@@ -1,0 +1,1991 @@
+/* Dragon Defence — layout only (positions and sizes); looks come from kit.css and the tokens.
+   Sizes for 375 × 812 portrait, the frame at most 480 px wide (as V2). Values recorded in docs/MEKANISME_UI.md. */
+
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; background: #12081f; overflow: hidden; }
+body { font-family: var(--font-ui); color: var(--white); -webkit-font-smoothing: antialiased; }
+button { font: inherit; }
+img { -webkit-user-drag: none; user-select: none; }
+
+.app { position: relative; width: 100%; max-width: 480px; height: 100%; margin: 0 auto; overflow: hidden; background: #1a0840; }
+.screen { position: absolute; inset: 0; overflow: hidden; }
+.screen--in { animation: gk-fade-in var(--t-nav) var(--ease-out); }
+.in-ic { width: 20px; height: 20px; object-fit: contain; }
+.gk-btn .gk-glyph { width: 22px; height: 22px; object-fit: contain; }
+.gk-btn--sm .gk-glyph { width: 18px; height: 18px; }
+.gk-ibtn .gk-glyph { width: 58%; height: 58%; object-fit: contain; }
+.bolt { display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: var(--yellow-500); box-shadow: inset 0 -2px 0 var(--yellow-600), 0 0 0 var(--ol-thin) var(--yellow-ink); }
+.bolt .gk-glyph { width: 15px; height: 15px; }
+.tier-common { color: var(--tier-common-hi); }
+.tier-rare { color: var(--tier-rare-hi); }
+.tier-epic { color: var(--tier-epic-hi); }
+.tier-legendary { color: var(--tier-legendary-hi); }
+
+/* ================================================================ lobby shell */
+.lobby { display: grid; grid-template-rows: auto 1fr auto; background: var(--c-bg-pattern), var(--c-bg-glow), var(--c-bg); }
+.lobby--heroes { background: url("../assets/pages/heroes_bg_soft.webp") center / cover; }
+.lobby--shop { background: url("../assets/shop/shop_bg_soft.webp") center / cover; }
+.lobby--kael { background: url("../assets/pages/artifact_bg_soft.webp") center / cover; }
+.lobby--exp { background: url("../assets/pages/expedition_bg_soft.webp") center / cover; }
+.top { position: relative; z-index: var(--z-hud); display: flex; align-items: center; gap: 8px; padding: 8px 12px 8px 4px; }
+.top__pl { position: relative; width: 48px; height: 48px; flex: none; display: grid; place-items: center; }
+.top__pl img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+.top__pln { position: relative; margin-top: 2px; font-size: 16px; }
+.top .gk-res { flex: 1 1 0; min-width: 0; padding-left: 24px; height: 30px; }
+.top .gk-res::after { content: ""; position: absolute; inset: -7px 0; }
+.top .gk-res > img { width: 26px; height: 26px; left: -4px; }
+.gk-res--bolt { padding-left: 24px; }
+.gk-res--bolt .bolt { position: absolute; left: -3px; top: 50%; translate: 0 -50%; }
+.top .gk-res > .gk-text { font-size: 14px; }
+.top .gk-ibtn { flex: none; }
+.page { position: relative; min-height: 0; overflow-y: auto; overflow-x: hidden; scrollbar-width: none; }
+.page::-webkit-scrollbar { display: none; }
+.page__head { display: flex; align-items: baseline; justify-content: center; gap: 8px; padding: 4px 0 8px; }
+.page__sub { color: var(--gold-400); }
+
+/* a hero's round picture: tier colour behind the bust, gold rim (V2 MEKANISME_UI §9) */
+.pic {
+  --_s: 46px; display: block; position: relative; flex: none; width: var(--_s); height: var(--_s); border-radius: 50%; overflow: hidden; padding: 0; border: 0;
+  background: radial-gradient(circle at 50% 35%, var(--_hi) 0%, var(--_mid) 55%, var(--_lo) 100%);
+  box-shadow: 0 0 0 var(--rim-w-sm) var(--gold-500), 0 0 0 calc(var(--rim-w-sm) + var(--ol-thin)) var(--gold-900), var(--sh-ambient-md);
+}
+.pic img { position: absolute; inset: 4% 0 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 10%; }
+.pic--common { --_hi: var(--tier-common-hi); --_mid: var(--tier-common); --_lo: var(--tier-common-lo); }
+.pic--rare { --_hi: var(--tier-rare-hi); --_mid: var(--tier-rare); --_lo: var(--tier-rare-lo); }
+.pic--epic { --_hi: var(--tier-epic-hi); --_mid: var(--tier-epic); --_lo: var(--tier-epic-lo); }
+.pic--legendary { --_hi: var(--tier-legendary-hi); --_mid: var(--tier-legendary); --_lo: var(--tier-legendary-lo); }
+.pic--empty, .pic--lock { background: var(--c-tray); box-shadow: inset 0 2px 3px rgba(0, 0, 0, 0.35), 0 0 0 var(--rim-w-sm) color-mix(in srgb, var(--gold-500) 45%, transparent); }
+.pic--empty::after { content: ""; position: absolute; inset: 32%; background: url("../assets/glyphs/glyph_plus.webp") center / contain no-repeat; opacity: 0.6; }
+.pic--lock img { inset: 24%; width: 52%; height: 52%; object-fit: contain; filter: grayscale(1); cursor: pointer; }
+.pic--kael { --_s: 54px; }
+
+/* ================================================================ Home */
+.home__bg { position: absolute; inset: -96px 0 0; background-position: center; background-size: cover; filter: saturate(0.9); z-index: -1; }
+.home__bg::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(26, 8, 64, 0.55), rgba(26, 8, 64, 0.2) 40%, rgba(26, 8, 64, 0.75)); }
+.lobby--home .page { overflow: hidden; }
+.home__stage { position: relative; height: 330px; display: grid; justify-items: center; }
+.home__dragon { position: absolute; top: 6px; height: 250px; display: grid; place-items: end center; }
+.home__dragon::before { content: ""; position: absolute; left: 50%; bottom: 8px; width: 240px; height: 90px; translate: -50% 0; background: var(--gate-glow); opacity: 0.55; border-radius: 50%; }
+.home__dragon img { position: relative; height: 240px; width: auto; max-width: 320px; object-fit: contain; animation: dd-bob var(--t-idle) ease-in-out infinite; filter: drop-shadow(0 10px 10px rgba(0, 0, 0, 0.45)); }
+.home__dragon.is-locked img { filter: grayscale(1) drop-shadow(0 10px 10px rgba(0, 0, 0, 0.45)); }
+@keyframes dd-bob { 50% { translate: 0 calc(-2 * var(--bob-rise)); } }
+.home__plate { position: absolute; top: 246px; width: 230px; height: 56px; display: grid; place-items: center; }
+.home__plate img { position: absolute; inset: 0; width: 100%; height: 100%; }
+.home__plate .gk-text { position: relative; font-size: 21px; padding-bottom: 4px; --tx-ol-color: var(--yellow-ink); }
+.home__name { position: absolute; top: 304px; }
+.home__arrow { position: absolute; top: 140px; }
+.home__arrow--prev { left: 14px; }
+.home__arrow--next { right: 14px; }
+.home__arrow .gk-ibtn { --_size: 44px; }
+.home__best { padding: 12px 32px 0; }
+.best { position: relative; height: 16px; border-radius: 999px; background: var(--c-tray); box-shadow: var(--sh-inset), 0 0 0 var(--ol-thin) var(--c-outline); }
+.best__fill { position: absolute; left: 2px; top: 2px; bottom: 2px; max-width: calc(100% - 4px); border-radius: 999px; background: linear-gradient(180deg, var(--yellow-400), var(--yellow-600)); }
+.best__pct { position: absolute; left: 50%; top: 50%; translate: -50% -50%; }
+.best__chest { position: absolute; top: 50%; width: 30px; height: 30px; translate: -50% -55%; }
+.best__chest img { width: 100%; height: 100%; object-fit: contain; filter: grayscale(0.8) brightness(0.8) drop-shadow(0 2px 2px rgba(0, 0, 0, 0.4)); }
+.best__chest.is-ready img, .best__chest.is-got img { filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.4)); }
+.best__tick { position: absolute; right: -4px; bottom: -2px; width: 16px; height: 16px; border-radius: 50%; display: grid; place-items: center; background: var(--green-500); box-shadow: 0 0 0 1.5px var(--green-900); }
+.best__tick .gk-glyph { width: 11px; height: 11px; }
+.home__power { display: flex; justify-content: center; align-items: baseline; gap: 8px; margin-top: 16px; }
+.home__power .is-low { color: var(--red-400); }
+.home__party { display: flex; justify-content: center; align-items: center; gap: 8px; margin: 16px auto 0; padding: 0; border: 0; background: none; cursor: pointer; }
+.home__party .pic { --_s: 40px; }
+.home__party .pic--kael { --_s: 48px; }
+.home__play { position: absolute; left: 50%; bottom: 18px; translate: -50% 0; min-width: 230px; }
+.home__cost { display: inline-flex; align-items: center; gap: 4px; }
+.home__cost .gk-text { color: var(--cream-100); }
+
+/* ================================================================ Heroes */
+.wallrow { display: flex; justify-content: center; align-items: center; gap: 8px; padding: 0 12px 12px; flex-wrap: wrap; }
+.wallrow .pic { --_s: 38px; }
+.wallrow .pic--kael { --_s: 46px; }
+.hgrid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px 8px; padding: 0 12px 16px; }
+.hgrid--pick { padding: 4px 0 8px; }
+.hc { position: relative; display: grid; justify-items: center; gap: 4px; padding: 0; border: 0; background: none; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.hc.is-off .hc__win { filter: grayscale(1); }
+.hc__win {
+  position: relative; display: block; width: 100%; aspect-ratio: 1 / 1.08; border-radius: var(--r-md); overflow: hidden; background-size: cover; background-position: center;
+  box-shadow: 0 0 0 var(--rim-w-sm) var(--gold-500), 0 0 0 calc(var(--rim-w-sm) + var(--ol-thin)) var(--gold-900), var(--sh-ambient-md);
+}
+.hc__win img { position: absolute; inset: 6% 0 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 8%; }
+.hc__win--common { background-image: url("../assets/cards/hero_bg_common.webp"); }
+.hc__win--rare { background-image: url("../assets/cards/hero_bg_rare.webp"); }
+.hc__win--epic { background-image: url("../assets/cards/hero_bg_epic.webp"); }
+.hc__win--legendary { background-image: url("../assets/cards/hero_bg_legendary.webp"); }
+.hc__lv { position: absolute; left: 4px; top: 4px; }
+.hc__in { position: absolute; right: -3px; top: -3px; width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center; background: var(--green-500); box-shadow: inset 0 -2px 0 var(--green-600), 0 0 0 var(--ol) var(--green-900); }
+.hc__in .gk-glyph { width: 13px; height: 13px; }
+.hc__up { position: absolute; right: -3px; bottom: 30px; width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center; background: var(--red-500); box-shadow: inset 0 -2px 0 var(--red-600), 0 0 0 var(--ol) var(--red-900); }
+.hc__up .gk-glyph { width: 12px; height: 12px; }
+.hc__bar { position: relative; width: 100%; height: 16px; border-radius: 999px; background: var(--c-tray); box-shadow: var(--sh-inset), 0 0 0 var(--ol-thin) var(--c-outline); overflow: hidden; }
+.hc__bar > span:first-child { position: absolute; left: 0; top: 0; bottom: 0; background: linear-gradient(180deg, var(--green-400), var(--green-600)); }
+.hc__bar .gk-text { position: absolute; inset: 0; display: grid; place-items: center; font-size: 12px; }
+.hc__name { white-space: nowrap; font-size: 12px; }
+.hsheet { display: grid; gap: 8px; }
+.hsheet__top { display: flex; gap: 12px; align-items: center; }
+.hsheet__pic { width: 84px; flex: none; }
+.hsheet__facts { display: grid; gap: 8px; justify-items: start; }
+.hsheet__cls { display: flex; gap: 8px; }
+.cls { display: inline-flex; align-items: center; gap: 4px; }
+.cls img { width: 22px; height: 22px; }
+.hsheet__role { color: var(--gold-400); }
+.lvrow { display: grid; grid-template-columns: 40px 1fr; gap: 8px; align-items: center; padding: 8px 8px; border-radius: var(--r-md); background: var(--c-tray); box-shadow: var(--sh-inset), inset 0 -1.5px 0 var(--c-tray-rim); opacity: 0.45; }
+.lvrow.is-on { opacity: 1; }
+.lvcost { display: inline-flex; align-items: center; gap: 4px; }
+
+/* ================================================================ Tavern */
+.tav { display: grid; justify-items: center; gap: 8px; padding: 0 16px 16px; }
+.tav__lvbar { position: relative; width: 220px; height: 16px; border-radius: 999px; background: var(--c-tray); box-shadow: var(--sh-inset), 0 0 0 var(--ol-thin) var(--c-outline); overflow: hidden; }
+.tav__lvbar > div { height: 100%; background: linear-gradient(180deg, var(--violet-400), var(--violet-600)); }
+.tav__lvbar .gk-text { position: absolute; inset: 0; display: grid; place-items: center; font-size: 12px; }
+.tav__pack { position: relative; width: 230px; height: 200px; display: grid; place-items: center; }
+.tav__tile { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+.tav__art { position: relative; width: 170px; animation: dd-bob var(--t-idle) ease-in-out infinite; filter: var(--sh-float); }
+.tav__odds { display: flex; gap: 8px; }
+.odd { padding: 4px 8px; border-radius: var(--r-xs); background: var(--_c); box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.25), 0 0 0 var(--ol-thin) var(--c-outline); }
+.odd--common { --_c: var(--tier-common); }
+.odd--rare { --_c: var(--tier-rare); }
+.odd--epic { --_c: var(--tier-epic); }
+.odd--legendary { --_c: var(--tier-legendary); }
+.tav__want { display: grid; justify-items: center; gap: 4px; padding: 0; border: 0; background: none; cursor: pointer; }
+.tav__want .pic { --_s: 50px; }
+.tav__buy { display: flex; gap: 12px; justify-content: center; }
+.tav__buy > * { min-width: 140px; }
+.tav__ex { width: 100%; max-width: 340px; }
+.tav__ex > img { width: 40px; height: 40px; }
+.tav__ex .gk-btn { margin-left: auto; }
+.pgrid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+.pulls .pgrid:has(> :only-child) { grid-template-columns: 96px; justify-content: center; }
+.pcard { position: relative; display: grid; justify-items: center; gap: 4px; animation: dd-flip 0.4s var(--ease-pop) backwards; }
+@keyframes dd-flip { from { opacity: 0; transform: rotateY(90deg) scale(0.8); } }
+.pcard__new { position: absolute; top: -6px; right: -6px; padding: 1px 4px; border-radius: var(--r-xs); background: var(--red-500); box-shadow: 0 0 0 var(--ol-thin) var(--red-900); }
+
+/* ================================================================ Kael */
+.kael { position: relative; height: 330px; display: grid; place-items: center; }
+.kael__fig { height: 300px; filter: drop-shadow(0 10px 12px rgba(0, 0, 0, 0.45)); }
+.kael__slots { position: absolute; inset: 0; z-index: 1; }
+.aslot { position: absolute; width: 62px; height: 62px; border-radius: var(--r-md); padding: 8px; border: 0; cursor: pointer; display: grid; place-items: center;
+  background: var(--c-tray-solid); box-shadow: inset 0 2px 3px rgba(0, 0, 0, 0.35), 0 0 0 var(--rim-w-sm) var(--gold-500), 0 0 0 calc(var(--rim-w-sm) + var(--ol-thin)) var(--gold-900); }
+.aslot:nth-child(1) { left: 18px; top: 40px; }
+.aslot:nth-child(2) { right: 18px; top: 40px; }
+.aslot:nth-child(3) { left: 18px; top: 190px; }
+.aslot:nth-child(4) { right: 18px; top: 190px; }
+.aslot img { width: 100%; height: 100%; object-fit: contain; }
+.aslot.is-empty .gk-glyph { width: 26px; height: 26px; opacity: 0.6; }
+.aslot.is-lock img { width: 30px; height: 30px; filter: grayscale(1); }
+.aslot__lv { position: absolute; right: 4px; bottom: 2px; }
+.kael__wall { margin: 0 16px 12px; }
+.kael__wall .kael__wallic { width: 56px; height: 30px; object-fit: contain; }
+.kael__wall .gk-btn { margin-left: auto; }
+.agrid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px 8px; padding: 0 16px 16px; }
+.acard { position: relative; display: grid; justify-items: center; gap: 4px; padding: 8px 4px 4px; border: 0; border-radius: var(--r-md); cursor: pointer; background: var(--c-tray-solid); box-shadow: inset 0 -1.5px 0 var(--c-tray-rim), 0 0 0 var(--ol-thin) var(--c-outline); }
+.acard img { width: 46px; height: 46px; object-fit: contain; }
+.acard.is-off img { filter: grayscale(1); }
+.acard__lv { position: absolute; left: 5px; top: 3px; color: var(--gold-400); }
+.asheet { display: grid; gap: 8px; justify-items: center; }
+.asheet__ic { width: 84px; height: 84px; object-fit: contain; }
+.asheet .gk-isec { width: 100%; }
+.asheet .lvrow { grid-template-columns: 30px 1fr; }
+
+/* ================================================================ Expedition */
+.exp { display: grid; justify-items: center; gap: 12px; padding: 0 16px 16px; }
+.exp__art { width: 150px; height: 150px; object-fit: contain; animation: dd-bob var(--t-idle) ease-in-out infinite; }
+.exp__bar { position: relative; width: 240px; height: 18px; border-radius: 999px; background: var(--c-tray); box-shadow: var(--sh-inset), 0 0 0 var(--ol-thin) var(--c-outline); overflow: hidden; }
+.exp__bar > div { height: 100%; background: linear-gradient(180deg, var(--sky-400), var(--sky-600)); }
+.exp__bar .gk-text { position: absolute; inset: 0; display: grid; place-items: center; }
+.exp__loot { display: flex; gap: 12px; }
+.exp__loot .gk-res { min-width: 80px; }
+.sweep { margin: 0 16px 16px; }
+.sweep__n { margin-left: auto; color: var(--gold-400); }
+.sweep .gk-row .gk-btn { margin-left: auto; }
+.sweep__none { padding: 8px 8px; }
+
+/* ================================================================ boxes */
+.reward { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 8px 12px; padding: 4px 0; }
+.reward .gk-res { min-width: 86px; }
+.reward__it { display: grid; justify-items: center; gap: 2px; }
+.reward__it img { width: 40px; height: 40px; object-fit: contain; }
+.reward__it .pic { --_s: 40px; }
+.res__pct .gk-text { color: var(--gold-400); }
+.res__chests { display: flex; justify-content: center; gap: 12px; }
+.res__chest { display: grid; justify-items: center; }
+.res__chest img { width: 36px; height: 36px; }
+.lock-note { position: absolute; left: 50%; top: 44%; z-index: var(--z-toast); translate: -50% -50%; padding: 16px 24px; display: grid; justify-items: center; gap: 8px; pointer-events: none;
+  border-radius: var(--r-lg); background: var(--purple-600); box-shadow: inset 0 -3px 0 var(--purple-800), 0 0 0 var(--ol) var(--purple-900), var(--sh-ambient-lg);
+  animation: dd-lock 1.65s ease-out forwards; white-space: nowrap; }
+.lock-note img { width: 44px; height: 44px; }
+@keyframes dd-lock { 0% { opacity: 0; scale: 0.9; } 9% { opacity: 1; scale: 1; } 82% { opacity: 1; } 100% { opacity: 0; } }
+.stats { width: 100%; }
+.stat { display: grid; grid-template-columns: 34px 1fr 52px; align-items: center; gap: 8px; padding: 2px 4px; }
+.stat .pic { --_s: 30px; }
+.stat__bar { height: 10px; border-radius: 999px; background: var(--c-tray); overflow: hidden; }
+.stat__bar > div { height: 100%; background: linear-gradient(180deg, var(--yellow-400), var(--yellow-600)); }
+
+/* ================================================================ story: Sera and Kael talk */
+.vn { position: absolute; inset: 0; z-index: var(--z-modal); background: linear-gradient(180deg, rgba(10, 4, 20, 0) 40%, rgba(10, 4, 20, 0.75)); cursor: pointer; animation: gk-fade-in var(--t-pop); }
+.vn__who { position: absolute; bottom: 150px; height: 380px; max-width: 78%; object-fit: contain; filter: drop-shadow(0 8px 12px rgba(0, 0, 0, 0.5)); animation: dd-in 0.3s var(--ease-out); }
+.vn__who--sera { left: -10px; }
+.vn__who--kael { right: -10px; }
+@keyframes dd-in { from { opacity: 0; translate: 0 16px; } }
+.vn__box { position: absolute; left: 12px; right: 12px; bottom: 22px; min-height: 128px; padding: 32px 24px 24px;
+  border: 0 solid transparent; border-image: url("../assets/lair/modal_frame.webp") 255 47 120 47 fill / 60px 14px 30px 14px stretch; }
+.vn__name { position: absolute; left: 50%; top: 8px; translate: -50% 0; }
+.vn__line { display: block; font-family: var(--font-ui); font-weight: 500; font-size: 15px; line-height: 1.38; color: color-mix(in srgb, var(--gold-400) 62%, var(--white)); }
+.vn__next { position: absolute; right: 16px; bottom: 14px; animation: dd-nudge 1s ease-in-out infinite; }
+.vn__next .gk-glyph { width: 18px; height: 18px; }
+@keyframes dd-nudge { 50% { translate: 4px 0; } }
+.hint { position: absolute; left: 10px; right: 10px; top: 104px; z-index: var(--z-float); display: flex; align-items: center; gap: 8px; padding: 8px 12px 8px 8px; pointer-events: none;
+  border-radius: var(--r-lg); background: var(--c-tray-solid); box-shadow: inset 0 -1.5px 0 var(--c-tray-rim), 0 0 0 var(--ol-thin) var(--c-outline), var(--sh-ambient-lg);
+  animation: dd-in 0.3s var(--ease-out); transition: opacity 0.4s; }
+.hint.is-out { opacity: 0; }
+.hint img { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; object-position: 50% 12%; background: var(--purple-600); box-shadow: 0 0 0 2px var(--gold-500); flex: none; }
+.hint .gk-cream { font-size: 13px; }
+
+/* ================================================================ Battle */
+.bt__bg { position: absolute; inset: 0; background-position: center top; background-size: cover; }
+.bt__bg::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(10, 4, 16, 0.4), rgba(10, 4, 16, 0.1) 30%, rgba(10, 4, 16, 0.2)); }
+/* the city wall: the Lair's tray as stone ramparts until the painted wall arrives */
+.bt__wall { position: absolute; left: 0; right: 0; bottom: 0; height: 168px;
+  background: url("../assets/lair/tray_party_top.webp") top / 100% auto no-repeat, url("../assets/lair/tray_party_bot.webp") bottom / 100% auto no-repeat, url("../assets/lair/tray_party_mid.webp") center / 100% auto repeat-y; }
+.bt__cv { position: absolute; inset: 0; touch-action: none; }
+.bt__cv canvas { display: block; }
+.bt__hud { position: absolute; top: 8px; left: 10px; right: 10px; z-index: var(--z-hud); display: grid; grid-template-columns: 44px minmax(0, 1fr) 96px; align-items: start; gap: 8px; pointer-events: none; }
+.bt__hud > * { pointer-events: auto; }
+.bt__stage { display: grid; justify-items: center; gap: 4px; }
+.bt__stage .gk-text--title { font-size: 19px; }
+.bt__prog { position: relative; width: 170px; height: 16px; border-radius: 999px; background: var(--c-tray); box-shadow: var(--sh-inset), 0 0 0 var(--ol-thin) var(--c-outline); overflow: hidden; }
+.bt__prog > div { height: 100%; width: 0; background: linear-gradient(180deg, var(--yellow-400), var(--yellow-600)); transition: width 0.3s; }
+.bt__prog .gk-text { position: absolute; inset: 0; display: grid; place-items: center; font-size: 12px; }
+.bt__right { display: grid; justify-items: end; gap: 8px; }
+.bt__right .gk-res { width: 96px; }
+.bt__right .gk-ibtn { --_size: 38px; }
+.bt__right .gk-ibtn .gk-text { font-size: var(--fs-button-sm); }
+/* the heroes on the wall and their skill levels: one row in the wall band above the life bar, so nothing covers the
+   field (Heroes vs Crazy Wiggler keeps the field clear; user 2026-10-24) */
+.bt__side { position: absolute; left: 0; right: 0; bottom: 58px; z-index: var(--z-hud); display: flex; justify-content: center; gap: 8px; pointer-events: none; }
+.side { position: relative; }
+.side .pic { --_s: 40px; }
+.side__n { position: absolute; left: -6px; bottom: -4px; min-width: 18px; height: 18px; padding: 0 4px; border-radius: 999px; display: grid; place-items: center; background: var(--purple-600); box-shadow: 0 0 0 1.5px var(--purple-900); }
+.side__n.is-evo { background: var(--tier-legendary); box-shadow: 0 0 0 1.5px var(--tier-legendary-lo); }
+.side__n .gk-text { font-size: 12px; }
+.bt__life { position: absolute; left: 50%; top: 0; width: 250px; height: 26px; translate: -50% 0; z-index: var(--z-hud); pointer-events: none; }
+.bt__life .frame { position: absolute; inset: 0; width: 100%; height: 100%; }
+.bt__life .fill { position: absolute; left: 8.2%; right: 8.2%; top: 31%; bottom: 31%; overflow: hidden; border-radius: 999px; }
+.bt__life .fill > div { height: 100%; width: 100%; background: url("../assets/loading/loading_bar_fill.webp") left center / 210px 100% no-repeat; transition: width 0.2s; }
+.bt__life.is-low .fill > div { filter: hue-rotate(110deg) saturate(1.4); }
+.bt__life .gk-text { position: absolute; inset: 0; display: grid; place-items: center; font-size: 12px; }
+.bt__life.is-hit { animation: dd-hit 0.3s ease-out infinite; }
+@keyframes dd-hit { 30% { translate: calc(-50% + 3px) 0; } 60% { translate: calc(-50% - 3px) 0; } }
+
+/* the choice cards (Hero Call, Skill Selection) */
+.pick { max-width: 372px; padding-left: 16px; padding-right: 16px; }
+.cards { display: flex; justify-content: center; gap: 8px; }
+.cards > .card { flex: 0 0 calc((100% - 16px) / 3); }
+.cards:has(> :nth-child(4)) { gap: 4px; }
+.cards:has(> :nth-child(4)) > .card { flex-basis: calc((100% - 15px) / 4); }
+.card { position: relative; aspect-ratio: 981 / 1427; padding: 0; border: 0; background: none; cursor: pointer; -webkit-tap-highlight-color: transparent; animation: dd-deal 0.32s var(--ease-pop) backwards; }
+@keyframes dd-deal { from { opacity: 0; translate: 0 18px; scale: 0.9; } }
+.card:active { translate: 0 2px; }
+.card--evo { filter: drop-shadow(0 0 10px rgba(255, 196, 122, 0.8)); }
+.card__win { position: absolute; left: 7.4%; right: 7.4%; top: 14.5%; bottom: 5.2%; border-radius: 9px; overflow: hidden; background-size: cover; background-position: center; display: grid; grid-template-rows: auto auto 1fr; justify-items: center; align-content: start; padding: 12px 4px 4px; gap: 2px; }
+.card__win--common { background-image: url("../assets/cards/hero_bg_common.webp"); }
+.card__win--rare { background-image: url("../assets/cards/hero_bg_rare.webp"); }
+.card__win--epic { background-image: url("../assets/cards/hero_bg_epic.webp"); }
+.card__win--legendary { background-image: url("../assets/cards/hero_bg_legendary.webp"); }
+.card__frame { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.card__gem { position: absolute; left: 50%; top: 2.2%; width: 17%; translate: -50% 0; pointer-events: none; }
+.card__icon { width: 44px; height: 44px; object-fit: contain; filter: var(--sh-drop-icon); }
+.card__who { position: absolute; left: 3px; top: 3px; z-index: 1; }
+.card__who .pic { --_s: 26px; box-shadow: 0 0 0 1.5px var(--gold-500), 0 0 0 3px var(--gold-900); }
+.card__name { font-size: 13px; line-height: 1.05; text-align: center; white-space: nowrap; }
+.card__name--long { font-size: 10.5px; letter-spacing: 0; }
+.card__line { display: grid; justify-items: center; text-align: center; }
+.card__line .gk-cream { font-size: 12px; line-height: 1.15; }
+.card__line .gk-text--number { font-size: 18px; color: var(--gold-400); }
+/* a hero card: the bust fills the window, its class faces on top, the name and line under it */
+.card--hero .card__win { padding: 0; display: block; }
+.card__bust { position: absolute; left: 0; right: 0; top: 0; width: 100%; height: 72%; object-fit: cover; object-position: 50% 10%; }
+.card__cls { position: absolute; left: 3px; top: 3px; display: grid; gap: 2px; }
+.card__cls img { width: 22px; height: 22px; }
+.card--hero .card__foot { position: absolute; left: 7.4%; right: 7.4%; bottom: 6%; height: 32%; padding: 4px 4px 2px; display: grid; justify-items: center; align-content: start; gap: 2px; background: linear-gradient(180deg, rgba(28, 14, 30, 0.75), rgba(28, 14, 30, 0.95)); border-radius: 0 0 9px 9px; }
+.card__say { font-size: 12px !important; line-height: 1.1 !important; text-align: center; }
+.card__aim { font-size: 12px; color: var(--gold-400); text-align: center; line-height: 1.1; white-space: normal; }
+/* Hero Call: the reaction this hero makes with one on the wall (Ledger TD Draft 15), under the card so the photo stays clear */
+.card__combo { position: absolute; left: -2px; right: -2px; top: calc(100% + 4px); display: grid; justify-items: center; }
+.cards:has(.card__combo) { padding-bottom: 32px; }
+.card__combo .gk-text { font-size: 12px; line-height: 1.15; color: var(--_rc, var(--gold-400)); }
+.card__combo--overload { --_rc: #ffe24a; }
+.card__combo--steam { --_rc: #e8f4ff; }
+.card__combo--wildfire { --_rc: #ff7a2a; }
+.card__combo--shatter { --_rc: #bfefff; }
+/* a small battle card face for lists (Skill Cards page, cards.html, user no. 90): the same window, frame and gem, four in a row at
+   375 px; no name (the row's label says it), so nothing is cut; not a button */
+.card--mini { animation: none; cursor: default; }
+.card--mini:active { translate: none; }
+#app .card--mini .card__win { padding: 18px 2px 2px; grid-template-rows: 1fr auto; align-content: stretch; align-items: center; gap: 0; }
+.card--mini .card__icon { width: 30px; height: 30px; }
+.card--mini .card__who { left: 2px; top: 2px; }
+.card--mini .card__who .pic { --_s: 18px; }
+#app .card--mini .card__line .gk-text--number { font-size: 14px; }
+.card--mini .card__tag { right: 2px; top: 2px; padding: 0 3px; }
+/* pause > Damage Statistics: reactions of this battle */
+.stat__rx { display: grid; gap: 2px; padding: 8px 4px 2px; }
+
+@media (max-height: 700px) {
+  .home__stage { height: 268px; }
+  .home__dragon { height: 200px; }
+  .home__dragon img { height: 190px; }
+  .home__plate { top: 196px; }
+  .home__name { top: 252px; }
+  .home__arrow { top: 110px; }
+  .home__best { padding-top: 8px; }
+  .home__power, .home__party { margin-top: 8px; }
+  .home__play { bottom: 10px; }
+  .kael { height: 270px; }
+  .kael__fig { height: 250px; }
+  .aslot:nth-child(3), .aslot:nth-child(4) { top: 160px; }
+  .vn__who { height: 300px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .home__dragon img, .tav__art, .exp__art, .card, .pcard { animation: none; }
+}
+
+/* =====================================================================================
+   v3 (docs/RANCANGAN.md CONFIRMED, 2026-10-24): Dragon Fever mechanics. Provisional layout until the UI phase
+   (user: "nanti baru masuk ui"); colours from the tokens only.
+   ===================================================================================== */
+.tier-mythic { color: var(--tier-god-hi); }
+.tier-normal { color: var(--gray-400); }
+.tier-superior { color: var(--green-400); }
+.pic--mythic { --_hi: var(--tier-god-hi); --_mid: var(--tier-god); --_lo: var(--tier-god-lo); }
+.hc__win--mythic, .card__win--mythic { background-image: url("../assets/dd/hero_bg_mythic.webp"); }
+.card__win--mythic { box-shadow: inset 0 0 0 3px var(--tier-god); }
+.odd--mythic { --_c: var(--tier-god); }
+.odd--g-normal { --_c: var(--gray-500); }
+.odd--g-superior { --_c: var(--green-500); }
+.odd--g-rare { --_c: var(--tier-rare); }
+.odd--g-epic { --_c: var(--tier-epic); }
+.odd--g-legendary { --_c: var(--tier-legendary); }
+
+/* elements: one colour each */
+.el { display: inline-flex; align-items: center; padding: 1px 8px; border-radius: var(--r-pill); background: var(--_c); box-shadow: inset 0 -1.5px 0 rgba(0, 0, 0, 0.25), 0 0 0 var(--ol-thin) var(--c-outline); }
+.el--physical { --_c: var(--stone-500); }
+.el--fire { --_c: var(--red-500); }
+.el--water { --_c: var(--sky-500); }
+.el--electric { --_c: var(--violet-500); }
+.el--nature { --_c: var(--green-600); }
+.el--ice { --_c: #7fd8f0; } .el--rock { --_c: #b08a5a; } .el--poison { --_c: #a24ac8; } .el--dark { --_c: #5a4a9a; } .el--holy { --_c: #d8b84a; } .el--dragon { --_c: #c83a3a; } /* C43 */
+
+/* gear painting (Request Asset R1) in the upper part of the tile, the stat line below it */
+.gear__ic { position: absolute; left: 50%; top: 5%; translate: -50% 0; width: 62%; height: 62%; object-fit: contain; filter: var(--sh-drop-icon); }
+/* equipped slots carry the Lv badge on the bottom edge: lift the stat line above it */
+.eslot .gear__ic { width: 52%; height: 52%; }
+.eslot .gear__stat { bottom: 11px; }
+.bolt--lg { width: 44px; height: 44px; }
+.bolt--lg .gk-glyph { width: 30px; height: 30px; }
+
+/* lobby */
+.top__en { border: 0; font: inherit; color: inherit; cursor: pointer; }
+.gk-nav__item.is-locked .gk-nav__art { filter: grayscale(1) brightness(0.7); }
+.nav__lock { position: absolute; left: 50%; top: 50%; width: 34px; height: 34px; translate: -50% -50%; }
+.ensheet { display: grid; justify-items: center; gap: 8px; padding: 8px 0; }
+.ensheet__n { display: flex; align-items: center; gap: 8px; }
+
+/* Home additions */
+.home__round { display: block; margin-top: 2px; text-align: center; color: var(--gold-400); }
+.home__weak { display: flex; justify-content: center; align-items: center; gap: 8px; margin-top: -2px; }
+.home__bestt { display: block; text-align: center; margin-bottom: 4px; }
+.best__chest { padding: 0; border: 0; background: none; cursor: pointer; }
+/* 44 px touch area around the 30 px chest (UI phase 2026-10-29) */
+.best__chest::before { content: ""; position: absolute; inset: -7px; }
+.best__chest.is-ready img { animation: dd-bob 1s ease-in-out infinite; }
+.home__pm { position: relative; display: block; }
+.home__trial { position: absolute; left: 50%; bottom: -8px; translate: -50% 0; padding: 0 4px; border-radius: var(--r-xs); background: var(--tier-legendary); }
+.home__side { position: absolute; bottom: 104px; display: grid; justify-items: center; gap: 2px; padding: 0; border: 0; background: none; cursor: pointer; }
+.home__side img { width: 46px; height: 46px; object-fit: contain; filter: var(--sh-drop-icon); }
+.home__side--l { left: 12px; }
+.home__side--r { right: 12px; }
+.dot { position: absolute; right: 2px; top: 0; width: 12px; height: 12px; border-radius: 50%; background: var(--red-500); box-shadow: 0 0 0 1.5px var(--red-900); }
+
+/* Heroes additions */
+.hexch { display: flex; justify-content: center; align-items: baseline; gap: 8px; padding: 0 0 8px; }
+.hc__el { position: absolute; right: 3px; bottom: 3px; }
+.hc__el .el { padding: 0 4px; }
+.hc__el .gk-text { font-size: 12px; }
+.hc__trial { position: absolute; left: 0; right: 0; bottom: 0; padding: 1px 0; text-align: center; background: var(--tier-legendary); }
+.hsheet__pic { height: 120px; width: auto; object-fit: contain; }
+.hsheet__tags, .hsheet__stats { display: flex; flex-wrap: wrap; gap: 4px 8px; align-items: center; }
+
+/* Commander */
+.cmd { position: relative; height: 300px; }
+.cmd__fig { position: absolute; left: 50%; top: 0; height: 290px; translate: -50% 0; filter: drop-shadow(0 10px 12px rgba(0, 0, 0, 0.45)); }
+.cmd__col { position: absolute; top: 10px; display: grid; gap: 12px; }
+.cmd__col--l { left: 12px; }
+.cmd__col--r { right: 12px; }
+.eslot { position: relative; padding: 0; border: 0; background: none; cursor: pointer; }
+.eslot__lv { position: absolute; left: 50%; bottom: -9px; translate: -50% 0; padding: 0 4px; border-radius: var(--r-pill); background: var(--c-tray-solid); box-shadow: 0 0 0 var(--ol-thin) var(--c-outline); white-space: nowrap; }
+.gear { position: relative; display: grid; place-items: center; width: 64px; height: 64px; border-radius: var(--r-md); background: var(--_c, var(--c-tray-solid));
+  box-shadow: inset 0 -3px 0 rgba(0, 0, 0, 0.3), inset 0 2px 0 rgba(255, 255, 255, 0.18), 0 0 0 var(--rim-w-sm) var(--gold-500), 0 0 0 calc(var(--rim-w-sm) + var(--ol-thin)) var(--gold-900); }
+.gear--empty { background: var(--c-tray); opacity: 0.8; }
+.gear--normal { --_c: var(--gray-500); }
+.gear--superior { --_c: var(--green-600); }
+.gear--rare { --_c: var(--tier-rare); }
+.gear--epic { --_c: var(--tier-epic); }
+.gear--legendary { --_c: var(--tier-legendary); }
+.gear__tier { position: absolute; left: 3px; top: 1px; }
+.gear__stat { position: absolute; left: 0; right: 0; bottom: 2px; text-align: center; }
+.gear__stat .gk-text { font-size: 12px; }
+.gear--btn { cursor: pointer; }
+.cmd__team { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 12px; padding: 8px 12px; }
+.cmd__btns { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 8px; padding: 8px 8px 12px; }
+/* the small kit buttons keep their look; their touch area grows to 44 px (UI phase 2026-10-29) */
+.cmd__btns .gk-btn, .cmd__bag .gk-btn, .shop__bar .gk-btn { position: relative; }
+.cmd__btns .gk-btn::after, .cmd__bag .gk-btn::after, .shop__bar .gk-btn::after { content: ""; position: absolute; inset: -5px 0; }
+.cmd__bag { display: flex; align-items: center; gap: 8px; padding: 4px 16px 8px; }
+.cmd__ore { display: flex; gap: 8px; margin-left: auto; }
+.cmd__ore .gk-res { min-width: 64px; }
+.ggrid { display: grid; grid-template-columns: repeat(5, 64px); justify-content: center; gap: 8px; padding: 0 12px 16px; }
+.ggrid--sheet { grid-template-columns: repeat(4, 64px); padding: 8px 0; }
+.ssheet { display: grid; gap: 12px; }
+.ssheet__now { display: flex; gap: 12px; align-items: center; text-align: left; }
+.ssheet__now > div { display: grid; gap: 4px; }
+.tal { display: grid; gap: 8px; }
+.tal__row { display: grid; grid-template-columns: 22px repeat(3, 1fr) 1.1fr; gap: 4px; align-items: center; padding: 4px; border-radius: var(--r-md); background: var(--c-tray); opacity: 0.7; }
+.tal__row.is-now { opacity: 1; box-shadow: 0 0 0 1.5px var(--gold-500); }
+.tal__node, .tal__big { display: grid; justify-items: center; padding: 4px 2px; border-radius: var(--r-sm); background: var(--c-tray-solid); }
+.tal__node .gk-text, .tal__big .gk-text { font-size: 12px; line-height: 1.1; }
+.tal__node.is-on { background: var(--purple-600); }
+.tal__node.is-max { background: var(--green-600); }
+.tal__big { background: var(--stone-800); }
+.tal__big.is-on { background: var(--tier-legendary); }
+
+/* build stage 3 (2026-10-29): Collection, runes, Limited Recruitment; text never below 12 px */
+.coll__sum { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 12px; padding: 0 0 8px; }
+.coll__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px 8px; }
+.coll { position: relative; display: grid; justify-items: center; gap: 4px; padding: 8px 4px 8px; border: 0; border-radius: var(--r-md); cursor: pointer; background: var(--c-tray); box-shadow: inset 0 0 0 2px var(--_c); }
+.coll--fine { --_c: var(--gray-500); }
+.coll--superior { --_c: var(--green-500); }
+.coll--rare { --_c: var(--tier-rare); }
+.coll--epic { --_c: var(--tier-epic); }
+.coll.is-off .coll__art { filter: grayscale(1) brightness(0.7); }
+.coll__art { width: 52px; height: 52px; object-fit: contain; filter: var(--sh-drop-icon); }
+.coll__lv { position: absolute; left: 6px; top: 4px; }
+.coll .dot { right: 4px; top: 4px; }
+.coll__name { font-size: 12px; line-height: 1.1; text-align: center; }
+.coll__stat { font-size: 12px; color: var(--gold-400); }
+.coll__bar { position: relative; width: 100%; height: 16px; border-radius: 999px; background: var(--c-tray-solid); overflow: hidden; }
+.coll__bar > span:first-child { position: absolute; left: 0; top: 0; bottom: 0; background: linear-gradient(180deg, var(--violet-400), var(--violet-600)); }
+.coll__bar .gk-text { position: absolute; inset: 0; display: grid; place-items: center; font-size: 12px; }
+.eslot__rune { position: absolute; right: -6px; top: -6px; width: 26px; height: 26px; display: grid; place-items: center; }
+.eslot__rune img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+.eslot__rune .gk-text { position: relative; font-size: 12px; }
+.rune__socks { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.rune__sock { display: grid; grid-template-columns: 30px 1fr; align-items: center; gap: 0 8px; padding: 8px; border-radius: var(--r-md); background: var(--c-tray); text-align: left; }
+.rune__sock .gk-text--tag { grid-column: 2; font-size: 12px; }
+.rune__sock.is-off { opacity: 0.6; }
+.rune__ic { grid-row: span 2; width: 30px; height: 30px; object-fit: contain; }
+.rune__inv { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; padding: 12px 0 8px; }
+.rune__chip { padding: 4px 8px; border-radius: var(--r-xs); background: var(--_c); box-shadow: 0 0 0 var(--ol-thin) var(--c-outline); }
+.rune__chip--atk { --_c: var(--red-600); }
+.rune__chip--hp { --_c: var(--green-600); }
+.lim__ms { width: 100%; display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+.tav__odds { width: 100%; flex-wrap: wrap; justify-content: center; }
+.tav__pack--sm { width: 180px; height: 150px; }
+.tav__pack--sm .tav__art { width: auto; height: 120px; }
+.lim__wallet { align-items: center; }
+.lim__wallet .gk-btn { position: relative; }
+.lim__wallet .gk-btn::after { content: ""; position: absolute; inset: -5px 0; }
+.lim__m { display: grid; justify-items: center; gap: 1px; width: 44px; padding: 4px 0; border: 0; border-radius: var(--r-sm); cursor: pointer; background: var(--c-tray); }
+.lim__m img { width: 22px; height: 22px; object-fit: contain; }
+.lim__m.is-ready { background: var(--yellow-600); animation: dd-bob 1s ease-in-out infinite; }
+.lim__m.is-got { opacity: 0.45; }
+
+/* Shop */
+.shop__sec { position: relative; display: grid; place-items: center; height: 40px; margin: 8px 0 4px; }
+.shop__banner { position: absolute; height: 40px; width: auto; }
+.shop__sect { position: relative; }
+.shop__bar { display: flex; align-items: center; justify-content: space-between; padding: 0 16px 8px; }
+.offers { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 0 12px 8px; }
+.offer { position: relative; display: grid; justify-items: center; align-content: start; gap: 2px; height: 128px; padding: 16px 4px 8px; border: 0; background: none; cursor: pointer; }
+.offer__tile { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: fill; }
+.offer__art { position: relative; height: 48px; display: grid; place-items: center; }
+.offer__art img { width: 46px; height: 46px; object-fit: contain; }
+.offer__name { position: relative; font-size: 12px; text-align: center; line-height: 1.1; }
+.offer__price { position: relative; display: inline-flex; align-items: center; gap: 4px; margin-top: auto; }
+.offer.is-sold { filter: grayscale(1) brightness(0.7); cursor: default; }
+.chestbox { display: flex; gap: 8px; align-items: center; padding: 0 16px; text-align: left; }
+.chestbox > div { display: grid; gap: 4px; }
+.chestbox__art { width: 78px; height: 78px; object-fit: contain; flex: none; }
+.chestbox__odds { display: flex; flex-wrap: wrap; gap: 4px; }
+.chestbox__odds .gk-text { font-size: 12px; }
+.chestbox__buy { display: flex; justify-content: center; gap: 12px; padding: 8px 0; }
+.packs { display: flex; justify-content: center; gap: 8px; padding: 0 12px 16px; }
+.pack { display: grid; justify-items: center; gap: 2px; width: 150px; padding: 12px 8px; border: 0; border-radius: var(--r-md); cursor: pointer; background: var(--purple-600); box-shadow: inset 0 -3px 0 var(--purple-800), 0 0 0 var(--ol) var(--purple-900); }
+
+/* Patrol */
+.quick { width: 100%; max-width: 340px; flex-wrap: wrap; justify-content: center; }
+.quick .gk-btn { margin-left: auto; }
+.reward--gear .gear { width: 52px; height: 52px; }
+
+/* simulated ad and in-battle offer */
+.adsim { position: absolute; inset: 0; z-index: calc(var(--z-toast) + 1); display: grid; place-items: center; background: var(--c-scrim); }
+.adsim__box { display: grid; justify-items: center; gap: 8px; padding: 16px 24px; border-radius: var(--r-lg); background: var(--c-tray-solid); box-shadow: 0 0 0 var(--ol) var(--c-outline); }
+.adsim__bar { width: 160px; height: 8px; border-radius: var(--r-pill); background: var(--c-tray); overflow: hidden; }
+.adsim__bar > div { height: 100%; width: 0; background: var(--yellow-500); animation: dd-adbar 1.1s linear forwards; }
+@keyframes dd-adbar { to { width: 100%; } }
+.bt__offer { display: flex; align-items: center; justify-content: space-between; width: 100%; margin-top: 12px; padding: 8px 16px; border: 0; border-radius: var(--r-md); cursor: pointer;
+  background: var(--yellow-500); box-shadow: inset 0 -3px 0 var(--yellow-600), 0 0 0 var(--ol) var(--yellow-ink); --tx-ol-color: var(--yellow-ink); }
+
+/* tutorial line (no character, D2.9) */
+.tip { position: absolute; left: 12px; right: 12px; top: 104px; z-index: var(--z-float); display: flex; align-items: center; justify-content: center; gap: 8px; padding: 8px 12px; pointer-events: none;
+  border-radius: var(--r-lg); background: var(--c-tray-solid); box-shadow: inset 0 -1.5px 0 var(--c-tray-rim), 0 0 0 var(--ol-thin) var(--c-outline), var(--sh-ambient-lg);
+  animation: dd-in 0.3s var(--ease-out); transition: opacity 0.4s; }
+.tip.is-out { opacity: 0; }
+.tip img { width: 30px; height: 30px; object-fit: contain; animation: dd-nudge 1s ease-in-out infinite; }
+
+/* battle additions */
+.bt__clock { color: var(--cream-100); }
+.bt__lifebox { position: absolute; left: 0; right: 0; bottom: 22px; height: 26px; z-index: var(--z-hud); pointer-events: none; }
+.is-round .bt__lifebox { bottom: 14px; }
+.tiers { display: flex; justify-content: center; gap: 4px; margin: -4px 0 8px; }
+.pick__hint { display: block; margin-top: 4px; }
+.card__tag { position: absolute; right: 3px; top: 3px; z-index: 1; padding: 0 4px; border-radius: var(--r-xs); background: var(--c-tray-solid); }
+.card--glow { filter: drop-shadow(0 0 8px rgba(255, 196, 122, 0.75)); }
+.card__cls .el { padding: 0 4px; }
+.ptabs { display: flex; justify-content: center; gap: 8px; margin-bottom: 8px; }
+.pview { max-height: 46vh; overflow-y: auto; }
+.pview .gk-row { margin-bottom: 4px; }
+.pview .gk-row .pic { --_s: 38px; }
+.res--win .gk-modal__head .gk-text { color: var(--gold-400); }
+
+@media (max-height: 700px) {
+  .cmd { height: 250px; }
+  .cmd__fig { height: 240px; }
+  .cmd__col { gap: 8px; }
+  .gear { width: 56px; height: 56px; }
+  .home__side { bottom: 92px; }
+}
+.cmd__none { padding: 0 24px 16px; text-align: center; }
+.card__name--long { white-space: normal; font-size: 10.5px; line-height: 1.05; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+/* =====================================================================================
+   UI pass 1 (2026-10-24, user: "coba buat uinya"): Home after the V2 target (docs/art/v2-target-home.webp) with
+   Dragon Fever content; nav labels; hero spec rows. Values in docs/MEKANISME_UI.md v3.
+   ===================================================================================== */
+/* nav: art 62 px + label under it (V2 target nav) */
+/* the painted medals carry their own label plate; Commander and Dungeon (plain pictures) get the same plate */
+
+/* Home */
+.lobby--home .page { overflow: hidden; }
+.hm { position: absolute; inset: 0; }
+.hm__ribbon { position: absolute; top: 2px; left: 0; right: 0; display: flex; justify-content: center; align-items: center; gap: 4px; }
+.hm__banner { position: relative; width: 236px; height: 58px; display: grid; place-items: center; }
+.hm__banner img { position: absolute; inset: 0; width: 100%; height: 100%; }
+.hm__banner .gk-text { position: relative; font-size: 22px; padding-bottom: 4px; --tx-ol-color: var(--yellow-ink); }
+.hm__world { position: absolute; top: 60px; left: 0; right: 0; display: grid; justify-items: center; gap: 2px; }
+.hm__round { color: var(--gold-400); }
+.hm__side { position: absolute; top: 92px; display: grid; gap: 8px; z-index: 2; }
+.hm__side--l { left: 10px; }
+.hm__side--r { right: 10px; }
+.fbtn { position: relative; display: grid; justify-items: center; gap: 0; width: 76px; padding: 0; border: 0; background: none; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.fbtn__ring { position: relative; width: 64px; height: 64px; display: grid; place-items: center; transition: transform var(--t-press) ease-out; }
+.fbtn:active .fbtn__ring { transform: translateY(2px); }
+.fbtn__bg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.fbtn__ic { position: relative; width: 38px; height: 38px; object-fit: contain; filter: var(--sh-drop-icon); }
+.fbtn.is-locked .fbtn__ic { width: 28px; height: 28px; filter: grayscale(1); }
+.fbtn__plate { position: relative; margin-top: -8px; width: 76px; height: 24px; display: grid; place-items: center; }
+.fbtn__plate img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: fill; }
+.fbtn__plate .gk-text { position: relative; font-size: 10px; white-space: nowrap; }
+.fbtn .dot { right: 8px; top: 2px; }
+.hm__dragon { position: absolute; top: 92px; left: 50%; translate: -50% 0; height: 212px; display: grid; place-items: end center; }
+.hm__dragon::before { content: ""; position: absolute; left: 50%; bottom: 6px; width: 230px; height: 84px; translate: -50% 0; background: var(--gate-glow); opacity: 0.55; border-radius: 50%; }
+.hm__dragon img { position: relative; height: 206px; width: auto; max-width: 230px; object-fit: contain; animation: dd-bob var(--t-idle) ease-in-out infinite; filter: drop-shadow(0 10px 10px rgba(0, 0, 0, 0.45)); }
+.hm__dragon.is-locked img { filter: grayscale(1) drop-shadow(0 10px 10px rgba(0, 0, 0, 0.45)); }
+.hm__weak { position: absolute; top: 310px; left: 0; right: 0; display: flex; justify-content: center; align-items: center; gap: 8px; }
+/* the recessed run card (V2 target: "Current run") */
+.hm__card { position: absolute; top: 340px; left: 14px; right: 14px; display: grid; gap: 8px; padding: 8px 16px 12px; border-radius: var(--r-lg);
+  background: var(--c-tray); box-shadow: var(--sh-inset), inset 0 -1.5px 0 var(--c-tray-rim), 0 0 0 var(--ol-thin) var(--c-outline); }
+.hm__cardt { text-align: center; color: var(--gold-400); }
+.hm__card .best { margin: 2px 8px 0; }
+.hm__power { display: flex; justify-content: center; align-items: baseline; gap: 8px; }
+.hm__power .is-low { color: var(--red-400); }
+.hm__rec { color: var(--cream-100); }
+.hm__party { position: absolute; top: 468px; left: 0; right: 0; display: flex; justify-content: center; align-items: center; gap: 8px; padding: 0; border: 0; background: none; cursor: pointer; }
+.hm__party .pic { --_s: 42px; }
+.hm__party .pic--kael { --_s: 50px; }
+.hm__play { position: absolute; left: 16px; right: 16px; bottom: 14px; }
+
+@media (max-height: 700px) {
+  .hm__side { top: 84px; gap: 8px; }
+  .fbtn__ring { width: 54px; height: 54px; }
+  .fbtn__ic { width: 32px; height: 32px; }
+  .hm__dragon { top: 84px; height: 150px; }
+  .hm__dragon img { height: 146px; }
+  .hm__weak { top: 238px; }
+  .hm__card { top: 264px; gap: 4px; padding: 8px 16px 8px; }
+  .hm__party { top: 362px; }
+  .hm__party .pic { --_s: 36px; }
+  .hm__party .pic--kael { --_s: 42px; }
+  .hm__play { bottom: 8px; }
+}
+
+/* hero sheet: the C12 spec */
+.hsheet .gk-isec { gap: 4px; }
+.gk-isec__head { gap: 8px; }
+.hsheet__sub { color: var(--cream-100); margin-left: auto; }
+.hsheet__tech, .hsheet__note { display: block; padding: 2px 8px 4px; text-align: left; }
+.uprow { display: grid; grid-template-columns: 62px 1fr auto; gap: 8px; align-items: center; padding: 4px 8px; border-radius: var(--r-md); background: var(--c-tray); box-shadow: var(--sh-inset), inset 0 -1.5px 0 var(--c-tray-rim); text-align: left; }
+.uprow__max { color: var(--gold-400); white-space: nowrap; }
+.lvrow { text-align: left; }
+/* the painted world behind Home stays visible after a redraw (z-index -1 needs its own stacking layer) */
+.lobby { isolation: isolate; }
+
+/* =====================================================================================
+   UI pass 2 (2026-10-24, user: "COBA LIHAT HEROES VS CRAZY WIGGLER.. UINYA YANG KAMU BUAT SAMPAH BANGET. SEMUA KECIL2
+   KAYAK SEMUT"): every Home element bigger, no label under 12 px. Values in docs/MEKANISME_UI.md v3 (UI pass 2).
+   ===================================================================================== */
+.top .gk-res .gk-text--number { font-size: 16px; }
+.hm__banner { width: 272px; height: 66px; }
+.hm__banner .gk-text { font-size: 28px; }
+.hm__world { top: 64px; }
+.hm__world .gk-text--label { font-size: 18px; }
+.hm__side { top: 96px; gap: 12px; }
+.fbtn { width: 88px; }
+.fbtn__ring { width: 76px; height: 76px; }
+.fbtn__ic { width: 48px; height: 48px; }
+.fbtn.is-locked .fbtn__ic { width: 36px; height: 36px; }
+.fbtn__plate { width: 88px; height: 28px; margin-top: -9px; }
+.fbtn__plate .gk-text { font-size: 13px; }
+.hm__dragon { top: 88px; height: 256px; }
+.hm__dragon::before { width: 280px; height: 96px; }
+.hm__dragon img { height: 250px; max-width: 290px; }
+.hm__weak { top: 348px; gap: 8px; }
+.hm__weak .gk-text { font-size: 14px; }
+.hm__card { top: 378px; gap: 8px; padding: 12px 16px 12px; }
+.hm .hm__cardt { font-size: 15px; }
+.hm__card .gk-text--tag { font-size: 14px; }
+.hm__power .gk-text--number { font-size: 22px; }
+.hm__party { top: 502px; gap: 8px; }
+.hm__party .pic { --_s: 54px; }
+.hm__party .pic--kael { --_s: 62px; }
+.hm__party .gk-text--tag { font-size: 13px; }
+/* 7 or 8 slots open (late game, or the developer switch): smaller so the row fits 375 px */
+.hm__party:has(> :nth-child(7)) { gap: 4px; }
+.hm__party:has(> :nth-child(7)) .pic { --_s: 42px; }
+.hm__party:has(> :nth-child(7)) .pic--kael { --_s: 50px; }
+.hm__party:has(> :nth-child(8)) { gap: 4px; }
+.hm__party:has(> :nth-child(8)) .pic { --_s: 40px; }
+.hm__party:has(> :nth-child(8)) .pic--kael { --_s: 48px; }
+.hm__play { bottom: 8px; }
+
+@media (max-height: 700px) {
+  .hm__banner { width: 236px; height: 58px; }
+  .hm__banner .gk-text { font-size: 24px; }
+  .hm__world { top: 58px; }
+  .hm__world .gk-text--label { font-size: 16px; }
+  .hm__side { top: 86px; gap: 8px; }
+  .fbtn { width: 80px; }
+  .fbtn__ring { width: 64px; height: 64px; }
+  .fbtn__ic { width: 40px; height: 40px; }
+  .fbtn__plate { width: 80px; height: 26px; }
+  .fbtn__plate .gk-text { font-size: 12px; }
+  .hm__dragon { top: 82px; height: 144px; }
+  .hm__dragon img { height: 140px; }
+  .hm__weak { top: 228px; }
+  .hm__weak .gk-text { font-size: 13px; }
+  .hm__card { top: 254px; gap: 4px; padding: 8px 16px 8px; }
+  .hm .hm__cardt { font-size: 14px; }
+  .hm__card .gk-text--tag { font-size: 13px; }
+  .hm__power .gk-text--number { font-size: 19px; }
+  .hm__party { top: 366px; }
+  .hm__party .pic { --_s: 46px; }
+  .hm__party .pic--kael { --_s: 54px; }
+}
+
+/* =====================================================================================
+   Audit UI (2026-10-30, user: "uinya super berantakan" → "go"): docs/AUDIT_UI_2026-10-30.md, values in
+   docs/MEKANISME_UI.md "Audit UI". Phase 1 = foundations.
+   ===================================================================================== */
+/* the painted label plate (icon_navbadge_plate: plate at x 11–243, y 232–296 of 254 × 300) cropped to fill its box */
+.plate { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+.plate img { position: absolute; left: -4.72%; top: -356.9%; width: 109%; height: 461.5%; max-width: none; }
+
+/* A2 bottom nav: Commander and Dungeon in a gold-rimmed disc where the painted medals have theirs (x 6–246, y 37 of
+   254 × 300), under the same plate (full-canvas overlay, so it lands where the painted ones carry theirs) */
+.nav__disc { position: absolute; left: 6%; top: 12.3%; width: 88%; aspect-ratio: 1; display: grid; place-items: center; border-radius: 50%; overflow: hidden;
+  border: var(--rim-w) solid transparent;
+  background: radial-gradient(circle at 42% 34%, var(--violet-400) 0%, var(--purple-700) 62%, var(--purple-900) 100%) padding-box, var(--rim-gold) border-box;
+  box-shadow: var(--rim-inner), 0 0 0 var(--ol-thin) var(--gold-900), var(--sh-ambient-sm); }
+.gk-nav__item .gk-nav__artbox .nav__disc .gk-nav__art { width: 84%; height: 84%; object-fit: contain; }
+.nav__plateimg { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.nav__label { position: absolute; left: 4%; right: 4%; top: 77.3%; height: 21.4%; display: grid; place-items: center; font-size: 12px; white-space: nowrap; }
+.gk-nav__item.is-locked .nav__disc .gk-nav__art { filter: grayscale(1) brightness(0.7); }
+.nav__lock { top: 46%; }
+
+/* A3 Home feature buttons: the full plate under the ring */
+.fbtn__plate { width: 92px; height: 28px; margin-top: -10px; }
+.fbtn__plate > .gk-text { position: relative; font-size: 13px; padding-bottom: 1px; }
+
+/* A4 developer switch: a small pill on the level emblem (localhost / ?dev only); red = everything unlocked */
+.top__dev { position: absolute; left: 8px; top: 47px; z-index: 1; height: 20px; min-width: 40px; padding: 0 8px; display: grid; place-items: center; border: 0; border-radius: var(--r-pill); cursor: pointer;
+  background: var(--gray-500); box-shadow: inset 0 -2px 0 var(--gray-600), 0 0 0 var(--ol-thin) var(--gray-900); --tx-ol-color: var(--gray-900); }
+.top__dev.is-on { background: var(--red-500); box-shadow: inset 0 -2px 0 var(--red-600), 0 0 0 var(--ol-thin) var(--red-900); --tx-ol-color: var(--red-900); }
+.top__dev .gk-text { font-size: 12px; }
+.top__dev::after { content: ""; position: absolute; inset: -14px -2px -2px; }
+
+/* A5 progress card: title left + percent right, a 12 px bar whose empty track shows, chests standing on it */
+.hm__cardrow { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+.hm .hm__cardt { text-align: left; }
+.hm__pct { color: var(--gold-400); font-size: 18px; }
+.hm__card .best { height: 12px; margin: 24px 8px 0; background: color-mix(in srgb, var(--c-tray-solid) 70%, black); box-shadow: inset 0 2px 2px rgba(0, 0, 0, 0.45), 0 0 0 var(--ol-thin) var(--gold-900), 0 0 0 calc(var(--ol-thin) + 1px) color-mix(in srgb, var(--gold-500) 35%, transparent); }
+.hm__card .best__fill { top: 1px; bottom: 1px; left: 1px; }
+.hm__card .best__chest { top: auto; bottom: 4px; translate: -50% 0; }
+.hm__card { gap: 8px; }
+
+/* A6 weakness: a dark chip next to the element chip */
+.wk { display: inline-flex; align-items: center; gap: 4px; height: 24px; padding: 0 8px; border-radius: var(--r-pill); background: var(--c-tray-solid); box-shadow: inset 0 -1.5px 0 var(--c-tray-rim), 0 0 0 var(--ol-thin) var(--c-outline); }
+.wk:has(> .el) { padding-right: 4px; }
+.hm__weak .el { height: 24px; padding: 0 8px; }
+
+/* A7 energy above the cap */
+.top__en.is-over .gk-text { color: var(--green-400); }
+
+@media (max-height: 700px) {
+  .hm__card { gap: 4px; }
+  .hm__card .best { margin-top: 24px; }
+  .hm__pct { font-size: 16px; }
+  .fbtn__plate { width: 84px; height: 26px; }
+  .fbtn__plate > .gk-text { font-size: 12px; }
+}
+/* "Commander" is wider than the painted labels: its plate stretches sideways (still inside the 75 px tab) */
+.gk-nav__item[data-tab="commander"] .nav__plateimg { left: -9%; width: 118%; }
+.gk-nav__item[data-tab="commander"] .nav__label { left: -6%; right: -6%; letter-spacing: -0.01em; }
+
+/* Phase 2 = battle */
+/* A9 HUD: one 44 px band, four items on one centre line */
+.bt__hud { top: 8px; height: 44px; grid-template-columns: 40px minmax(0, 1fr) 84px 40px; align-items: center; gap: 8px; }
+.bt__stage { gap: 4px; justify-items: stretch; }
+.bt__strow { display: flex; align-items: baseline; justify-content: center; gap: 8px; }
+.bt__strow .gk-text--label { font-size: 17px; }
+.bt__clock { font-size: 12px; }
+.bt__prog { width: 100%; height: 15px; }
+.bt__hud .gk-res { width: 84px; min-width: 0; padding-left: 24px; }
+.bt__hud .gk-res > img { width: 28px; height: 28px; left: -5px; }
+.bt__hud .gk-ibtn { --_size: 40px; }
+.bt__hud .gk-ibtn .gk-text { font-size: var(--fs-button-sm); }
+/* A10 the tutorial line sits over the open lower field, not over the coiled body and the HUD */
+#battle .tip { top: auto; bottom: 272px; }
+#battle.is-round .tip { bottom: 150px; }
+/* A11 the painted tray under the wall painting (painting ends 124.5 px above the bottom); photos and wall HP on it */
+.bt__band { position: absolute; left: 0; right: 0; bottom: 0; height: 128px;
+  background: url("../assets/lair/tray_party_top.webp") top / 100% auto no-repeat, url("../assets/lair/tray_party_bot.webp") bottom / 100% auto no-repeat, url("../assets/lair/tray_party_mid.webp") center / 100% auto repeat-y; }
+.is-round .bt__band { display: none; }
+#battle:not(.is-round) .bt__side { bottom: 66px; }
+#battle:not(.is-round) .bt__lifebox { bottom: 24px; }
+/* A12 Skill Selection / Hero Call: the action buttons share one height */
+.pick #rr { display: flex; justify-content: center; align-items: stretch; gap: 12px; }
+.pick #rr > .gk-btn { min-width: 132px; }
+/* C43: what each offered card does, one line each under the cards (the name in its tier colour) */
+.pick__info { display: grid; gap: 4px; margin: 10px 0 2px; text-align: left; }
+.pick__info:empty { display: none; }
+.pick__row { margin: 0; line-height: 1.3; }
+
+/* Phase 3 = Victory / Defeat (A13): painted ribbon over the frame, progress bar + percent, reward slots, equal buttons */
+.res { margin-top: 44px; }
+.res__banner { position: absolute; left: 50%; top: -60px; z-index: 2; width: 300px; height: 72px; translate: -50% 0; display: grid; place-items: center; pointer-events: none;
+  animation: dd-banner 0.45s var(--ease-pop) both; }
+@keyframes dd-banner { from { opacity: 0; scale: 0.6; } }
+.res__banner img { position: absolute; inset: 0; width: 100%; height: 100%; }
+.res__banner .gk-text { position: relative; font-size: 34px; padding-bottom: 8px; --tx-ol-color: var(--yellow-ink); }
+.res--lose .res__banner .gk-text { --tx-ol-color: var(--red-900); }
+.res__prog { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 8px; padding: 0 8px; }
+.res__prog .best { height: 14px; background: color-mix(in srgb, var(--c-tray-solid) 70%, black); box-shadow: inset 0 2px 2px rgba(0, 0, 0, 0.45), 0 0 0 var(--ol-thin) var(--gold-900); }
+.res__pctn { font-size: 20px; color: var(--gold-400); }
+.rslots { display: flex; justify-content: center; gap: 8px; padding: 4px 0 2px; }
+.rslot { width: 78px; height: 78px; display: grid; justify-items: center; align-content: center; gap: 2px; border-radius: var(--r-md); background: var(--c-tray);
+  box-shadow: var(--sh-inset), inset 0 -1.5px 0 var(--c-tray-rim), 0 0 0 var(--rim-w-sm) var(--gold-500), 0 0 0 calc(var(--rim-w-sm) + var(--ol-thin)) var(--gold-900);
+  animation: dd-deal 0.32s var(--ease-pop) backwards; }
+.rslot:nth-child(2) { animation-delay: 80ms; }
+.rslot:nth-child(3) { animation-delay: 160ms; }
+.rslot img { width: 40px; height: 40px; object-fit: contain; filter: var(--sh-drop-icon); }
+.rslot .gk-text { font-size: 16px; }
+.res .gk-modal__actions { flex-wrap: nowrap; }
+.res .gk-modal__actions > * { flex: 1 1 0; min-width: 0; }
+@media (prefers-reduced-motion: reduce) { .res__banner, .rslot { animation: none; } }
+
+/* Phase 4 = menus */
+/* A14 Heroes: Exchange Shards chip in the head, tier strips, badges in the window corners (the chin stays clear) */
+.page__head { position: relative; }
+.exch { position: absolute; right: 12px; top: 50%; translate: 0 -50%; display: flex; align-items: center; gap: 4px; height: 30px; padding: 0 8px 0 4px; border: 0; border-radius: var(--r-pill); cursor: pointer;
+  background: var(--c-tray); box-shadow: var(--sh-inset), inset 0 -1.5px 0 var(--c-tray-rim), 0 0 0 var(--ol-thin) var(--c-outline); --tx-ol-color: var(--c-outline); }
+.exch img { width: 26px; height: 26px; object-fit: contain; }
+.exch .gk-text { font-size: 14px; }
+.exch::after { content: ""; position: absolute; inset: -8px 0; }
+.hgrid { padding-top: 4px; }
+.hgrid__tier { grid-column: 1 / -1; display: flex; align-items: center; gap: 8px; margin: 8px 0 -2px; color: var(--_tc); }
+.hgrid__tier::before, .hgrid__tier::after { content: ""; flex: 1; height: 2px; border-radius: 1px; background: linear-gradient(90deg, transparent, var(--_tc)); }
+.hgrid__tier::after { background: linear-gradient(90deg, var(--_tc), transparent); }
+.hgrid__tier .gk-text { color: var(--_tc); font-size: 15px; }
+.hgrid__tier--legendary { --_tc: var(--tier-legendary-hi); }
+.hgrid__tier--mythic { --_tc: var(--tier-god-hi); }
+.hgrid__tier--epic { --_tc: var(--tier-epic-hi); }
+.hgrid__tier--rare { --_tc: var(--tier-rare-hi); }
+.hgrid__tier--common { --_tc: var(--tier-common-hi); }
+.hgrid__tier:first-child { margin-top: 0; }
+.hc__el { right: 3px; top: 3px; bottom: auto; }
+.hc__in { right: auto; top: auto; left: 3px; bottom: 3px; }
+.hc__up { right: 3px; bottom: 3px; }
+
+/* A15 hero sheet: three numbers on top, the rest folds */
+.hsheet__nums { display: flex; gap: 8px; }
+.hnum { display: grid; justify-items: center; min-width: 62px; padding: 4px 8px 4px; border-radius: var(--r-md); background: var(--c-tray); box-shadow: var(--sh-inset), inset 0 -1.5px 0 var(--c-tray-rim); }
+.hnum .gk-text--number { font-size: 18px; color: var(--gold-400); }
+.hnum .gk-text--tag { font-size: 12px; }
+.hchip { display: inline-flex; align-items: baseline; gap: 4px; padding: 2px 8px; border-radius: var(--r-pill); background: var(--c-tray-solid); box-shadow: inset 0 -1.5px 0 var(--c-tray-rim), 0 0 0 var(--ol-thin) var(--c-outline); }
+.hchip .gk-text--label { font-size: 14px; color: var(--gold-400); }
+.hsec > summary { list-style: none; cursor: pointer; -webkit-tap-highlight-color: transparent; min-height: 36px; }
+.hsec > summary::-webkit-details-marker { display: none; }
+.hsec > summary .gk-glyph { width: 16px; height: 16px; margin-left: auto; transition: rotate var(--t-pop) var(--ease-out); }
+.hsec[open] > summary .gk-glyph { rotate: 90deg; }
+.hsec .hsheet__sub { margin-left: auto; }
+.hsec .hsheet__sub + .gk-glyph { margin-left: 0; }
+
+/* A16 Commander: silhouettes in empty slots, stat chips, one row of buttons with Enhance as the main one */
+.gear__ic--ghost { filter: grayscale(1) brightness(0.8); opacity: 0.6; }
+.gear--empty { opacity: 1; }
+.gear--empty .gear__stat .gk-text { color: var(--cream-100); }
+.cmd__team { gap: 8px; padding: 8px 12px 4px; }
+.cmd__btns { flex-wrap: nowrap; align-items: center; gap: 8px; padding: 8px 8px 12px; }
+.cmd__btns .gk-btn--sm { padding-left: 12px; padding-right: 12px; }
+.cmd__main { min-height: 44px; padding: 4px 16px calc(4px + var(--_lipw)); }
+.cmd__main .gk-btn__label { font-size: var(--fs-button); }
+.cmd__btns .cmd__main::after { content: none; }
+
+/* A17 Shop: price on the tile's gold plate (y 79.4–95.8 %), chest block centred, packs as painted tiles */
+.offer__price { position: absolute; left: 10%; right: 10%; top: 79.4%; bottom: 4.2%; margin: 0; justify-content: center; --tx-ol-color: var(--yellow-ink); }
+.offer { padding-bottom: 0; }
+.chestbox { justify-content: center; }
+.chestbox > div { justify-items: start; }
+.chestbox__odds .odd { padding: 2px 8px; }
+.packs { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; padding: 0 12px 16px; }
+.offer--pack { height: 150px; width: auto; border-radius: 0; background: none; box-shadow: none; padding-top: 16px; }
+.offer--pack .offer__art { height: 62px; }
+.offer--pack .offer__art img { width: 60px; height: 60px; }
+.offer--pack .offer__name { font-size: 14px; }
+
+/* A18 Limited / Recruit: four odds chips 2 × 2, the seven pull rewards 4 + 3 centred */
+.tav__odds:has(> :nth-child(4)) { display: grid; grid-template-columns: repeat(2, 136px); justify-content: center; }
+.tav__odds:has(> :nth-child(4)) .odd { text-align: center; }
+.lim__ms { max-width: 200px; margin: 0 auto; }
+/* hero card corners: element top-left, Lv bottom-left, level-up plus bottom-right; formation check before the name */
+.hc__el { left: 3px; right: auto; }
+.hc__lv { top: auto; bottom: 3px; left: 4px; color: var(--gold-400); }
+.hc:has(.hc__trial) .hc__lv { bottom: 22px; }
+.hc__nm { display: flex; align-items: center; justify-content: center; gap: 4px; max-width: 100%; }
+.hc__nm .hc__in { position: static; width: 16px; height: 16px; flex: none; box-shadow: inset 0 -1.5px 0 var(--green-600), 0 0 0 1.5px var(--green-900); }
+.hc__nm .hc__in .gk-glyph { width: 11px; height: 11px; }
+.hc__name { overflow: hidden; text-overflow: ellipsis; }
+
+
+/* =====================================================================================
+   Calm text, every screen (2026-10-30, user: "tulisannya semua ganggu. terlalu berisik" → "bukan cuman ada di home ... go").
+   Recipe in kit.css; here: plates keep the display face, the Lv on a hero card sits on a dark pill.
+   ===================================================================================== */
+.shop__sect, .hm__banner .gk-text, .res__banner .gk-text, .hm__world .gk-text--label { font-family: var(--font-display); font-weight: var(--fw-display); -webkit-text-stroke: 2px var(--tx-ol-color); text-shadow: 0 1px 0 var(--tx-ol-color); }
+.hc__lv { padding: 0 8px; border-radius: var(--r-pill); background: rgba(16, 6, 28, 0.72); color: var(--gold-400); font-size: 12px; line-height: 18px; text-shadow: none; }
+.coll__sum { gap: 8px; }
+.coll__sum .hchip .gk-text--label { font-size: 13px; }
+
+/* =====================================================================================
+   Calm text, every screen (2026-10-30, user: "tulisannya semua ganggu. terlalu berisik" → "bukan cuman ada di home ... go").
+   Recipe in kit.css; here: plates keep the display face, the Lv on a hero card sits on a dark pill.
+   ===================================================================================== */
+.shop__sect, .hm__banner .gk-text, .res__banner .gk-text, .hm__world .gk-text--label { font-family: var(--font-display); font-weight: var(--fw-display); -webkit-text-stroke: 2px var(--tx-ol-color); text-shadow: 0 1px 0 var(--tx-ol-color); }
+.hc__lv { padding: 0 8px; border-radius: var(--r-pill); background: rgba(16, 6, 28, 0.72); color: var(--gold-400); font-size: 12px; line-height: 18px; text-shadow: none; }
+.coll__sum { gap: 8px; }
+.coll__sum .hchip .gk-text--label { font-size: 13px; }
+/* Patrol: Quick Patrol on one row, title + "+2h loot" left, the two buttons right */
+.quick { display: grid; grid-template-columns: 1fr auto auto; gap: 8px; align-items: center; }
+.quick .gk-btn { margin-left: 0; min-width: 64px; }
+.quick__t { display: grid; gap: 2px; text-align: left; }
+.quick__t .gk-text--tag { color: var(--gold-400); }
+/* Talents: one head row with the node names, the rows show n/5 */
+.tal__row--head { background: none; opacity: 1; padding-top: 0; padding-bottom: 0; }
+.tal__row--head .gk-text { font-size: 12px; text-align: center; color: var(--gold-400); line-height: 1.1; }
+.tal__node { min-height: 30px; align-content: center; }
+.tal__node .gk-text--label { font-size: 14px; }
+.tal__row:not(.is-now):not(.tal__row--head) { opacity: 0.55; }
+.tal__big { align-content: center; min-height: 30px; }
+.tal__big .gk-text { text-align: center; }
+/* one size scale for small text: 12 / 14 / 16 (+ 18 numbers, 22 titles, 28 stage, 38 CTA); 13 and 15 folded in */
+.gk-cream { font-size: 14px; }
+.hm__party .gk-text--tag { font-size: 12px; }
+.fbtn__plate > .gk-text { font-size: 14px; }
+.hm .hm__cardt, .hm__card .gk-text--tag { font-size: 14px; }
+@media (max-height: 700px) { .fbtn__plate > .gk-text { font-size: 12px; } .hm__weak .gk-text { font-size: 14px; } }
+.hgrid__tier .gk-text { font-size: 14px; }
+/* ≤ 700 px: the two element chips fit between the feature columns (191 px) */
+@media (max-height: 700px) {
+  .hm__weak { gap: 4px; }
+  .hm__weak .gk-text { font-size: 12px; }
+  .hm__weak .el { height: 22px; padding: 0 8px; }
+  .wk { height: 22px; gap: 4px; padding: 0 4px 0 8px; }
+}
+/* 7 or 8 heroes on the wall: the photo row still fits 375 px */
+.bt__side:has(> :nth-child(7)) { gap: 4px; }
+.bt__side:has(> :nth-child(7)) .pic { --_s: 36px; }
+.bt__side:has(> :nth-child(8)) { gap: 4px; }
+.bt__side:has(> :nth-child(8)) .pic { --_s: 34px; }
+
+/* =====================================================================================
+   Commander rebuilt (2026-10-30, user: "baigan halaman comander. semua masih sangat berantakan.. ukuran gambar, ukuran
+   tulisan, hirarkie, smua berantakan"): name 22 > Power 26 gold > Kael 280 px between six 66 px slots > stats 18 >
+   Enhance All > three equal buttons > bag. Values in docs/MEKANISME_UI.md "Commander".
+   ===================================================================================== */
+.cmd2 { display: grid; gap: 8px; padding: 2px 12px 16px; }
+.cmd2__head { display: grid; justify-items: center; gap: 4px; }
+.cmd2__power { display: inline-flex; align-items: baseline; gap: 8px; padding: 2px 16px 4px; border-radius: var(--r-pill); background: var(--c-tray); box-shadow: var(--sh-inset), inset 0 -1.5px 0 var(--c-tray-rim), 0 0 0 var(--ol-thin) var(--c-outline); }
+.cmd2__power .gk-text--tag { font-size: 12px; color: var(--cream-100); text-transform: uppercase; letter-spacing: 0.06em; }
+.cmd2__power .gk-text--number { font-size: 26px; color: var(--gold-400); }
+.cmd2__stage { position: relative; display: grid; grid-template-columns: 66px 1fr 66px; align-items: center; min-height: 290px; }
+.cmd2__col { display: grid; gap: 16px; z-index: 1; }
+.cmd2__fig { position: relative; display: grid; place-items: end center; height: 290px; }
+/* a soft pedestal of light and the dungeon's ground shadow under Kael */
+.cmd2__fig::before { content: ""; position: absolute; left: 50%; bottom: 0; width: 190px; height: 46px; translate: -50% 0; border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0)); }
+.cmd2__fig::after { content: ""; position: absolute; left: 50%; bottom: 10px; width: 230px; height: 230px; translate: -50% 0; border-radius: 50%; z-index: -1;
+  background: radial-gradient(closest-side, color-mix(in srgb, var(--violet-400) 45%, transparent), transparent); }
+.cmd2__fig img { position: relative; height: 280px; width: auto; max-width: 100%; object-fit: contain; filter: drop-shadow(0 8px 10px rgba(0, 0, 0, 0.45)); }
+.cmd2__panel { display: grid; gap: 8px; padding: 12px; border-radius: var(--r-lg); background: color-mix(in srgb, var(--c-tray-solid) 88%, transparent);
+  box-shadow: var(--sh-inset), inset 0 -1.5px 0 var(--c-tray-rim), 0 0 0 var(--ol-thin) var(--c-outline), 0 0 0 calc(var(--ol-thin) + 1.5px) color-mix(in srgb, var(--gold-500) 35%, transparent); }
+.cmd2__stats { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 8px; }
+.cstat { display: grid; justify-items: center; gap: 1px; padding: 4px 4px 8px; border-radius: var(--r-md); background: var(--c-tray); box-shadow: var(--sh-inset); }
+.cstat .gk-text--tag { font-size: 12px; color: var(--cream-100); }
+.cstat .gk-text--number { font-size: 18px; color: var(--gold-400); }
+.cmd2__enh { width: 100%; min-height: 52px; }
+.cmd2__sub { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.cmd2__sub .gk-btn { min-width: 0; width: 100%; position: relative; }
+.cmd2__sub .gk-btn::after { content: ""; position: absolute; inset: -5px 0; }
+.cmd2__baghead { display: flex; align-items: center; gap: 8px; }
+.cmd2__baghead > .gk-text--label { font-size: 16px; }
+.cmd2__count { color: var(--cream-100); }
+.cmd2__res { display: flex; gap: 8px; margin-left: auto; }
+.cmd2__res .gk-res { min-width: 0; width: 66px; height: 28px; padding-left: 24px; }
+.cmd2__res .gk-res > img { width: 26px; height: 26px; left: -5px; }
+.cmd2__res .gk-res .gk-text { font-size: 14px; }
+.cmd2__baghead .gk-btn { position: relative; padding-left: 12px; padding-right: 12px; }
+.cmd2__baghead .gk-btn::after { content: ""; position: absolute; inset: -5px 0; }
+.cmd2__bag .ggrid { grid-template-columns: repeat(5, 1fr); gap: 8px; padding: 0; }
+.cmd2__bag .gear { width: 100%; height: auto; aspect-ratio: 1; }
+
+/* gear tiles: a dark tile, the rarity on the rim and a glow from below (no more full colour faces) */
+.gear { --_c: var(--gray-500); background: radial-gradient(120% 90% at 50% 100%, color-mix(in srgb, var(--_c) 55%, transparent) 0%, transparent 70%), var(--c-tray-solid);
+  box-shadow: inset 0 0 0 2.5px var(--_c), inset 0 -3px 0 rgba(0, 0, 0, 0.35), 0 0 0 var(--ol-thin) var(--c-outline), var(--sh-ambient-sm); }
+.gear--normal { --_c: var(--gray-400); }
+.gear--superior { --_c: var(--green-400); }
+.gear--rare { --_c: var(--tier-rare-hi); }
+.gear--epic { --_c: var(--tier-epic-hi); }
+.gear--legendary { --_c: var(--tier-legendary-hi); }
+.gear--empty { --_c: color-mix(in srgb, var(--gold-500) 45%, transparent); background: var(--c-tray); }
+.gear__ic { top: 8%; width: 66%; height: 66%; filter: drop-shadow(0 3px 2px rgba(0, 0, 0, 0.5)); }
+.gear__stat { bottom: 3px; }
+.gear__stat .gk-text { font-size: 12px; }
+/* equipped slots: art only (the stat is in the slot sheet), Lv on a pill, rune on the corner */
+.eslot .gear { width: 66px; height: 66px; }
+.eslot .gear:not(.gear--empty) .gear__stat { display: none; }
+.eslot .gear:not(.gear--empty) .gear__ic { top: 12%; width: 74%; height: 74%; }
+.eslot .gear--empty .gear__ic { top: 6%; width: 58%; height: 58%; }
+.eslot__lv { left: 4px; bottom: auto; top: 4px; translate: none; padding: 0 4px; background: rgba(16, 6, 28, 0.78); box-shadow: none; }
+.eslot__lv .gk-text { font-size: 12px; color: var(--gold-400); }
+
+@media (max-height: 700px) {
+  .cmd2__stage { min-height: 240px; }
+  .cmd2__fig { height: 240px; }
+  .cmd2__fig img { height: 232px; }
+  .cmd2__col { gap: 8px; }
+  .eslot .gear { width: 60px; height: 60px; }
+  .cmd2__stage { grid-template-columns: 60px 1fr 60px; }
+}
+
+/* =====================================================================================
+   Commander v3 (2026-10-30, user: "cari referensi di chrome di pinterest ... agar tidak berantakan. pakai skills mu"):
+   the equipment-screen pattern of the Pinterest references; supersedes .cmd2. Values in docs/MEKANISME_UI.md "Commander".
+   ===================================================================================== */
+.cmd3 { display: grid; gap: 8px; padding: 2px 12px 16px; }
+.cmd3__board { position: relative; display: grid; justify-items: center; gap: 8px; padding: 12px 12px 12px; border-radius: var(--r-lg);
+  background: radial-gradient(80% 60% at 50% 55%, color-mix(in srgb, var(--violet-500) 38%, transparent), transparent 75%), color-mix(in srgb, var(--c-tray-solid) 82%, transparent);
+  box-shadow: var(--sh-inset), inset 0 -1.5px 0 var(--c-tray-rim), 0 0 0 var(--ol-thin) var(--c-outline), 0 0 0 calc(var(--ol-thin) + 2px) color-mix(in srgb, var(--gold-500) 55%, transparent), var(--sh-ambient-md); }
+.cmd3__name { font-size: 20px; }
+.cmd3__stage { width: 100%; display: grid; grid-template-columns: 58px 1fr 58px; align-items: center; }
+.cmd3__col { display: grid; gap: 12px; z-index: 1; }
+.cmd3__col .eslot .gear { width: 58px; height: 58px; }
+.cmd3__hero { position: relative; height: 236px; display: grid; place-items: end center; }
+.cmd3__pedestal { position: absolute; left: 50%; bottom: 0; width: 200px; height: auto; translate: -50% 0; filter: drop-shadow(0 6px 6px rgba(0, 0, 0, 0.45)); }
+.cmd3__fig { position: relative; height: 226px; width: auto; max-width: 100%; object-fit: contain; margin-bottom: 24px; filter: drop-shadow(0 6px 6px rgba(0, 0, 0, 0.4)); }
+.cmd3__power { display: flex; align-items: baseline; gap: 8px; margin-top: 2px; }
+.cmd3__power .gk-text--tag { font-size: 12px; color: var(--cream-100); text-transform: uppercase; letter-spacing: 0.08em; }
+.cmd3__power .gk-text--number { font-size: 28px; color: var(--gold-400); }
+.cmd3__stats { display: flex; justify-content: center; gap: 16px; }
+.cmd3__stat { display: inline-flex; align-items: center; gap: 4px; }
+.cmd3__stat img { width: 26px; height: 26px; object-fit: contain; filter: drop-shadow(0 2px 1px rgba(0, 0, 0, 0.45)); }
+.cmd3__stat .gk-text--number { font-size: 18px; }
+.cmd3__extra { display: flex; gap: 8px; }
+.cmd3__enh { width: 100%; min-height: 52px; }
+.cmd3__sub { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.cmd3__sub .gk-btn { min-width: 0; width: 100%; position: relative; }
+.cmd3__sub .gk-btn::after { content: ""; position: absolute; inset: -5px 0; }
+/* the bag title bar (the Shop section banner as its plate) */
+.cmd3__bar { position: relative; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 8px; min-height: 44px; margin-top: 4px; padding: 0 2px; }
+.cmd3__bar::before { content: ""; position: absolute; left: 50%; top: 50%; width: 220px; height: 40px; translate: -50% -50%; background: url("../assets/shop/shop_section_banner.webp") center / contain no-repeat; pointer-events: none; }
+.cmd3__bar > .gk-res { justify-self: start; width: 74px; min-width: 0; height: 28px; padding-left: 24px; }
+.cmd3__bar > .gk-res > img { width: 26px; height: 26px; left: -5px; }
+.cmd3__bar > .gk-res .gk-text { font-size: 14px; }
+.cmd3__bagt { position: relative; display: inline-flex; align-items: baseline; gap: 8px; }
+.cmd3__bagt .gk-text--label { font-family: var(--font-display); font-weight: var(--fw-display); font-size: 16px; -webkit-text-stroke: 2px var(--tx-ol-color); text-shadow: 0 1px 0 var(--tx-ol-color); }
+.cmd3__bagt .gk-text--tag { color: var(--cream-100); }
+.cmd3__bar > .gk-btn { justify-self: end; position: relative; padding-left: 12px; padding-right: 12px; }
+.cmd3__bar > .gk-btn::after { content: ""; position: absolute; inset: -5px 0; }
+.cmd3__grid { grid-template-columns: repeat(5, 1fr); gap: 8px; padding: 0; }
+.cmd3__grid .gear { width: 100%; height: auto; aspect-ratio: 1; }
+@media (max-height: 700px) {
+  .cmd3__hero { height: 196px; }
+  .cmd3__fig { height: 186px; margin-bottom: 16px; }
+  .cmd3__pedestal { width: 170px; }
+  .cmd3__col { gap: 8px; }
+  .cmd3__col .eslot .gear { width: 54px; height: 54px; }
+  .cmd3__stage { grid-template-columns: 54px 1fr 54px; }
+}
+/* Lv sits on the slot's bottom edge (as "Lv.5" in the references), never over the gear painting */
+.cmd3__col .eslot__lv { top: auto; bottom: -8px; left: 50%; translate: -50% 0; padding: 0 8px; background: var(--c-tray-solid); box-shadow: 0 0 0 var(--ol-thin) color-mix(in srgb, var(--gold-500) 60%, transparent); }
+.cmd3__col { gap: 16px; }
+.cmd3__bar::before { opacity: 0.9; z-index: 0; }
+.cmd3__bar > * { position: relative; z-index: 1; }
+@media (max-height: 700px) { .cmd3__col { gap: 8px; } }
+
+/* =====================================================================================
+   Commander clarity (2026-10-30, user: "itu yang mana yang mana masih membingungkan ... saat di klik harusnya muncul tengah
+   bukan di bawah ... logo T1 dibuat jadi lingkaran bulat di atas kotak")
+   ===================================================================================== */
+/* rarity readable at a glance: the tile is tinted top to bottom in its rarity colour (references: Archero-style bags) */
+.gear { background: linear-gradient(180deg, color-mix(in srgb, var(--_c) 30%, var(--c-tray-solid)) 0%, color-mix(in srgb, var(--_c) 62%, var(--c-tray-solid)) 100%); }
+.gear--empty { background: var(--c-tray); }
+/* the tier: a round badge sitting on the top edge of the tile */
+.gear__tier { position: absolute; left: 50%; top: -9px; translate: -50% 0; z-index: 2; width: 24px; height: 24px; display: grid; place-items: center; border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, color-mix(in srgb, var(--_c) 70%, white), var(--_c) 55%, color-mix(in srgb, var(--_c) 55%, black));
+  box-shadow: 0 0 0 2px var(--gold-500), 0 0 0 3px var(--gold-900), 0 2px 3px rgba(0, 0, 0, 0.45); }
+.gear__tier .gk-text { font-family: var(--font-display); font-weight: var(--fw-display); font-size: 12px; line-height: 1; letter-spacing: 0; -webkit-text-stroke: 2px var(--c-outline); paint-order: stroke fill; text-shadow: none; }
+.ggrid, .cmd3__grid { row-gap: 16px; padding-top: 12px; }
+.cmd3__col { gap: 20px; padding-top: 8px; }
+/* better than what the slot wears: a green arrow on the top-right corner */
+.gear__up { position: absolute; right: -5px; top: -5px; z-index: 2; width: 20px; height: 20px; border-radius: 50%; background: var(--green-500); box-shadow: inset 0 -2px 0 var(--green-600), 0 0 0 1.5px var(--green-900); }
+.gear__up::after { content: ""; position: absolute; left: 50%; top: 45%; translate: -50% -50%; border: 0 solid transparent; border-width: 0 5px 7px; border-bottom-color: var(--white); }
+/* centre boxes from the Commander */
+.cbox { max-height: 86vh; grid-template-rows: auto minmax(0, 1fr) auto; }
+.cbox__body { overflow-y: auto; min-height: 0; display: grid; gap: 8px; scrollbar-width: none; }
+.cbox__body::-webkit-scrollbar { display: none; }
+.gbox__top { display: flex; align-items: center; gap: 12px; text-align: left; padding-top: 8px; }
+.gbox__top .gear { width: 72px; height: 72px; flex: none; }
+.gbox__facts { display: grid; gap: 4px; }
+.gbox__big .gk-text--number { font-size: 22px; color: var(--gold-400); }
+.gbox__row { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 12px; border-radius: var(--r-md); background: var(--c-tray); box-shadow: var(--sh-inset), inset 0 -1.5px 0 var(--c-tray-rim); }
+.gbox__row .gk-text--tag { color: var(--cream-100); }
+.gbox__cost { display: inline-flex; align-items: center; gap: 4px; }
+.gbox__sect { text-align: left; padding: 2px 2px 0; }
+.gbox__sect .gk-text { color: var(--cream-100); }
+.gbox .ggrid--sheet { grid-template-columns: repeat(4, 1fr); gap: 16px 8px; padding: 12px 0 0; }
+.gbox .ggrid--sheet .gear { width: 100%; height: auto; aspect-ratio: 1; }
+.gbox__cmp { display: grid; grid-template-columns: 1fr 30px 1fr; align-items: center; gap: 4px; padding-top: 8px; }
+.gbox__side { display: grid; justify-items: center; gap: 12px; }
+.gbox__side .gk-text--tag { color: var(--cream-100); }
+.gbox__side .gear { width: 76px; height: 76px; }
+.gbox__arrow { justify-self: center; width: 0; height: 0; border: 0 solid transparent; border-width: 10px 0 10px 14px; border-left-color: var(--gold-400); }
+.gbox__delta { justify-self: center; padding: 4px 16px; border-radius: var(--r-pill); background: var(--c-tray); }
+.gbox__delta.is-up .gk-text { color: var(--green-400); }
+.gbox__delta.is-down .gk-text { color: var(--red-400); }
+.gbox__delta .gk-text { font-size: 20px; }
+/* Kael's level on the Commander board (C15): a gold Lv badge and a bar of the Player Level still needed (2026-10-30) */
+.cmd3__lv { position: relative; display: flex; align-items: center; gap: 8px; width: min(240px, 80%); padding: 0; border: 0; background: none; cursor: pointer; }
+.cmd3__lv::after { content: ""; position: absolute; inset: -8px 0; }
+.cmd3__lvn { flex: none; padding: 1px 8px 2px; border-radius: var(--r-pill); background: var(--c-tray-solid); color: var(--gold-400); font-size: 14px;
+  box-shadow: 0 0 0 1.5px color-mix(in srgb, var(--gold-500) 70%, transparent); }
+.cmd3__lvbar { position: relative; flex: 1; height: 18px; border-radius: var(--r-pill); overflow: hidden; background: color-mix(in srgb, var(--c-tray-solid) 70%, black); box-shadow: inset 0 2px 2px rgba(0, 0, 0, 0.45), 0 0 0 var(--ol-thin) var(--gold-900); }
+.cmd3__lvbar > span:first-child { position: absolute; left: 0; top: 0; bottom: 0; background: linear-gradient(180deg, var(--violet-400), var(--violet-600)); }
+.cmd3__lvbar .gk-text { position: absolute; inset: 0; display: grid; place-items: center; font-size: 12px; }
+
+/* =====================================================================================
+   Party (Ledger TD Confirmed C21, 2026-10-30, user: "semua berujung ke party level dan power ... comander aku pasti akan
+   ganti ... kita ganti dengan party power. lalu juga ada artifact, dan juga enchantment"). Reuses the cmd3 board.
+   ===================================================================================== */
+/* the party under the pedestal: small portraits, the lead one a ring brighter */
+.party__row { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px; margin-top: -4px; padding: 0; border: 0; background: none; cursor: pointer; }
+.party__row .pic { --_s: 36px; }
+.party__row .pic--lead { --_s: 42px; }
+/* the attributes: a 4 × 2 grid of icon + value + name; zero ones dim */
+.attrs { width: 100%; display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.attr { position: relative; display: grid; justify-items: center; gap: 1px; padding: 8px 2px 4px; border: 0; border-radius: var(--r-md); background: var(--c-tray); box-shadow: var(--sh-inset), inset 0 -1.5px 0 var(--c-tray-rim); cursor: pointer; }
+.attr img { width: 26px; height: 26px; object-fit: contain; filter: drop-shadow(0 2px 1px rgba(0, 0, 0, 0.45)); }
+.attr .gk-text--number { font-size: 15px; line-height: 1.1; }
+.attr .gk-text--tag { font-size: 12px; line-height: 1.1; color: var(--cream-100); white-space: nowrap; }
+.attr.is-zero { opacity: 0.5; }
+.attr.is-zero img { filter: grayscale(0.7); }
+.party__stones { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: -4px; }
+.party__stones .gk-res { min-width: 74px; padding-left: 24px; height: 26px; }
+.party__stones .gk-text--tag { color: var(--cream-100); }
+/* affix dots on an artifact tile: one per affix, gold once enchanted */
+.gear__aff { position: absolute; left: 4px; top: 50%; translate: 0 -50%; display: grid; gap: 4px; z-index: 1; }
+.gear__aff i { display: block; width: 6px; height: 6px; rotate: 45deg; background: var(--cream-100); box-shadow: 0 0 0 1px var(--c-outline); }
+.gear__aff i.is-on { background: var(--gold-400); }
+/* affix rows: name, value, five star diamonds */
+.aff { display: grid; gap: 4px; width: 100%; }
+.aff__row { display: grid; grid-template-columns: 1fr auto auto; align-items: center; gap: 8px; padding: 4px 8px; border-radius: var(--r-sm); background: var(--c-tray); text-align: left; }
+.aff__row .gk-text--tag { color: var(--cream-100); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.aff__row .gk-text--label { font-size: 14px; color: var(--green-400); }
+.pips { display: inline-flex; gap: 4px; }
+.pips i { display: block; width: 7px; height: 7px; rotate: 45deg; background: color-mix(in srgb, var(--cream-100) 25%, transparent); box-shadow: 0 0 0 1px var(--c-outline); }
+.pips i.is-on { background: var(--gold-400); }
+.gbox__side .aff { margin-top: -4px; }
+.gbox__side .aff__row { grid-template-columns: 1fr auto; padding: 4px 8px; }
+.gbox__side .aff__row .pips { grid-column: 1 / -1; justify-self: start; }
+.gbox__verdict { justify-self: center; margin-top: -4px; }
+.gbox__verdict .gk-text { color: var(--green-400); }
+/* Training: rank head, three lines, the next perk */
+.trn__rank { display: flex; align-items: baseline; justify-content: center; gap: 8px; }
+.trn__rank .gk-text--tag { color: var(--cream-100); }
+.trn__row { display: grid; grid-template-columns: 36px 1fr auto; align-items: center; gap: 8px; padding: 8px; border-radius: var(--r-md); background: var(--c-tray); box-shadow: var(--sh-inset), inset 0 -1.5px 0 var(--c-tray-rim); text-align: left; }
+.trn__ic { width: 36px; height: 36px; object-fit: contain; filter: drop-shadow(0 2px 1px rgba(0, 0, 0, 0.45)); }
+.trn__t { display: grid; gap: 4px; min-width: 0; }
+.trn__t .gk-text--tag { color: var(--cream-100); }
+.trn__bar { position: relative; height: 8px; border-radius: var(--r-pill); overflow: hidden; background: color-mix(in srgb, var(--c-tray-solid) 70%, black); box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.45); }
+.trn__bar > span { position: absolute; left: 0; top: 0; bottom: 0; background: linear-gradient(180deg, var(--green-400), var(--green-600)); }
+.trn__up { min-width: 92px; position: relative; }
+.trn__up::after { content: ""; position: absolute; inset: -6px 0; }
+.trn__perk, .trn__got { display: grid; gap: 2px; padding: 8px 12px; border-radius: var(--r-md); background: var(--c-tray); }
+.trn__perk .gk-text--tag, .trn__got .gk-text--tag { color: var(--cream-100); }
+.trn__perk .gk-text--label { color: var(--gold-400); }
+.trn__perk.is-ready { box-shadow: 0 0 0 1.5px var(--gold-500); }
+.trn__got .gk-text--label { font-size: 13px; line-height: 1.3; }
+/* Training on the Party page (2026-11-02): a head line, then three cells side by side; the whole cell is the button */
+.trn3 { position: relative; display: grid; gap: 8px; padding: 8px 8px 8px; }
+.trn3__head { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 32px; }
+.trn3__rank { display: flex; align-items: baseline; gap: 8px; padding: 0; border: 0; background: none; cursor: pointer; }
+.trn3__act { min-width: 112px; }
+.trn3__cells { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.trn3__c { display: grid; gap: 4px; min-width: 0; padding: 8px 8px 4px; border: 0; cursor: pointer; text-align: left; }
+.trn3__top { display: flex; align-items: center; gap: 4px; min-width: 0; }
+.trn3__ic { width: 22px; height: 22px; object-fit: contain; flex: none; }
+.trn3__v { margin-left: auto; white-space: nowrap; }
+.trn3__foot { display: flex; align-items: center; justify-content: space-between; gap: 4px; white-space: nowrap; }
+.trn3__cost { display: inline-flex; align-items: center; gap: 2px; }
+.trn3__cost .in-ic { width: 16px; height: 16px; }
+.trn3 .trn__bar { height: 6px; }
+.trn3.has-new::before { content: "NEW"; position: absolute; left: 50%; top: -9px; translate: -50% 0; padding: 0 8px; border-radius: var(--r-pill); background: var(--gold-400); font: 700 12px/16px var(--font-ui); color: #1a1206; }
+/* Enchant: the six worn artifacts as a picker, then the affixes of the picked one */
+.ench__slots { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; padding-top: 12px; }
+.ench__slot { position: relative; padding: 0; border: 0; background: none; border-radius: var(--r-md); cursor: pointer; }
+.ench__slot .gear { width: 100%; height: auto; aspect-ratio: 1; }
+.ench__slot .gear__stat, .ench__slot .gear__aff { display: none; }
+.ench__slot .gear__tier { scale: 0.8; top: -10px; }
+.ench__slot.is-on { box-shadow: 0 0 0 2px var(--gold-400), 0 0 8px color-mix(in srgb, var(--gold-400) 60%, transparent); }
+.ench__wallet { display: flex; align-items: center; justify-content: center; gap: 8px; }
+.ench__wallet .gk-res { min-width: 74px; padding-left: 24px; height: 26px; }
+.ench__wallet .gk-text--tag { color: var(--cream-100); }
+.aff--big .aff__row { grid-template-columns: 1fr auto auto auto; padding: 8px 8px; }
+.aff--big .ench__rr { padding-left: 8px; padding-right: 8px; position: relative; }
+.aff--big .ench__rr::after { content: ""; position: absolute; inset: -6px 0; }
+.ench__note { font-size: 12px; text-align: center; }
+@media (max-height: 700px) {
+  .attr { padding: 4px 2px 4px; }
+  .attr img { width: 22px; height: 22px; }
+  .party__row .pic { --_s: 32px; }
+  .party__row .pic--lead { --_s: 36px; }
+}
+/* the two sides of the compare box line up at the top now that each can carry its affix rows */
+.gbox__cmp { align-items: start; }
+.gbox__arrow { align-self: start; margin-top: 62px; }
+/* short phones (375 × 667): the board tightens so the Training button stays above the tab bar without scrolling */
+@media (max-height: 700px) {
+  .party .cmd3__board { gap: 4px; padding-top: 8px; padding-bottom: 8px; }
+  .party .cmd3__stage { grid-template-columns: 48px 1fr 48px; }
+  .party .cmd3__col { gap: 12px; padding-top: 4px; }
+  .party .cmd3__col .eslot .gear { width: 48px; height: 48px; }
+  .party .cmd3__hero { height: 166px; }
+  .party .cmd3__fig { height: 156px; margin-bottom: 16px; }
+  .party .cmd3__pedestal { width: 146px; }
+  .party .cmd3__power .gk-text--number { font-size: 24px; }
+  .party .attrs { gap: 4px; }
+  .party .attr { padding: 4px 2px 2px; }
+  .party .attr img { width: 20px; height: 20px; }
+  .party .attr .gk-text--number { font-size: 14px; }
+}
+/* Party Shards chip (C21): the Heroes head, left side, mirror of the Exchange chip */
+.exch--l { right: auto; left: 12px; }
+/* hero sheet tools (C21): Party Shards fill + Lead, small, in one row under the shard count */
+.hsheet__tools { display: flex; justify-content: center; gap: 8px; padding-top: 2px; }
+.hsheet__tools .gk-btn { position: relative; }
+.hsheet__tools .gk-btn::after { content: ""; position: absolute; inset: -6px 0; }
+/* element DMG chips wrap (four elements used to push the board past the screen edge) */
+.party .cmd3__extra { flex-wrap: wrap; justify-content: center; max-width: 100%; }
+.party .cmd3__board { min-width: 0; }
+
+/* =====================================================================================
+   Red dots and NEW tags (2026-10-31, user: "masuk group task"): derived from the state (P.dots, P.isNew), never stored.
+   ===================================================================================== */
+.gk-nav__artbox .dot { right: 8%; top: 4%; width: 14px; height: 14px; z-index: 3; }
+.newtag { position: absolute; left: 50%; top: 0; translate: -50% 0; z-index: 3; padding: 0 8px; border-radius: var(--r-pill); background: var(--gold-400); box-shadow: 0 0 0 1.5px var(--gold-900); }
+.newtag .gk-text { color: var(--stone-950); font-size: 12px; line-height: 16px; -webkit-text-stroke: 0; text-shadow: none; }
+.gk-btn.has-dot::before { content: ""; position: absolute; right: 4px; top: 4px; width: 12px; height: 12px; border-radius: 50%; background: var(--red-500); box-shadow: 0 0 0 1.5px var(--red-900); z-index: 2; }
+.gk-btn.has-new::before { content: "NEW"; position: absolute; right: 6px; top: -9px; padding: 0 8px; border-radius: var(--r-pill); background: var(--gold-400); box-shadow: 0 0 0 1.5px var(--gold-900);
+  font-family: var(--font-ui, inherit); font-size: 12px; line-height: 16px; color: var(--stone-950); z-index: 2; }
+.gk-btn.has-dot, .gk-btn.has-new { position: relative; }
+
+/* =====================================================================================
+   Build stage 5, the daily loop (Ledger TD C22, 2026-10-31, user: "masuk group task"): Missions sheet, Pass, Party 2 × 2.
+   ===================================================================================== */
+/* reward chips: picture + amount */
+.gift { display: inline-flex; align-items: center; gap: 2px; }
+.gift img { width: 24px; height: 24px; object-fit: contain; filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.4)); }
+.gift .bolt { width: 20px; height: 20px; }
+.gift .gk-text--number { font-size: 13px; }
+/* Party: Enhance All · Equip All · Enchant · Collection in 2 × 2 */
+.party .cmd3__sub { grid-template-columns: repeat(2, 1fr); }
+/* Missions sheet */
+.missheet .gk-sheet__body { display: grid; gap: 8px; align-content: start; }
+.mtabs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.mtabs .gk-btn { min-width: 0; }
+.mhead { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; padding: 0 2px; }
+.mhead .gk-text--tag { color: var(--cream-100); }
+.mhead .gk-text--number { font-size: 18px; color: var(--gold-400); }
+.qbar { height: 12px; margin: 32px 16px 4px; background: color-mix(in srgb, var(--c-tray-solid) 70%, black); }
+.qbar .best__fill { top: 1px; bottom: 1px; left: 1px; }
+.qbar .best__chest { top: auto; bottom: 4px; translate: -50% 0; }
+.qbar__at { position: absolute; left: 50%; top: 100%; translate: -50% 14px; font-size: 12px; color: var(--cream-100); }
+.qbar { margin-bottom: 16px; }
+.qlist { display: grid; gap: 8px; }
+.qrow { display: grid; grid-template-columns: 1fr auto auto; align-items: center; gap: 8px; min-height: 40px; padding: 4px 12px; border-radius: var(--r-md); background: var(--c-tray); box-shadow: var(--sh-inset), inset 0 -1.5px 0 var(--c-tray-rim); text-align: left; }
+.qrow .gk-text--tag { color: var(--cream-100); }
+.qrow.is-done { opacity: 0.6; }
+.qrow__pts { padding: 1px 8px; border-radius: var(--r-pill); background: var(--purple-700); box-shadow: 0 0 0 1px var(--gold-900); }
+.qrow__pts .gk-text { color: var(--gold-400); }
+.qrow__ok { position: relative; width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; background: var(--green-500); box-shadow: 0 0 0 1.5px var(--green-900); }
+.qrow__ok .gk-glyph { width: 13px; height: 13px; }
+.qrow__gifts { display: inline-flex; gap: 8px; }
+.qrow__btn { position: relative; }
+.qrow__btn::after { content: ""; position: absolute; inset: -6px 0; }
+.online { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+.online__it { position: relative; display: grid; justify-items: center; gap: 2px; padding: 8px 2px; border: 0; border-radius: var(--r-md); background: var(--c-tray); box-shadow: var(--sh-inset); cursor: pointer; opacity: 0.6; }
+.online__it.is-ready { opacity: 1; box-shadow: 0 0 0 1.5px var(--gold-500); animation: dd-bob 1s ease-in-out infinite; }
+.online__it.is-got { opacity: 0.5; }
+.online__it .gk-text--tag { color: var(--cream-100); }
+/* Sign-in: 7 days, 4 + 3, day 7 wide */
+.sign { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.sign__day { position: relative; display: grid; justify-items: center; gap: 4px; padding: 8px 2px; border-radius: var(--r-md); background: var(--c-tray); box-shadow: var(--sh-inset), inset 0 -1.5px 0 var(--c-tray-rim); }
+.sign__day--big { grid-column: span 2; }
+.sign__day .gk-text--tag { color: var(--cream-100); }
+.sign__gifts { display: flex; flex-wrap: wrap; justify-content: center; gap: 2px 8px; }
+.sign__day.is-got { opacity: 0.55; }
+.sign__day.is-now { box-shadow: 0 0 0 2px var(--gold-400), 0 0 10px color-mix(in srgb, var(--gold-400) 50%, transparent); }
+.sign__note { font-size: 13px; text-align: center; }
+/* Newcomer: day chips */
+.mdays { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+.mday { position: relative; min-height: 36px; padding: 0; border: 0; border-radius: var(--r-sm); background: var(--c-tray); cursor: pointer; }
+.mday::after { content: ""; position: absolute; inset: -4px 0; }
+.mday .gk-text { font-size: 12px; color: var(--cream-100); }
+.mday.is-on { background: var(--purple-600); box-shadow: 0 0 0 1.5px var(--gold-500); }
+.mday.is-locked { opacity: 0.45; }
+/* Shop: Progression Pass */
+.pass { display: grid; gap: 8px; padding: 0 12px 8px; }
+.pass__head { display: flex; align-items: center; gap: 8px; }
+.pass__head .gk-text--label { flex: 1; }
+.pass__art { width: 40px; height: 40px; object-fit: contain; filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.45)); }
+.pass__track { display: flex; gap: 8px; overflow-x: auto; padding: 2px 2px 8px; scroll-snap-type: x proximity; scrollbar-width: none; }
+.pass__track::-webkit-scrollbar { display: none; }
+.pass__tier { flex: none; width: 74px; display: grid; justify-items: center; gap: 4px; scroll-snap-align: start; }
+.pass__tier .gk-text--tag { color: var(--cream-100); white-space: nowrap; }
+.pass__cell { position: relative; width: 70px; height: 54px; display: grid; place-items: center; border-radius: var(--r-md); background: var(--c-tray); box-shadow: var(--sh-inset), inset 0 -1.5px 0 var(--c-tray-rim); }
+.pass__cell--prem { background: color-mix(in srgb, var(--gold-500) 22%, var(--c-tray-solid)); }
+.pass__lock { position: absolute; right: 2px; top: 2px; width: 16px; height: 16px; object-fit: contain; }
+.pass__tier.is-ready .pass__cell--free { box-shadow: 0 0 0 2px var(--gold-400); }
+.pass__tier.is-got .pass__cell--free { opacity: 0.55; }
+.pass__tier.is-lock .pass__cell--free { opacity: 0.7; }
+
+/* =====================================================================================
+   Hard Mode and chapters (Cell Survivor, Ledger TD C23, 2026-10-31): red ribbon, a switch under the right arrow, chapter tag.
+   ===================================================================================== */
+.hm__chap { font-size: 12px; color: var(--cream-100); }
+.hm__hard { position: absolute; right: 10px; top: 70px; z-index: 3; min-width: 74px; padding: 2px 12px; border: 0; border-radius: var(--r-pill); cursor: pointer;
+  background: var(--c-tray-solid); box-shadow: 0 0 0 1.5px color-mix(in srgb, var(--gold-500) 60%, transparent), 0 2px 3px rgba(0, 0, 0, 0.4); }
+.hm__hard::after { content: ""; position: absolute; inset: -10px -4px; }
+.hm__hard .gk-text { font-size: 12px; color: var(--cream-100); }
+.hm__hard.is-on { background: linear-gradient(180deg, var(--red-500), var(--red-600)); box-shadow: 0 0 0 1.5px var(--gold-500), 0 2px 3px rgba(0, 0, 0, 0.4); }
+.hm__hard.is-on .gk-text { color: var(--white); }
+.hm__hardline { display: flex; align-items: center; justify-content: center; gap: 8px; height: 20px; }
+.hm__card .best.best--hard { margin-top: 2px; }
+.hm__hardline .gift img { width: 20px; height: 20px; }
+.hm__hardline .gk-text--tag { color: var(--cream-100); }
+@media (max-height: 700px) { .hm__hard { top: 62px; } }
+
+/* =====================================================================================
+   Text system v2 (2026-10-31, user: "kamu buka data dreamdysis : dungeon & dice ... bagai mana tulisan di buat hirarki, degan ada
+   3-4 jenis text, dan berbagai ukuran"). Same as ROLL GAME V2 docs/visual/TYPOGRAPHY_SYSTEM.md §6: two styles, four sizes by role.
+     1 title 22 (sheet 20)  Lilita white   page title, one per screen
+     2 head  18             Lilita white   section title, the subject of a box, big numbers   (text "number")
+     3 body  15             Lilita white   names, values, tabs, small buttons                 (text "label")
+     4 note  13             Fredoka cream  sentences, counts, captions under cards            (text "tag", cream())
+     sub = note in violet: tier · element · weapon under a name                               (.tx-sub)
+   ===================================================================================== */
+.gk-text--label { font-family: var(--font-display); font-weight: var(--fw-display); font-size: 15px; letter-spacing: 0.01em; --_ol: var(--tx-ol-sm); --_drop: var(--tx-drop-sm);
+  -webkit-text-stroke: calc(var(--_ol) * 2) var(--tx-ol-color); text-shadow: 0 var(--_drop) 0 var(--tx-ol-color); }
+.gk-text--tag { font-family: var(--font-ui); font-weight: 500; font-size: 13px; line-height: 1.3; letter-spacing: 0; color: color-mix(in srgb, var(--gold-400) 62%, var(--white));
+  -webkit-text-stroke: 0; text-shadow: 0 1px 2px rgba(16, 6, 28, 0.6); }
+.gk-cream { font-weight: 500; }
+.tx-sub, .gk-text--tag.tx-sub { font-family: var(--font-ui); font-weight: 600; font-size: 13px; color: var(--purple-300); -webkit-text-stroke: 0; text-shadow: 0 1px 2px rgba(16, 6, 28, 0.6); }
+/* words painted on a plate, a bar or a button stay white display type */
+.gk-btn .gk-text--tag, .gk-res .gk-text, .nav__label, .fbtn__plate .gk-text, .hc__bar .gk-text, .bt__prog .gk-text, .coll__bar .gk-text,
+.tav__lvbar .gk-text, .exp__bar .gk-text, .bt__life .gk-text, .side__n .gk-text, .lock-note .gk-text, .gk-toast .gk-text, .cmd3__lvbar .gk-text { color: var(--white); }
+/* words on a coloured chip or badge: white UI type, 12 px */
+.el .gk-text, .odd .gk-text, .gear__tier .gk-text, .home__trial .gk-text, .hc__trial .gk-text, .pcard__new .gk-text, .card__tag .gk-text, .card__combo .gk-text,
+.qrow__pts .gk-text, .eslot__lv .gk-text, .hc__lv, .best__chest .gk-text { font-family: var(--font-ui); font-weight: 700; font-size: 12px; color: var(--white); -webkit-text-stroke: 0; text-shadow: 0 1px 1px rgba(16, 6, 28, 0.6); }
+.qrow__pts .gk-text, .eslot__lv .gk-text { color: var(--gold-400); }
+.qbar__at.gk-text--tag { font-family: var(--font-ui); font-weight: 600; font-size: 12px; color: var(--cream-100); }
+
+/* page head (Dungeon & Dice "Dice" page): Info pill left, title centred, the count under it as a sentence */
+.phead { position: relative; display: grid; justify-items: center; gap: 2px; padding: 8px 0 12px; }
+.phead .gk-text--title { font-size: 22px; }
+.phead__info, .hm__info { position: absolute; left: 12px; top: 8px; z-index: 3; min-width: 56px; height: 28px; padding: 0 12px; border: 0; border-radius: var(--r-pill); cursor: pointer;
+  background: linear-gradient(180deg, var(--purple-600), var(--purple-800)); box-shadow: 0 0 0 1.5px var(--gold-500), inset 0 -2px 0 var(--purple-900), 0 2px 3px rgba(0, 0, 0, 0.4); }
+.phead__info::after, .hm__info::after { content: ""; position: absolute; inset: -8px -4px; }
+.phead__info .gk-text, .hm__info .gk-text { font-size: 14px; }
+.phead__chips { display: flex; justify-content: center; gap: 8px; margin-top: 8px; }
+.phead__chips .exch { position: relative; right: auto; left: auto; top: auto; translate: none; }
+.hm__info { top: 70px; }
+@media (max-height: 700px) { .hm__info { top: 62px; } }
+
+/* section head: title left (head 18), its count right (note 13) — "Soul Lanterns ……… 0 of 4 lit" */
+.shead { grid-column: 1 / -1; display: flex; align-items: baseline; justify-content: space-between; gap: 8px; padding: 8px 2px 0; }
+.shead .gk-text--number { font-size: 18px; }
+.hgrid .shead .gk-text--number { color: var(--_tc, var(--white)); }
+
+/* Info box: sections of rows, each = picture + name (body) + sentence (note) */
+.infobox .cbox__body { gap: 8px; }
+.isec { display: grid; gap: 8px; padding: 8px 8px 8px; border-radius: var(--r-lg); background: color-mix(in srgb, var(--violet-400) 10%, transparent); box-shadow: 0 0 0 1.5px color-mix(in srgb, var(--violet-400) 38%, transparent); text-align: left; }
+.isec > .gk-text--number { font-size: 18px; padding: 2px 4px 0; }
+.irow { display: grid; grid-template-columns: 40px 1fr; align-items: center; gap: 4px 8px; padding: 8px 8px 8px 8px; border-radius: var(--r-md); background: var(--c-tray); box-shadow: var(--sh-inset), inset 0 -1.5px 0 var(--c-tray-rim); }
+.irow > img { grid-row: span 2; width: 40px; height: 40px; object-fit: contain; filter: drop-shadow(0 2px 1px rgba(0, 0, 0, 0.45)); }
+.irow > .gk-text--label { align-self: end; }
+.irow > .gk-cream { align-self: start; }
+.irow--noimg { grid-template-columns: 1fr; }
+
+/* names under a subject (sheet / box): tier · element · weapon */
+.namesub { display: block; text-align: center; margin-top: -4px; }
+.lead-tag { position: absolute; left: 50%; bottom: -8px; translate: -50% 0; padding: 0 4px; border-radius: var(--r-pill); background: var(--gold-500); box-shadow: 0 0 0 1px var(--gold-900); }
+.lead-tag .gk-text { font-family: var(--font-ui); font-weight: 700; font-size: 12px; color: var(--stone-950); -webkit-text-stroke: 0; text-shadow: none; }
+.party__row .pic { position: relative; }
+/* Party head: the Party Level badge and EXP bar under the title (frees the board's first row) */
+.phead .cmd3__lv { margin-top: 4px; }
+.party__lead { position: relative; display: inline-block; }
+.party__lead .lead-tag { bottom: -7px; }
+/* the board a little tighter so Training stays above the tab bar at 812 with four extra chips */
+.party .cmd3__col { gap: 12px; }
+.party .attr { padding: 4px 2px 4px; }
+.party .attr img { width: 22px; height: 22px; }
+.party .cmd3__extra { gap: 4px; }
+/* the Home Info pill matches the Hard switch (24 px) so neither touches the feature columns at 667 */
+.hm__info { height: 24px; min-width: 56px; padding: 0 12px; }
+.hm__info .gk-text { font-size: 13px; }
+/* short phones: page head and Party board tighter so Training stays above the tab bar */
+@media (max-height: 700px) {
+  .phead { padding: 2px 0 4px; gap: 0; }
+  .phead .gk-text--title { font-size: 20px; }
+  .phead .cmd3__lv { margin-top: 2px; }
+  .party .cmd3__col { gap: 8px; }
+  .party .cmd3__col .eslot .gear { width: 44px; height: 44px; }
+  .party .cmd3__stage { grid-template-columns: 44px 1fr 44px; }
+  .party .cmd3__hero { height: 146px; }
+  .party .cmd3__fig { height: 138px; margin-bottom: 12px; }
+  .party .cmd3__pedestal { width: 130px; }
+  .party .attr { padding: 2px 2px 2px; }
+}
+
+/* =====================================================================================
+   UI pass 3 (2026-10-31, user: "perbaiki ui, ukuran ikon, ukuran tulisan. pastikan margin kanan kiri atas bawah pas
+   sesuai. tidak ada yang over seperti recuit lv 1, pastikan semua in the center middle. tidak berantakan seperti stage 8.
+   semua tulisan seragam, tidak seperti party dan dungeon yang punya font berbeda dengan lainnya").
+   This block is the ONE place that sets text sizes. "#app" makes each rule one step stronger than every class rule above,
+   so the older per-screen sizes (10 / 10.5 / 14 / 16 / 17 / 19 / 21 / 24 / 26 / 34 px) no longer apply anywhere.
+   Text sizes never change with the screen height; only spacing and pictures shrink on short phones.
+   Roles (MEKANISME_UI "Sistem teks v3"):
+     cta    38  Lilita              the one main button of a screen (Start Battle)
+     ribbon 28  Lilita              painted ribbons: Stage n, Victory, Defeat
+     title  22  Lilita              page title (20 in a sheet or a centre box); the key number (Party Power, a box's subject value)
+     head   18  Lilita              section heads, the stage's world, resource numbers, normal buttons
+     body   15  Lilita              names, values, tabs, small buttons
+     plate  13  Lilita              words on painted plates, pills and bars (tab labels, feature plates, Info, Normal, EXP)
+     note   13  Fredoka 500 cream   sentences, counts, captions
+     chip   12  Fredoka 700 white   element, rarity, tier, level and NEW chips
+   One page gutter: 12 px left and right on every page.
+   ===================================================================================== */
+:root { --gut: 12px; --fs-plate: 13px; --fs-note: 13px; --fs-chip: 12px; --fs-body: 15px; --fs-head: 18px; --fs-ttl: 22px; --fs-box-ttl: 20px; --fs-ribbon: 28px; --fs-cta-xl: 38px; }
+
+/* ---- the eight roles ---- */
+#app .gk-text--tag, #app .gk-cream, #app .tx-sub { font-size: var(--fs-note); }
+#app .gk-cream b, #app .gk-cream em { font-size: inherit; }
+#app .gk-text--label { font-size: var(--fs-body); }
+#app .gk-text--number { font-size: var(--fs-head); }
+#app .gk-text--title { font-size: var(--fs-ttl); line-height: 1.1; }
+#app :is(.gk-modal__head, .gk-sheet__head) .gk-text--title { font-size: var(--fs-box-ttl); line-height: 30px; }
+#app .gk-text--hero, #app .hm__banner .gk-text, #app .res__banner .gk-text { font-size: var(--fs-ribbon); }
+/* buttons: every word inside takes the button's size (a price and its word no longer differ) */
+#app .gk-btn { --btn-fs: var(--fs-head); }
+#app .gk-btn--sm { --btn-fs: var(--fs-body); }
+#app .gk-btn--xl { --btn-fs: var(--fs-cta-xl); }
+#app .gk-btn :is(.gk-btn__label, .gk-btn__row .gk-text--label, .gk-btn__row .gk-text--number) { font-size: var(--btn-fs); }
+#app .gk-ibtn .gk-text--label { font-size: var(--fs-body); }
+/* key numbers */
+#app :is(.hm__power, .cmd3__power) .gk-text--number, #app .gbox__big, #app .ensheet__n .gk-text { font-size: var(--fs-ttl); }
+/* plate: Lilita 13, white, thin outline: every word painted on a plate, pill or bar */
+#app :is(.nav__label, .fbtn__plate .gk-text, .phead__info .gk-text, .hm__info .gk-text, .hm__hard .gk-text, .hc__bar .gk-text,
+  .bt__prog .gk-text, .bt__life .gk-text, .coll__bar .gk-text, .tav__lvbar .gk-text, .exp__bar .gk-text, .cmd3__lvbar .gk-text,
+  .gk-btn > .gk-text--tag, .gift .gk-text, .lock-note .gk-text--tag) {
+  font-family: var(--font-display); font-weight: var(--fw-display); font-size: var(--fs-plate); line-height: 1.05; letter-spacing: 0.01em;
+  color: var(--white); -webkit-text-stroke: 2px var(--tx-ol-color); paint-order: stroke fill; text-shadow: 0 1px 0 var(--tx-ol-color); text-transform: none;
+}
+/* chip: Fredoka 700 12 white */
+#app :is(.el, .odd, .gear__tier, .home__trial, .hc__trial, .pcard__new, .card__tag, .card__combo, .qrow__pts, .eslot__lv, .best__chest, .lead-tag,
+  .fbtn__lv, .newtag, .top__dev, .side__n) .gk-text, #app .hc__lv, #app .qbar__at, #app .gear__stat .gk-text {
+  font-family: var(--font-ui); font-weight: 700; font-size: var(--fs-chip); line-height: 1.25; letter-spacing: 0; text-transform: none;
+  -webkit-text-stroke: 0; text-shadow: 0 1px 1px rgba(16, 6, 28, 0.6);
+}
+#app :is(.qrow__pts, .eslot__lv) .gk-text { color: var(--gold-400); }
+#app :is(.lead-tag, .newtag) .gk-text { color: var(--stone-950); text-shadow: none; }
+#app :is(.el, .odd, .gear__tier, .home__trial, .hc__trial, .fbtn__lv, .top__dev, .side__n) .gk-text, #app .hc__lv, #app .gear__stat .gk-text { color: var(--white); }
+/* section heads and painted section banners = head */
+#app .shop__sect, #app .cmd3__bagt .gk-text--label, #app .shead .gk-text--number, #app .isec > .gk-text--number { font-size: var(--fs-head); }
+/* captions that were 12 px are sentences: note */
+#app :is(.attr, .cmd3__power, .hnum, .wk, .hm__power, .hchip) .gk-text--tag { font-size: var(--fs-note); text-transform: none; letter-spacing: 0; }
+#app .cmd3__power .gk-text--tag { color: var(--cream-100); }
+#app .hm__chap { color: var(--cream-100); }
+
+/* ---- icons: one size per role ---- */
+#app .gk-res > img { width: 28px; height: 28px; object-fit: contain; }
+#app .in-ic, #app .gk-btn .gk-glyph { width: 20px; height: 20px; object-fit: contain; }
+#app .gk-btn--xl .gk-glyph { width: 22px; height: 22px; }
+#app .gift img { width: 20px; height: 20px; object-fit: contain; }
+#app .plate img, #app .fbtn__ic, #app .rslot img { object-fit: contain; }
+
+/* ---- top bar: resource numbers are head 18 ---- */
+#app .top .gk-res > .gk-text, #app .top__pln { font-size: var(--fs-head); }
+#app .top .gk-res { padding-left: 28px; padding-right: 12px; }
+#app .top .gk-res > img { left: -5px; }
+
+/* ---- bottom nav: Party and Dungeon carry the same plate words as the painted medals ---- */
+#app .nav__label { left: 14%; right: 14%; top: 77.3%; height: 21.4%; padding-bottom: 1px; }
+#app .gk-nav__item[data-tab="dungeon"] .nav__plateimg { left: -6%; width: 112%; }
+#app .gk-nav__item[data-tab="dungeon"] .nav__label { left: 8%; right: 8%; letter-spacing: 0; }
+
+/* ---- Home: one column from the ribbon to the button, no fixed positions, centred, 12 px gutters ---- */
+#app .hm { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: space-between; gap: 8px; padding: 2px var(--gut) 12px; }
+#app .hm > * { position: relative; inset: auto; top: auto; left: auto; right: auto; bottom: auto; translate: none; margin: 0; flex: none; }
+#app .hm__ribbon { display: flex; justify-content: center; align-items: center; gap: 8px; }
+#app .hm__banner { width: 260px; height: 62px; }
+#app .hm__banner .gk-text { padding-bottom: 4px; }
+#app .hm__head { display: grid; grid-template-columns: 64px minmax(0, 1fr) 64px; align-items: center; gap: 8px; margin-top: -4px; }
+#app .hm__head > .hm__info, #app .hm__head > .hm__hard { position: relative; inset: auto; top: auto; left: auto; right: auto; z-index: 3; width: 64px; min-width: 0; height: 28px; padding: 0 8px;
+  display: inline-flex; align-items: center; justify-content: center; gap: 4px; border-radius: var(--r-pill); border: 0; cursor: pointer;
+  background: linear-gradient(180deg, var(--purple-600), var(--purple-800)); box-shadow: 0 0 0 1.5px var(--gold-500), inset 0 -2px 0 var(--purple-900), 0 2px 3px rgba(0, 0, 0, 0.4); }
+#app .hm__head > .hm__hard.is-on { background: linear-gradient(180deg, var(--red-500), var(--red-600)); }
+#app .hm__head > .hm__hard.is-locked { background: linear-gradient(180deg, var(--gray-500), var(--gray-600)); box-shadow: 0 0 0 1.5px var(--gray-900), inset 0 -2px 0 var(--gray-900); }
+#app .hm__lock { width: 14px; height: 14px; object-fit: contain; filter: grayscale(1) brightness(1.3); }
+#app .hm__world { position: relative; inset: auto; display: grid; justify-items: center; gap: 2px; min-width: 0; text-align: center; }
+#app .hm__world .gk-text--number { max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* the stage: two feature columns, the dragon between them and its element pill under it (the columns span both rows) */
+#app .hm__stage { flex: 1 1 auto; min-height: 0; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; grid-template-rows: minmax(0, 1fr) auto; align-items: center; row-gap: 4px; }
+#app .hm__side { position: relative; inset: auto; top: auto; left: auto; right: auto; z-index: 2; grid-row: 1 / 3; display: grid; gap: 8px; align-content: center; }
+#app .hm__side--l { grid-column: 1; }
+#app .hm__side--r { grid-column: 3; }
+#app .hm__dragon { position: relative; inset: auto; top: auto; left: auto; translate: none; z-index: 1; grid-column: 2; grid-row: 1; align-self: stretch; height: auto; min-height: 0; width: auto; margin: 0 -40px; }
+#app .hm__dragon::before { width: 70%; height: 26%; bottom: 4%; }
+#app .hm__dragon img { position: absolute; inset: 0; margin: auto; height: 100%; max-height: 280px; width: 100%; max-width: 100%; object-fit: contain; }
+#app .hm__weak { position: relative; inset: auto; top: auto; z-index: 2; grid-column: 2; grid-row: 2; display: flex; justify-content: center; gap: 0; min-width: 0; }
+#app .hm__weak .wk { height: 28px; gap: 8px; padding: 0 4px; }
+#app .hm__weak .wk > .gk-text--tag { color: var(--cream-100); }
+#app .hm__weak .wk > :only-child { padding: 0 8px; }
+#app .hm__weak .el { height: 22px; padding: 0 8px; }
+#app .hm__card { position: relative; inset: auto; top: auto; left: auto; right: auto; display: grid; gap: 4px; padding: 8px 16px 12px; }
+#app .hm__cardrow { align-items: center; }
+#app .hm__cardt { color: var(--gold-400); text-align: left; }
+#app .hm__pct { color: var(--gold-400); }
+#app .hm__card .best { margin: 24px 12px 2px; }
+#app .hm__power { display: flex; justify-content: center; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+#app .hm__party { position: relative; inset: auto; top: auto; display: flex; justify-content: center; align-items: center; gap: 8px; height: 56px; }
+#app .hm__party .pic { --_s: 46px; }
+#app .hm__party .pic--kael { --_s: 54px; }
+#app .hm__party:has(> :nth-child(6)) { gap: 8px; }
+#app .hm__party:has(> :nth-child(6)) .pic { --_s: 44px; }
+#app .hm__party:has(> :nth-child(6)) .pic--kael { --_s: 50px; }
+#app .hm__party:has(> :nth-child(7)) { gap: 4px; }
+#app .hm__party:has(> :nth-child(7)) .pic { --_s: 41px; }
+#app .hm__party:has(> :nth-child(7)) .pic--kael { --_s: 48px; }
+#app .hm__party:has(> :nth-child(8)) .pic { --_s: 37px; }
+#app .hm__party:has(> :nth-child(8)) .pic--kael { --_s: 45px; }
+#app .hm__play { position: relative; left: auto; right: auto; bottom: auto; width: 100%; }
+#app .home__cost { gap: 4px; margin-right: 8px; }
+#app .home__cost .gk-text { font-size: var(--fs-head); }
+#app .home__cost .bolt { width: 26px; height: 26px; }
+#app .home__cost .bolt .gk-glyph { width: 17px; height: 17px; }
+/* feature buttons: ring, one word on the plate, a level chip on the ring */
+#app .fbtn { width: 88px; }
+#app .fbtn__ring { width: 74px; height: 74px; }
+#app .fbtn__ic { width: 46px; height: 46px; }
+#app .fbtn.is-locked .fbtn__ic { width: 34px; height: 34px; }
+#app .fbtn__plate { width: 88px; height: 28px; margin-top: -10px; }
+#app .fbtn__plate > .gk-text { padding-bottom: 1px; white-space: nowrap; }
+#app .fbtn .dot { right: 8px; top: 2px; }
+#app .fbtn__lv { position: absolute; left: 0; top: 2px; z-index: 2; padding: 0 4px; border-radius: var(--r-pill); background: var(--purple-700); box-shadow: 0 0 0 1.5px var(--gold-500); }
+@media (max-height: 760px) {
+  #app .hm { gap: 4px; padding-bottom: 8px; }
+  #app .hm__banner { width: 230px; height: 55px; }
+  #app .hm__side { gap: 8px; }
+  #app .fbtn { width: 80px; }
+  #app .fbtn__ring { width: 62px; height: 62px; }
+  #app .fbtn__ic { width: 40px; height: 40px; }
+  #app .fbtn__plate { width: 80px; height: 26px; margin-top: -9px; }
+  #app .hm__card { padding: 8px 16px 8px; gap: 2px; }
+  #app .hm__card .best { margin-top: 24px; }
+  #app .hm__party { height: 50px; }
+  #app .hm__play { min-height: 64px; }
+}
+@media (min-width: 420px) {
+  #app .hm__party .pic { --_s: 52px; }
+  #app .hm__party .pic--kael { --_s: 60px; }
+  #app .hm__party:has(> :nth-child(7)) .pic { --_s: 46px; }
+  #app .hm__party:has(> :nth-child(7)) .pic--kael { --_s: 54px; }
+  #app .hm__party:has(> :nth-child(8)) .pic { --_s: 44px; }
+  #app .hm__party:has(> :nth-child(8)) .pic--kael { --_s: 52px; }
+  #app .hm__party { height: 62px; }
+  #app .hm__dragon img { max-height: 340px; }
+  #app .hm__side { gap: 16px; }
+  #app .fbtn { width: 96px; }
+  #app .fbtn__ring { width: 82px; height: 82px; }
+  #app .fbtn__ic { width: 52px; height: 52px; }
+  #app .fbtn__plate { width: 96px; height: 30px; margin-top: -11px; }
+}
+@media (min-width: 420px) and (max-height: 760px) {
+  #app .fbtn { width: 84px; }
+  #app .fbtn__ring { width: 66px; height: 66px; }
+  #app .fbtn__ic { width: 42px; height: 42px; }
+  #app .fbtn__plate { width: 84px; height: 26px; margin-top: -9px; }
+}
+
+/* ---- page gutters: 12 px on every page ---- */
+#app .shop__bar { padding-left: var(--gut); padding-right: var(--gut); }
+#app .chestbox { padding-left: var(--gut); padding-right: var(--gut); }
+#app .offers { padding-left: var(--gut); padding-right: var(--gut); }
+
+/* ---- Heroes: four equal columns (a long name no longer widens its column), the name under the picture, then the bar ---- */
+#app .hgrid { grid-template-columns: repeat(4, minmax(0, 1fr)); padding-left: var(--gut); padding-right: var(--gut); }
+#app .hc { align-content: start; min-width: 0; }
+#app .hc__nm { min-width: 0; max-width: 100%; }
+#app .hc__bar { margin-top: 1px; }
+
+/* ---- Shop: the painted tiles as nine-slice frames (they were squashed 1.2 to 1.9 times) ---- */
+#app .offer > .offer__tile { display: none; }
+#app .offer:not(.offer--pack) { border: 0 solid transparent; border-image: url("../assets/shop/shop_tile.webp") 95 95 175 95 fill / 20px 20px 37px 20px stretch; }
+#app .offer--pack { border: 0 solid transparent; border-image: url("../assets/shop/shop_tile_premium.webp") 105 105 175 105 fill / 22px 22px 37px 22px stretch; }
+
+/* ---- centre boxes never wider than the screen; their rows shrink instead (Victory at 375 ran off the right edge) ---- */
+#app .gk-scrim { grid-template-columns: minmax(0, 1fr); }
+#app .gk-modal { justify-self: center; min-width: 0; }
+#app .gk-modal > * { min-width: 0; }
+#app .rslots { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+#app .rslot { width: 64px; height: 72px; }
+#app .rslot img { width: 36px; height: 36px; }
+#app .rslot .gk-text { font-size: var(--fs-body); }
+#app .res__pctn { font-size: var(--fs-head); }
+#app .res .gk-modal__actions > * { min-width: 0; }
+
+/* ---- choice cards: a two-line name block so the values of one row line up; long names wrap instead of shrinking ---- */
+#app .card__name, #app .card__name--long { font-size: var(--fs-body); line-height: 1.05; letter-spacing: 0; }
+#app .card__win > .card__name { min-height: 2.1em; display: grid; place-items: center; white-space: normal; text-wrap: balance; -webkit-line-clamp: unset; overflow: visible; }
+#app .card__aim { font-size: var(--fs-note); line-height: 1.15; }
+
+/* ---- battle HUD ---- */
+#app .bt__strow .gk-text--label { font-size: var(--fs-body); }
+#app .bt__clock { font-size: var(--fs-note); }
+
+/* ---- Party board (UI pass 3): Party Power under the pedestal inside the stage; slots spaced so the tier coin and the Lv chip
+   never touch the next slot; attributes in two lines (icon + value, then the name); everything inside the board ---- */
+#app .party .cmd3__board { gap: 8px; padding: 8px 12px; }
+#app .party .cmd3__stage { grid-template-columns: 56px minmax(0, 1fr) 56px; align-items: center; }
+#app .party .cmd3__col { gap: 24px; padding: 12px 0 8px; align-content: center; }
+#app .party .cmd3__col .eslot .gear { width: 56px; height: 56px; }
+#app .party .cmd3__hero { position: relative; height: 246px; display: grid; place-items: end center; padding-bottom: 32px; }
+#app .party .cmd3__fig { height: 196px; margin-bottom: 16px; }
+#app .party .cmd3__pedestal { bottom: 30px; width: 170px; }
+#app .party .cmd3__power { position: absolute; left: 50%; bottom: 0; translate: -50% 0; margin: 0; display: flex; align-items: baseline; gap: 8px; white-space: nowrap; }
+#app .party .cmd3__power .gk-text--number { color: var(--gold-400); }
+#app .party .party__row { margin-top: 0; gap: 4px; padding-bottom: 8px; }
+#app .party .party__row .pic { --_s: 38px; }
+#app .party .party__row .pic--lead { --_s: 44px; }
+#app .party .attrs { gap: 4px; }
+#app .party .attr { grid-template-columns: auto auto; justify-content: center; align-items: center; column-gap: 4px; row-gap: 0; padding: 4px 2px 4px; }
+#app .party .attr img { width: 20px; height: 20px; }
+#app .party .attr .gk-text--number { font-size: var(--fs-body); line-height: 1.15; }
+#app .party .attr .gk-text--tag { grid-column: 1 / -1; line-height: 1.2; color: var(--cream-100); }
+#app .party .cmd3__extra { gap: 4px; }
+#app .hchip { align-items: center; height: 26px; padding: 0 8px; gap: 4px; }
+#app .hchip:has(> .el) { padding-left: 4px; }
+#app .hchip .gk-text--label { color: var(--gold-400); }
+#app .hchip .el { height: 20px; }
+@media (max-height: 760px) {
+  #app .cmd3.party { gap: 8px; }
+  #app .party .cmd3__board { gap: 4px; padding: 4px 8px 8px; }
+  #app .party .cmd3__stage { grid-template-columns: 42px minmax(0, 1fr) 42px; }
+  #app .party .cmd3__col { gap: 16px; padding: 8px 0 8px; }
+  #app .party .cmd3__col .eslot .gear { width: 42px; height: 42px; }
+  #app .party .cmd3__hero { height: 178px; padding-bottom: 28px; }
+  #app .party .cmd3__fig { height: 138px; margin-bottom: 12px; }
+  #app .party .cmd3__pedestal { bottom: 28px; width: 132px; }
+  #app .party .party__row { padding-bottom: 4px; }
+  #app .party .party__row .pic { --_s: 34px; }
+  #app .party .party__row .pic--lead { --_s: 40px; }
+  #app .party .attr { padding: 4px 2px 2px; }
+  #app .phead { padding: 2px 0 4px; gap: 0; }
+}
+
+/* ---- Shop tiles (UI pass 3): picture with its amount chip, the name on up to two centred lines, the price on the plate ---- */
+#app .offer:not(.offer--pack) { height: 138px; padding: 16px 8px 0; gap: 2px; grid-template-rows: 42px 36px; align-content: start; }
+#app .offer__art { height: 42px; }
+#app .offer__art img { width: 40px; height: 40px; }
+#app .offer__amt { position: absolute; right: -14px; bottom: -2px; padding: 0 4px; border-radius: var(--r-pill); background: rgba(16, 6, 28, 0.82); box-shadow: 0 0 0 1px color-mix(in srgb, var(--gold-500) 70%, transparent); }
+#app .offer__amt .gk-text { font-family: var(--font-ui); font-weight: 700; font-size: var(--fs-chip); line-height: 1.3; color: var(--white); -webkit-text-stroke: 0; text-shadow: none; }
+#app .offer__name { display: grid; place-items: center; width: 100%; line-height: 1.05; white-space: normal; text-wrap: balance; }
+#app .offer__price { top: auto; bottom: 6px; height: 24px; left: 12%; right: 12%; }
+#app .offer--pack .offer__name { font-size: var(--fs-body); }
+/* chest: picture + three lines, then the odds centred under both */
+#app .chestbox { display: grid; grid-template-columns: auto auto; justify-content: center; align-items: center; column-gap: 12px; row-gap: 8px; }
+#app .chestbox > div { justify-items: start; gap: 2px; }
+#app .chestbox > .chestbox__odds { grid-column: 1 / -1; display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; }
+#app .chestbox__odds .odd { padding: 2px 8px; }
+/* Recruit on short phones: the card picture shrinks so the wallet row stays above the buttons */
+@media (max-height: 760px) {
+  #app .tav { gap: 8px; }
+  #app .tav__pack { width: 180px; height: 150px; }
+  #app .tav__art { width: auto; height: 124px; }
+}
+@media (max-height: 760px) {
+  #app .tav__pack--sm { width: 150px; height: 112px; }
+  #app .tav__pack--sm .tav__art { height: 96px; }
+}
+/* Hero Call card: the name and a two-line line of what the hero does both fit inside the frame */
+#app .card--hero .card__foot { height: 41%; padding: 4px 4px 4px; align-content: end; gap: 1px; }
+#app .card--hero .card__aim { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-wrap: balance; }
+/* hero names under the cards: a smaller check and gap so a nine-letter name ("Amar-Suen") fits a 375 px column */
+#app .hgrid { column-gap: 8px; }
+#app .hc__nm { gap: 2px; }
+#app .hc__nm .hc__in { width: 14px; height: 14px; }
+#app .hc__nm .hc__in .gk-glyph { width: 10px; height: 10px; }
+/* eight party members stay on one row inside the Party board */
+#app .party .party__row:has(> :nth-child(8)) .pic { --_s: 35px; }
+#app .party .party__row:has(> :nth-child(8)) .pic--lead { --_s: 41px; }
+@media (max-height: 760px) {
+  #app .party .party__row:has(> :nth-child(8)) .pic { --_s: 34px; }
+  #app .party .party__row:has(> :nth-child(8)) .pic--lead { --_s: 40px; }
+}
+
+/* =====================================================================================
+   UI pass 4 (2026-10-31, user: "beberapa tulisan tidak tengah, icon tidak tengah ... statistik ... ada 2 warna dan satu besar
+   satu kecil ... di party page, logo / icon heroes harusnya tidak perlu ada ... artifacts ... punya halaman sendiri di dungeon.
+   dungeon pindah ke home jadi lingkarang floating ... di party hanya party dan traning, lead dan status ... pada yang ter equip,
+   besar kotak artifact, sama dengan artifacts list. smua tidak perlu ada t1.. pakai lingkaran sebagai penanda tier ...
+   atk kecil cream, +13% besar. adjust kotaknya.")
+   ===================================================================================== */
+
+/* ---- centred on the painting, not on the picture's box ---- */
+/* Stage ribbon: the gem hangs into the face, so the words sit in the face under it (face y 90–300 of 368, gem tip 165) */
+#app .hm__banner .gk-text { padding: 0; top: 8%; }
+/* level emblem: the number in the purple shield (shield centre at 60 % of the emblem's height) */
+#app .top__pl { place-items: initial; }
+#app .top__pln { position: absolute; left: 50%; top: 60%; translate: -50% -50%; margin: 0; line-height: 1; }
+/* painted label plates: the dark face is at 45 % of the plate's height (rows 242–281 of 232–297) */
+#app .fbtn__plate > .gk-text { padding: 0 0 4px; }
+#app .nav__label { padding-bottom: 2px; }
+/* feature icons: each one moved by its own weight centre so it sits in the middle of the ring (measured on the art) */
+#app #patrol .fbtn__ic { translate: 1% -4%; }
+#app #missions .fbtn__ic { translate: -3.8% 2.8%; }
+#app #recruit .fbtn__ic { translate: -3.7% -3.4%; }
+#app #limited .fbtn__ic { translate: 0 8.6%; }
+#app #dungeon .fbtn__ic { translate: 0 -7.9%; }
+#app .fbtn.is-soon .fbtn__ic { filter: grayscale(1) brightness(0.75); }
+#app .fbtn__lock { position: absolute; right: 10%; bottom: 10%; width: 34%; height: 34%; object-fit: contain; filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.6)); }
+#app .fbtn--ghost { visibility: hidden; pointer-events: none; }
+
+/* ---- Home: three rows in each column (left Patrol, Missions, Dungeon; right Recruit, Limited and an empty place) ---- */
+#app .hm__side { gap: 8px; }
+#app .hm__side > .fbtn--ghost { height: var(--fb-h); }
+#app .hm { --fb-h: 92px; }
+#app .fbtn { width: 88px; }
+#app .fbtn__ring { width: 72px; height: 72px; }
+#app .fbtn__ic { width: 44px; height: 44px; }
+#app .fbtn__plate { width: 88px; height: 28px; margin-top: -8px; }
+@media (max-height: 760px) {
+  #app .hm { --fb-h: 60px; gap: 4px; }
+  #app .hm__banner { width: 200px; height: 48px; }
+  #app .hm__side { gap: 4px; }
+  #app .fbtn { width: 80px; }
+  #app .fbtn__ring { width: 46px; height: 46px; }
+  #app .fbtn__ic { width: 30px; height: 30px; }
+  #app .fbtn__plate { width: 80px; height: 22px; margin-top: -8px; }
+  #app .fbtn .dot { right: 14px; top: 0; }
+  #app .fbtn__lv { left: 4px; top: -2px; }
+  #app .hm__card { padding: 4px 16px 8px; }
+  #app .hm__card .best { margin-top: 20px; }
+  #app .hm__party { height: 46px; }
+}
+@media (min-width: 420px) {
+  #app .hm { --fb-h: 102px; }
+  #app .fbtn { width: 96px; }
+  #app .fbtn__ring { width: 80px; height: 80px; }
+  #app .fbtn__ic { width: 50px; height: 50px; }
+  #app .fbtn__plate { width: 96px; height: 30px; margin-top: -8px; }
+  #app .hm__side { gap: 12px; }
+}
+@media (min-width: 420px) and (max-height: 760px) {
+  #app .hm { --fb-h: 60px; }
+  #app .hm__side { gap: 4px; }
+  #app .fbtn { width: 84px; }
+  #app .fbtn__ring { width: 46px; height: 46px; }
+  #app .fbtn__ic { width: 30px; height: 30px; }
+  #app .fbtn__plate { width: 84px; height: 22px; margin-top: -8px; }
+}
+
+/* ---- bottom nav: the Artifacts tab (where Dungeon was) carries the widened plate ---- */
+#app .gk-nav__item[data-tab="artifacts"] .nav__plateimg { left: -6%; width: 112%; }
+#app .gk-nav__item[data-tab="artifacts"] .nav__label { left: 7%; right: 7%; letter-spacing: 0; }
+#app .gk-nav__item[data-tab="artifacts"] .nav__disc .gk-nav__art { width: 70%; height: 70%; }
+
+/* ---- Party: the Lead on its pedestal (name and Lead chip on the pedestal's front), Party Power, the status, Training ---- */
+#app .party .cmd3__board { gap: 8px; padding: 8px 12px 12px; }
+#app .party .cmd3__hero { position: relative; width: 100%; height: 232px; padding: 0; border: 0; background: none; cursor: pointer; display: grid; place-items: end center; -webkit-tap-highlight-color: transparent; }
+#app .party .cmd3__fig { height: 204px; margin-bottom: 24px; }
+#app .party .cmd3__pedestal { bottom: 2px; width: 190px; }
+#app .party .party__lead { position: absolute; left: 50%; bottom: 0; translate: -50% 0; z-index: 2; display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; }
+#app .party .party__lead .lead-tag { position: static; translate: none; }
+#app .party .cmd3__power { position: static; translate: none; display: flex; justify-content: center; align-items: baseline; gap: 8px; margin: 2px 0 0; }
+/* status: icon, the value big and white, the name small and cream (two colours, two sizes) */
+#app .party .attrs { gap: 8px; }
+#app .party .attr { grid-template-columns: 1fr; justify-items: center; align-items: center; row-gap: 1px; padding: 8px 2px 8px; }
+#app .party .attr img { width: 22px; height: 22px; }
+#app .party .attr .attr__v { font-size: var(--fs-head); line-height: 1.1; color: var(--white); }
+#app .party .attr .attr__n { font-size: var(--fs-note); line-height: 1.15; white-space: nowrap; }
+#app .hchip .gk-cream { line-height: 1; }
+@media (max-height: 760px) {
+  #app .party .cmd3__board { gap: 4px; padding: 8px 8px 8px; }
+  #app .party .cmd3__hero { height: 150px; }
+  #app .party .cmd3__fig { height: 126px; margin-bottom: 24px; }
+  #app .party .cmd3__pedestal { width: 132px; }
+  #app .party .attrs { gap: 4px; }
+  #app .party .attr { padding: 4px 2px 4px; row-gap: 0; }
+  #app .party .attr img { width: 18px; height: 18px; }
+}
+
+/* ---- the artifact tile: painting (affixes left, tier circles under it), value big white, ATK / HP small cream ---- */
+#app .gear { --gw: 64px; position: relative; width: var(--gw); height: auto; aspect-ratio: auto; display: grid; grid-template-rows: auto auto auto;
+  justify-items: center; align-content: start; place-items: start center; padding: 0 2px 8px; overflow: visible; }
+#app .gear__art { position: relative; width: 100%; aspect-ratio: 1; display: grid; place-items: center; }
+#app .gear__ic { position: static; inset: auto; left: auto; top: auto; translate: none; width: 70%; height: 70%; object-fit: contain; }
+#app .gear--empty .gear__ic { width: 56%; height: 56%; }
+#app .gear__aff { left: 4px; top: 46%; }
+#app .gear__tiers { position: absolute; left: 0; right: 0; bottom: 2px; display: flex; justify-content: center; gap: 2px; pointer-events: none; }
+#app .gear__tiers i { display: block; width: 7px; height: 7px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, var(--white) 0 16%, var(--_tc) 55%); box-shadow: 0 0 0 1px var(--c-outline); }
+#app .gear__tiers--silver { --_tc: var(--gray-400); }
+#app .gear__tiers--gold { --_tc: var(--gold-400); }
+#app .gear__tiers--ruby { --_tc: var(--red-400); }
+#app .gear__tiers--violet { --_tc: var(--violet-400); }
+#app .gear__val { font-size: var(--fs-head); line-height: 1; white-space: nowrap; margin-top: 1px; }
+#app .gear__lab { font-size: var(--fs-note); line-height: 1.15; }
+#app .gear--empty .gear__val { visibility: hidden; }
+#app .gear--empty .gear__lab { color: var(--cream-100); }
+#app .gear__lv { position: absolute; left: 50%; top: -9px; translate: -50% 0; z-index: 2; padding: 0 8px; border-radius: var(--r-pill); background: var(--c-tray-solid); box-shadow: 0 0 0 1.5px color-mix(in srgb, var(--gold-500) 70%, transparent); white-space: nowrap; }
+#app .gear__lv .gk-text { font-family: var(--font-ui); font-weight: 700; font-size: var(--fs-chip); line-height: 1.3; color: var(--gold-400); -webkit-text-stroke: 0; text-shadow: none; }
+#app .gear__up { right: -5px; top: -5px; }
+/* where tiles stand */
+#app .arts { display: grid; gap: 8px; padding: 0 var(--gut) 16px; }
+#app .arts .shead { padding: 2px 2px 0; }
+#app .eqgrid, #app .arts .ggrid { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 16px 8px; padding: 12px 0 0; justify-content: stretch; }
+#app .eqgrid .eslot { position: relative; min-width: 0; padding: 0; border: 0; background: none; cursor: pointer; }
+#app .eqgrid .gear, #app .arts .ggrid .gear, #app .ench__slot .gear, #app .gbox .ggrid--sheet .gear { --gw: 100%; }
+#app .arts .cmd3__sub { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-top: 4px; }
+#app .arts__bar { display: flex; align-items: center; gap: 8px; }
+#app .arts__bar .gk-res { min-width: 0; width: 80px; height: 28px; padding-left: 24px; }
+#app .arts__bar > .gk-btn { margin-left: auto; position: relative; }
+#app .arts__bar > .gk-btn::after { content: ""; position: absolute; inset: -5px 0; }
+#app .gbox .ggrid--sheet { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px 8px; }
+#app .gbox__top .gear, #app .gbox__side .gear { --gw: 72px; }
+#app .reward--gear .gear { --gw: 56px; }
+#app .ench__slots { grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 4px; padding-top: 12px; }
+@media (min-width: 420px) { #app .eqgrid, #app .arts .ggrid { gap: 16px 8px; } }
+@media (max-height: 760px) { #app .fbtn__lv { left: -14px; top: -2px; } }
+
+/* =====================================================================================
+   UI pass 5 (2026-10-31, user: "sekarang patrol mission recuit mision semua jadi pada turun ... apa bedanya enchant dan enhance,
+   membingungkan ... referensi sudah ku suruh cari, tapi hasil ga berubah")
+   ===================================================================================== */
+/* feature icons: back to the geometric centre (every icon is painted centred on its canvas: alpha box 49–50 %); the pass-4 shift by
+   weight centre pushed Limited and Missions down. 56 % of the ring, so the picture keeps clear of the gold rim. */
+#app #patrol .fbtn__ic, #app #missions .fbtn__ic, #app #recruit .fbtn__ic, #app #limited .fbtn__ic, #app #dungeon .fbtn__ic { translate: none; }
+#app .fbtn__ic, #app .fbtn.is-soon .fbtn__ic { width: 56%; height: 56%; }
+#app .fbtn.is-locked:not(.is-soon) .fbtn__ic { width: 42%; height: 42%; }
+/* the plate covers the ring's lower diamond by 14 % of the ring again (pass 3 values) */
+#app .fbtn__plate { margin-top: -10px; }
+@media (max-height: 760px) { #app .fbtn__plate { margin-top: -7px; } }
+@media (min-width: 420px) { #app .fbtn__plate { margin-top: -11px; } }
+@media (min-width: 420px) and (max-height: 760px) { #app .fbtn__plate { margin-top: -7px; } }
+
+/* ---- Artifacts = the Dragon Fever Commander screen: framed stage (Lead + 3 slots a side), round Enchant / Collection beside Power on
+   its ribbon and Level Up All, then the bag panel (head: Bag n/30 left, Equip All + Disassemble right; wallet; 5 tiles a row).
+   One tile size for worn slots and bag: a fifth of the bag panel's inner width. ---- */
+#app .arts { container-type: inline-size; --tile: calc((100cqw - 20px - 32px) / 5); display: grid; gap: 8px; padding: 0 var(--gut) 16px; }
+#app .arts__board { justify-items: stretch; gap: 8px; padding: 12px 12px 12px; }
+#app .arts__stage { display: grid; grid-template-columns: var(--tile) minmax(0, 1fr) var(--tile); align-items: center; column-gap: 0; }
+#app .arts__col { display: grid; gap: 16px; padding-top: 8px; }
+#app .arts__col .eslot { position: relative; padding: 0; border: 0; background: none; cursor: pointer; }
+#app .arts__col .gear, #app .arts .ggrid .gear { --gw: var(--tile); }
+#app .arts__hero { position: relative; align-self: stretch; display: grid; place-items: end center; min-height: 0; }
+#app .arts__pedestal { position: absolute; left: 50%; bottom: 0; width: min(190px, 92%); height: auto; translate: -50% 0; filter: drop-shadow(0 6px 6px rgba(0, 0, 0, 0.45)); }
+#app .arts__fig { position: relative; height: calc(100% - 30px); max-height: 290px; width: auto; max-width: 100%; object-fit: contain; margin-bottom: 24px; filter: drop-shadow(0 6px 6px rgba(0, 0, 0, 0.4)); }
+#app .arts__foot { display: grid; grid-template-columns: 80px minmax(0, 1fr) 80px; align-items: center; column-gap: 8px; }
+#app .arts__foot .fbtn { width: 80px; }
+#app .arts__foot .fbtn__ring { width: 54px; height: 54px; }
+#app .arts__foot .fbtn__plate { width: 80px; height: 24px; margin-top: -8px; }
+#app .arts__mid { display: grid; justify-items: center; gap: 8px; min-width: 0; }
+#app .arts__power { position: relative; width: 100%; max-width: 200px; aspect-ratio: 1536 / 368; display: flex; align-items: center; justify-content: center; gap: 8px; padding-top: 7%; --tx-ol-color: var(--yellow-ink); }
+#app .arts__ribbon { position: absolute; inset: 0; width: 100%; height: 100%; }
+#app .arts__power > .gk-text { position: relative; }
+#app .arts__power .gk-text--tag { font-family: var(--font-display); font-weight: var(--fw-display); color: var(--white); -webkit-text-stroke: 2px var(--yellow-ink); paint-order: stroke fill; text-shadow: 0 1px 0 var(--yellow-ink); }
+#app .arts__power .gk-text--number { font-size: var(--fs-ttl); }
+#app .arts__mid > .gk-btn { min-width: 140px; }
+#app .arts__bag { display: grid; gap: 8px; padding: 12px 12px 16px; border-radius: var(--r-lg); background: var(--c-tray); box-shadow: var(--sh-inset), inset 0 -1.5px 0 var(--c-tray-rim), 0 0 0 var(--ol-thin) var(--c-outline); }
+#app .arts__bagh { display: flex; align-items: center; gap: 8px; }
+#app .arts__bagh > .gk-text--tag { color: var(--cream-100); }
+#app .arts__bagb { margin-left: auto; display: flex; gap: 8px; }
+#app .arts__bagb .gk-btn { position: relative; padding-left: 12px; padding-right: 12px; }
+#app .arts__bagb .gk-btn::after { content: ""; position: absolute; inset: -5px 0; }
+#app .arts__bar { display: flex; justify-content: center; gap: 8px; }
+#app .arts__bar .gk-res { min-width: 0; width: 84px; height: 28px; padding-left: 24px; }
+#app .arts .ggrid { grid-template-columns: repeat(5, var(--tile)); gap: 16px 8px; justify-content: center; padding: 8px 0 0; }
+
+/* ---- C27 D (2026-11-02): the party's five places on the Heroes tab (user: "maksnya bawa 5. semua muncul langsung, yang belum tetap ada
+   lingkaran kosong"): five equal columns, a 54 px circle each, the Lead chip on the first, the name under it */
+.hparty { margin: 0 12px 12px; }
+.prow { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; padding: 16px 8px 8px; }
+.prow__m { position: relative; display: grid; justify-items: center; gap: 8px; min-width: 0; padding: 0; border: 0; background: none; cursor: pointer; }
+.prow__m .pic { --_s: 54px; }
+.prow__lead { position: absolute; left: 50%; top: -10px; bottom: auto; translate: -50% 0; z-index: 1; }
+.prow__n { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* ---- C27 E: the hero page (no box, no folding sections) */
+.hp { display: grid; gap: 8px; padding: 0 12px 16px; }
+.hp__top { display: flex; align-items: center; justify-content: space-between; min-height: 32px; }
+.hp__back { display: inline-flex; align-items: center; gap: 4px; height: 32px; padding: 0 12px 0 2px; border: 0; background: none; cursor: pointer; }
+.hp__back .gk-glyph { width: 16px; height: 16px; }
+.hp__hero { position: relative; height: 196px; display: grid; place-items: end center; }
+.hp__ped { position: absolute; left: 50%; bottom: 0; width: 150px; height: auto; translate: -50% 0; }
+.hp__fig { position: relative; height: 150px; width: auto; max-width: 100%; object-fit: contain; margin-bottom: 44px; }
+.hp__id { display: grid; justify-items: center; gap: 8px; text-align: center; }
+.hp__id .hsheet__tags { justify-content: center; flex-wrap: wrap; }
+.hp__lv { display: grid; gap: 8px; padding: 12px 12px 12px; }
+.hp__lvrow { display: flex; align-items: center; gap: 8px; }
+.hp__pips { display: inline-flex; gap: 8px; }
+.hp__pips i { width: 9px; height: 9px; rotate: 45deg; }
+.hp__cards { margin-left: auto; }
+.hp__next { display: block; text-align: left; }
+.hp__act { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+.hp__act .gk-btn:not(.gk-btn--sm) { min-width: 170px; }
+.hp__sec { display: grid; gap: 8px; padding: 8px 12px 12px; }
+.hp__sec .gk-isec__head { display: flex; align-items: baseline; gap: 8px; }
+.hp__foot { display: flex; gap: 8px; justify-content: center; align-items: center; flex-wrap: wrap; padding-top: 4px; }
+.hp__leadnote { flex-basis: 100%; text-align: center; }
+.hp__sec .lvrow { grid-template-columns: 54px 1fr; }
+
+/* ---- C27 G: the Artifacts tab (worn places, chests, the ten artifacts) */
+.artp { display: grid; gap: 8px; padding: 0 12px 16px; }
+.artw { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.artw__m { display: grid; justify-items: center; align-content: start; gap: 4px; min-width: 0; min-height: 132px; padding: 8px 8px; border: 0; background: none; cursor: pointer; text-align: center; }
+.artw__pic { width: 56px; height: 56px; object-fit: contain; }
+.artw__n { max-width: 100%; }
+.artw__fx { font-size: 12px; line-height: 1.25; }
+.artc { display: flex; align-items: center; gap: 8px; }
+.artc .gk-cream { flex: 1; font-size: 13px; line-height: 1.25; }
+.artg { grid-template-columns: repeat(3, 1fr); }
+.artb__pic { width: 72px; height: 72px; object-fit: contain; }
+
+/* C27 F: Party tabs, the Lead line on the Equipment tab, stars on a tile */
+.ptabs { grid-template-columns: repeat(2, 1fr); margin: 0 12px 12px; }
+#app .arts__lead { display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; margin: 2px 0 8px; }
+#app .arts__lead .lead-tag { position: static; translate: none; }
+#app .arts__foot.arts__foot--solo { grid-template-columns: minmax(0, 1fr); justify-items: center; }
+.gear__stars { position: absolute; left: 4px; top: 4px; display: grid; gap: 2px; }
+.gear__stars i { width: 6px; height: 6px; rotate: 45deg; }
+#app .gear__stars.gear__stars--row { position: static; display: flex; gap: 8px; margin-left: auto; margin-right: 8px; }
+#app .gear__stars--row i { width: 9px; height: 9px; }
+#app .gbox__row > .gk-text--tag { white-space: nowrap; }
+
+/* Heroes: the party panel is frozen at the top of the page while the hero list scrolls (2026-11-02, user: "di heroes page, party di
+   freeze aja ya"); stuck = a backing from edge to edge with a 14 px fade at the bottom, so the cards slide under it */
+#app .hparty { position: sticky; top: 0; z-index: 20; }
+#app .hparty::before { content: ""; position: absolute; inset: 0 -12px -14px; z-index: -1; opacity: 0; transition: opacity 0.15s; pointer-events: none;
+  background: linear-gradient(180deg, rgba(20, 12, 16, 0.96) calc(100% - 14px), rgba(20, 12, 16, 0)); }
+#app .hparty.is-stuck::before { opacity: 1; }
+
+/* Heroes: Recruit and Limited float at the bottom right of the list (2026-11-02); the list leaves room under them */
+#app .hfab { position: sticky; bottom: 10px; height: 0; z-index: 15; pointer-events: none; }
+#app .hfab__in { position: absolute; right: 10px; bottom: 0; display: grid; gap: 8px; pointer-events: auto; }
+#app .lobby--heroes:not(.lobby--hero) .hgrid { padding-bottom: 24px; }
+/* the hero page: arrows beside the figure, a short slide when it swipes to the next hero (2026-11-02) */
+#app .hp__nav { position: absolute; top: 50%; z-index: 2; width: 44px; height: 44px; margin-top: -30px; display: grid; place-items: center; padding: 0; border: 0; border-radius: 50%; cursor: pointer; }
+#app .hp__nav--l { left: 0; }
+#app .hp__nav--r { right: 0; }
+#app .hp__nav--r .gk-glyph { transform: scaleX(-1); }
+#app .hp { touch-action: pan-y; }
+#app .hp--in-r { animation: hp-in-r 0.2s ease-out; }
+#app .hp--in-l { animation: hp-in-l 0.2s ease-out; }
+@keyframes hp-in-r { from { opacity: 0.3; transform: translateX(28px); } }
+@keyframes hp-in-l { from { opacity: 0.3; transform: translateX(-28px); } }
+#app .reward--arts .reward__art { width: 44px; height: 44px; object-fit: contain; }
+#app .hp__nav .gk-glyph { width: 18px; height: 18px; }
+
+/* ---- C29 D: the hero page in the structure of the user's photo 2: the hero big on its hall, a dark tray under it */
+#app .lobby--hero .hp { padding: 0 0 16px; gap: 8px; }
+#app .hp__stage { position: relative; height: min(318px, 39vh); min-height: 250px; overflow: hidden; }
+#app .hp__bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%; opacity: 0.55; }
+#app .hp__fade { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(13, 15, 18, 0.55), transparent 28%, transparent 62%, rgba(13, 15, 18, 0.96)); }
+#app .hp__stage .hp__fig { position: absolute; left: 50%; bottom: 0; height: 92%; width: auto; max-width: none; margin: 0; translate: -50% 0; object-fit: contain; }
+#app .hp__stage .hp__top { position: absolute; left: 12px; right: 12px; top: 4px; z-index: 2; }
+#app .hp__pow { display: grid; justify-items: end; line-height: 1; }
+#app .hp__stage .hp__id { position: absolute; left: 12px; right: 12px; bottom: 8px; z-index: 2; justify-items: start; text-align: left; gap: 2px; }
+#app .hp__line { font-size: 13px; }
+#app .hp__stage .hp__nav { top: 46%; }
+#app .hp__stage .hp__nav--l { left: 8px; }
+#app .hp__stage .hp__nav--r { right: 8px; }
+#app .hp__tray { position: relative; margin: -4px 0 0; padding: 12px 12px 16px; display: grid; gap: 8px; }
+#app .hp__cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+#app .hcard { display: grid; justify-items: center; align-content: start; gap: 4px; min-width: 0; padding: 8px 4px 8px; text-align: center; }
+#app .hcard .gk-cream { font-size: 12px; line-height: 1.2; }
+#app .hcard .hp__pips { justify-content: center; }
+#app .hp__tray .hp__act { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+#app .hp__tray .hp__act .gk-btn { min-width: 0; width: 100%; }
+#app .hp__tray .hp__next { text-align: center; }
+#app .hp__gearh { display: flex; align-items: center; justify-content: space-between; }
+#app .hp__bag { height: 32px; padding: 0 12px; border: 0; cursor: pointer; }
+#app .hp__gear { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; }
+#app .hp__gear .eslot { padding: 0; border: 0; background: none; cursor: pointer; min-width: 0; }
+#app .hp__gear .gear { --gw: 100%; }
+#app .lobby--hero .hp__sec, #app .lobby--hero .hp__foot { margin: 0 12px; }
+#app .hp__gear { align-items: stretch; }
+#app .hp__gear .eslot { display: grid; }
+#app .hp__gear .gear { height: 100%; }
+.gear--mythic { --_c: #d9474b; } /* C46 */
+
+/* Company splash (no. 105, js/splash.js): full screen over everything, white like the video, the video fitted whole */
+.splash { position: fixed; inset: 0; z-index: 10000; display: grid; place-items: center; background: #fff; transition: opacity 0.35s ease; }
+.splash.is-out { opacity: 0; pointer-events: none; }
+.splash__v { width: 100%; height: 100%; object-fit: contain; background: #fff; }

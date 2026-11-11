@@ -1,0 +1,40 @@
+/* Equipment & Artifacts page (items.html, user no. 93): layout only (places and gaps); every look comes from kit.css, game.css and
+   theme-2a.css (the Shop's gold-framed boxes, the Party page's .gear tiles, the Artifacts page's .coll cards, the reveal's New badge) */
+.it-sec { display: grid; gap: 16px; }
+.it-sec[hidden], .it-art[hidden] { display: none; }
+.it-tabs { margin-top: -4px; }
+.it-rar { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; }
+.it-rar--4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.it-rar__c { display: grid; justify-items: center; align-content: start; gap: 2px; text-align: center; }
+.it-rar__c .gk-cream { font-size: 12px; line-height: 1.2; }
+.it-gear.gear { width: 60px; height: 60px; }
+.it-odds { display: grid; gap: 2px; }
+.it-list { display: grid; gap: 10px; }
+.it-list--txt { gap: 6px; }
+.it-row { display: grid; grid-template-columns: 60px minmax(0, 1fr); gap: 10px; align-items: center; }
+.it-row__t { display: grid; gap: 2px; }
+.it-grid3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px 6px; }
+.it-cell { display: grid; justify-items: center; gap: 2px; text-align: center; }
+.it-fxs { display: grid; gap: 6px; }
+.it-fx { display: grid; grid-template-columns: auto auto minmax(0, 1fr); align-items: baseline; gap: 2px 6px; }
+.it-fx__v { grid-column: 1 / -1; }
+.it-leg { display: grid; grid-template-columns: 60px minmax(0, 1fr); gap: 10px; align-items: start; }
+.it-leg__t { display: grid; gap: 4px; }
+.it-leg__n { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 6px; }
+.it-leg__fx { flex-basis: 100%; }
+.it-new { flex: none; align-self: center; }
+.it-arts { display: grid; gap: 12px; }
+.it-art { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 10px; align-items: center; }
+.it-art .it-coll { width: 96px; box-sizing: border-box; cursor: default; }
+.it-art__t { display: grid; gap: 2px; }
+.it-art__h { display: flex; align-items: center; gap: 6px; }
+.it-rar__c .oddl__n { font-size: 13px; } /* five names side by side at 375 px (Legendary is the widest) */
+.it-rar .it-gear.gear { width: 100%; max-width: 60px; } /* the five tiles never touch at 375 px */
+.it-strip { grid-column: 1 / -1; display: grid; gap: 4px; }
+.it-strip__g { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 4px; }
+.it-lv { display: grid; justify-items: center; gap: 1px; padding: 4px 2px; text-align: center; }
+.it-lv .gk-cream { font-size: 13px; line-height: 1.2; }
+.it-art__note { grid-column: 1 / -1; }
+.it-rar--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px 6px; }
+.it-strip__g--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.it-lock { flex: none; align-self: center; }

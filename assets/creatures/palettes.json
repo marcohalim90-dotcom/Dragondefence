@@ -1,0 +1,177 @@
+{
+ "amethyst_dragon": {
+  "hi": "#d04bff",
+  "mid": "#9d17cb",
+  "lo": "#44025b",
+  "belly": "#f7cab0",
+  "spike": "#af5a83"
+ },
+ "ashen_dragon": {
+  "hi": "#b33f33",
+  "mid": "#7b170d",
+  "lo": "#370600",
+  "belly": "#e09e4d",
+  "spike": "#c4461f"
+ },
+ "barracks_dragon": {
+  "hi": "#ff6c64",
+  "mid": "#bb352d",
+  "lo": "#54110d",
+  "belly": "#dec7ad",
+  "spike": "#6d5b5c"
+ },
+ "blossom_dragon": {
+  "hi": "#ff7d86",
+  "mid": "#e0515c",
+  "lo": "#641e23",
+  "belly": "#fae1bf",
+  "spike": "#d57a4e"
+ },
+ "bone_dragon": {
+  "hi": "#ffe4c2",
+  "mid": "#dbbf9a",
+  "lo": "#625442",
+  "belly": "#f2e2c5",
+  "spike": "#98c4d5"
+ },
+ "bramble_dragon": {
+  "hi": "#7db041",
+  "mid": "#4c7919",
+  "lo": "#203607",
+  "belly": "#bcc552",
+  "spike": "#a25728"
+ },
+ "bridge_dragon": {
+  "hi": "#a48669",
+  "mid": "#6f553c",
+  "lo": "#312519",
+  "belly": "#d3b686",
+  "spike": "#d3b686"
+ },
+ "cathedral_dragon": {
+  "hi": "#163163",
+  "mid": "#02163b",
+  "lo": "#00091a",
+  "belly": "#a1dbe2",
+  "spike": "#4f8d98"
+ },
+ "cove_dragon": {
+  "hi": "#ff8750",
+  "mid": "#ce541e",
+  "lo": "#5c2005",
+  "belly": "#f8dbac",
+  "spike": "#2abfc6"
+ },
+ "dragon": {
+  "hi": "#d83a45",
+  "mid": "#990d16",
+  "lo": "#440004",
+  "belly": "#fbdc76",
+  "spike": "#e46239"
+ },
+ "eclipse_dragon": {
+  "hi": "#ffbd6c",
+  "mid": "#d08d3b",
+  "lo": "#5d3c13",
+  "belly": "#f4ca64",
+  "spike": "#592754"
+ },
+ "elder_dragon": {
+  "hi": "#ed8354",
+  "mid": "#aa4a20",
+  "lo": "#4c1d08",
+  "belly": "#f8cd6d",
+  "spike": "#d7712b"
+ },
+ "ember_dragon": {
+  "hi": "#ff8c47",
+  "mid": "#e46416",
+  "lo": "#662701",
+  "belly": "#fdd85a",
+  "spike": "#ed821b"
+ },
+ "frost_dragon_face": {
+  "hi": "#60beff",
+  "mid": "#3297df",
+  "lo": "#0e4164",
+  "belly": "#d5f2fb",
+  "spike": "#3298df"
+ },
+ "ghostship_dragon": {
+  "hi": "#5ac39b",
+  "mid": "#2d8865",
+  "lo": "#103d2b",
+  "belly": "#ddedc9",
+  "spike": "#b6c198"
+ },
+ "hive_dragon": {
+  "hi": "#ffa244",
+  "mid": "#dc7812",
+  "lo": "#633100",
+  "belly": "#fbe277",
+  "spike": "#f6a61f"
+ },
+ "obsidian_dragon": {
+  "hi": "#573d86",
+  "mid": "#301b57",
+  "lo": "#140927",
+  "belly": "#c48fe8",
+  "spike": "#8d3bce"
+ },
+ "rust_dragon": {
+  "hi": "#ff9055",
+  "mid": "#b9551f",
+  "lo": "#532107",
+  "belly": "#e8a557",
+  "spike": "#b9551f"
+ },
+ "sand_dragon": {
+  "hi": "#f38345",
+  "mid": "#ae4a12",
+  "lo": "#4e1c01",
+  "belly": "#fde885",
+  "spike": "#de7d24"
+ },
+ "shadow_dragon_face": {
+  "hi": "#793a91",
+  "mid": "#4c1860",
+  "lo": "#21072b",
+  "belly": "#efc2bb",
+  "spike": "#ae4c8e"
+ },
+ "springs_dragon": {
+  "hi": "#6bffff",
+  "mid": "#3ad2d2",
+  "lo": "#135e5e",
+  "belly": "#f2e6d7",
+  "spike": "#91546a"
+ },
+ "storm_dragon": {
+  "hi": "#25386c",
+  "mid": "#0b1a42",
+  "lo": "#020a1d",
+  "belly": "#d6d7db",
+  "spike": "#8db0b7"
+ },
+ "venom_dragon": {
+  "hi": "#301936",
+  "mid": "#130817",
+  "lo": "#08020a",
+  "belly": "#ebde9e",
+  "spike": "#ebde9e"
+ },
+ "warren_dragon": {
+  "hi": "#52742e",
+  "mid": "#2e4911",
+  "lo": "#132005",
+  "belly": "#efe16f",
+  "spike": "#efe16f"
+ },
+ "windmill_dragon": {
+  "hi": "#f59f55",
+  "mid": "#b06320",
+  "lo": "#4f2908",
+  "belly": "#fae4ad",
+  "spike": "#518cb0"
+ }
+}

@@ -1,0 +1,28 @@
+/* Skill Cards page (cards.html, user no. 90): layout only (places and gaps); every look comes from kit.css, game.css and
+   theme-2a.css (the Shop's gold-framed boxes, the battle's card faces as .card--mini) */
+html, body { height: 100%; margin: 0; background: #07080a; }
+.cl-page { padding: max(8px, env(safe-area-inset-top)) 12px 32px; display: grid; gap: 16px; align-content: start; }
+.cl-list { display: grid; gap: 16px; }
+.cl-hero[hidden] { display: none; }
+.cl-chips { display: flex; flex-wrap: wrap; gap: 4px; }
+.cl-count { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px; }
+.cl-count .gk-cream { margin-right: 8px; }
+.cl-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+.cl-grid > .cl-gap, .cl-grid--head > span:first-child { display: none; }
+.cl-th { display: grid; justify-items: center; }
+.cl-row { display: grid; gap: 4px; }
+.cl-rl { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 0 8px; }
+.cl-evo { display: grid; grid-template-columns: calc((100% - 18px) / 4) minmax(0, 1fr); gap: 10px; align-items: center; }
+.cl-evo__txt { display: grid; gap: 2px; }
+.cl-tiers { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 6px; }
+.cl-tier { display: grid; justify-items: center; gap: 2px; }
+.cl-sgrid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 2px 6px; align-items: center; }
+.cl-sl { grid-column: 1 / -1; display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin-top: 8px; }
+.cl-sv { display: grid; justify-items: center; }
+.cl-total { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+.cl-total > div { display: grid; justify-items: center; }
+.cl-filter { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; }
+.cl-grid--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); padding-right: calc((100% - 18px) / 4 + 6px); }
+.cl-none { aspect-ratio: 981 / 1427; }
+.cl-sgrid--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.cl-meta { font-size: 13px; line-height: 1.3; }

@@ -1,0 +1,214 @@
+/* =====================================================================================
+   GAME KIT — the V2 kit (ROLL GAME V2 src/ui/kit/kit.css) as plain CSS for Dragon Defence.
+   Same recipes and tokens (css/tokens.css, copied from V2): text = face + outline + drop, buttons = flat face + lip +
+   outline + extrusion, centre boxes = the Lair's painted frame (docs/visual/INFO_BOX_TEMPLATE.md).
+   ===================================================================================== */
+
+/* ---------------------------------------------------------------- text */
+.gk-text {
+  --_ol: var(--tx-ol-sm);
+  --_drop: var(--tx-drop-sm);
+  font-family: var(--font-display);
+  font-weight: var(--fw-display);
+  color: var(--white);
+  line-height: 1.05;
+  letter-spacing: 0.01em;
+  -webkit-text-stroke: calc(var(--_ol) * 2) var(--tx-ol-color);
+  paint-order: stroke fill;
+  text-shadow: 0 var(--_drop) 0 var(--tx-ol-color);
+}
+.gk-text--hero { font-size: var(--fs-hero); --_ol: var(--tx-ol-lg); --_drop: var(--tx-drop-lg); }
+.gk-text--cta { font-size: var(--fs-cta); --_ol: var(--tx-ol-lg); --_drop: var(--tx-drop-md); }
+.gk-text--title { font-size: var(--fs-title); --_ol: var(--tx-ol-md); --_drop: var(--tx-drop-md); }
+.gk-text--number { font-size: var(--fs-number); --_ol: var(--tx-ol-md); --_drop: var(--tx-drop-sm); font-variant-numeric: tabular-nums; }
+.gk-text--label { font-size: var(--fs-label); --_ol: var(--tx-ol-sm); --_drop: var(--tx-drop-sm); }
+.gk-text--tag { font-size: var(--fs-tag); --_ol: var(--tx-ol-xs); --_drop: var(--tx-drop-xs); }
+.gk-text--gold { color: var(--gold-400); }
+/* the hero box's sentence: UI font, 500, 13 px, cream, no outline */
+.gk-cream {
+  font-family: var(--font-ui); font-weight: 500; font-size: 13px; line-height: 1.38;
+  color: color-mix(in srgb, var(--gold-400) 62%, var(--white));
+  -webkit-text-stroke: 0; text-shadow: none;
+}
+.gk-cream b { color: var(--white); font-weight: 700; }
+.gk-cream em { font-style: normal; color: var(--gold-400); font-weight: 600; }
+
+/* ---------------------------------------------------------------- button recipe (raised) */
+.gk-btn, .gk-ibtn {
+  --_face: var(--c-neutral); --_hi: var(--c-neutral-hi); --_lip: var(--c-neutral-lip);
+  --_olw: var(--ol); --_lipw: var(--lip-md); --_ext: var(--ext-md); --_r: var(--r-md);
+  --tx-ol-color: var(--c-outline);
+  position: relative;
+  isolation: isolate;
+  display: inline-flex; align-items: center; justify-content: center;
+  margin: 0;
+  color: var(--white);
+  font: inherit;
+  border: var(--_olw) solid var(--c-outline);
+  border-radius: var(--_r);
+  background: linear-gradient(180deg, var(--_hi) 0%, var(--_face) 42%, var(--_face) 100%);
+  box-shadow: var(--hl-normal), inset 0 calc(-1 * var(--_lipw)) 0 var(--_lip), 0 var(--_ext) 0 var(--c-outline), var(--sh-ambient-md);
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform var(--t-press) ease-out, box-shadow var(--t-press) ease-out, filter var(--t-press);
+}
+.gk-btn:active:not(:disabled), .gk-ibtn:active:not(:disabled) {
+  transform: translateY(var(--_ext));
+  box-shadow: var(--hl-normal), inset 0 calc(-0.5 * var(--_lipw)) 0 var(--_lip), 0 0 0 var(--c-outline), var(--sh-ambient-sm);
+}
+.gk--primary { --_face: var(--yellow-500); --_hi: var(--yellow-400); --_lip: var(--yellow-600); --tx-ol-color: var(--yellow-ink); }
+.gk--secondary { --_face: var(--sky-500); --_hi: var(--sky-400); --_lip: var(--sky-600); }
+.gk--success { --_face: var(--green-500); --_hi: var(--green-400); --_lip: var(--green-600); --tx-ol-color: var(--green-900); }
+.gk--danger { --_face: var(--red-500); --_hi: var(--red-400); --_lip: var(--red-600); --tx-ol-color: var(--red-900); }
+.gk--special { --_face: var(--violet-500); --_hi: var(--violet-400); --_lip: var(--violet-600); --tx-ol-color: var(--purple-900); }
+.gk--locked, .gk-btn:disabled, .gk-ibtn:disabled {
+  --_face: var(--gray-500); --_hi: var(--gray-400); --_lip: var(--gray-600); --tx-ol-color: var(--gray-900);
+  cursor: not-allowed;
+}
+.gk--primary .gk-btn__label { color: var(--cream-100); }
+.gk-btn .gk-glyph, .gk-ibtn .gk-glyph { filter: drop-shadow(0 1.5px 0 var(--tx-ol-color)); }
+
+.gk-btn { flex-direction: column; gap: 1px; min-height: 48px; padding: 8px 16px calc(7px + var(--_lipw)); text-align: center; white-space: nowrap; }
+.gk-btn__row { display: inline-flex; align-items: center; gap: 8px; }
+.gk-btn__label { font-size: var(--fs-button); }
+.gk-btn--sm { min-height: 36px; padding: 4px 12px calc(4px + var(--_lipw)); --_lipw: var(--lip-sm); --_ext: var(--ext-sm); --_r: var(--r-sm); }
+.gk-btn--sm .gk-btn__label { font-size: var(--fs-button-sm); }
+.gk-btn--xl { min-height: 74px; padding: 8px 28px calc(8px + var(--_lipw)); --_lipw: var(--lip-lg); --_ext: var(--ext-lg); --_r: var(--r-lg); --_olw: var(--ol-strong); }
+.gk-btn--xl .gk-btn__label { font-size: var(--fs-cta-xl); }
+.gk-btn--pulse:not(:disabled) { animation: gk-pulse 1.6s ease-in-out infinite; }
+@keyframes gk-pulse { 0%, 100% { scale: 1; } 50% { scale: 1.04; } }
+/* can't pay: grey face, red price */
+.gk-btn--poor { --_face: var(--gray-500); --_hi: var(--gray-400); --_lip: var(--gray-600); --tx-ol-color: var(--gray-900); }
+.gk-btn--poor .gk-btn__label { color: var(--red-400); --tx-ol-color: #3a0a12; }
+
+.gk-ibtn { --_size: 52px; width: var(--_size); height: var(--_size); padding: 0 0 var(--_lipw); flex: none; }
+.gk-ibtn--sm { --_size: 40px; --_lipw: var(--lip-sm); --_ext: var(--ext-sm); --_r: var(--r-sm); }
+.gk-ibtn--sm::after { content: ""; position: absolute; inset: calc((100% - var(--hit)) / 2); }
+.gk-ibtn--round { --_r: 50%; }
+.gk-ibtn img { width: 62%; height: 62%; object-fit: contain; }
+
+/* ---------------------------------------------------------------- resource box (top bar): r-sm, icon 26, number 15 */
+.gk-res {
+  position: relative; display: flex; align-items: center; height: 32px; min-width: 88px; padding: 0 12px 0 32px;
+  border-radius: var(--r-sm); background: var(--c-tray);
+  box-shadow: var(--sh-inset), inset 0 -1.5px 0 var(--c-tray-rim), 0 0 0 var(--ol-thin) var(--c-outline);
+  --tx-ol-color: var(--c-outline);
+}
+.gk-res > img { position: absolute; left: -6px; top: 50%; translate: 0 -50%; width: 30px; height: 30px; filter: var(--sh-drop-icon); }
+.gk-res > .gk-text { margin-left: auto; font-size: var(--fs-label); }
+
+/* ---------------------------------------------------------------- centre box: the Lair's painted frame */
+.gk-scrim {
+  position: absolute; inset: 0; z-index: var(--z-modal); display: grid; place-items: center; padding: var(--sp-4);
+  background: var(--c-scrim); animation: gk-fade-in var(--t-pop) var(--ease-out);
+}
+@keyframes gk-fade-in { from { opacity: 0; } }
+.gk-modal {
+  position: relative; width: 100%; max-width: 360px; display: grid; gap: var(--sp-3); text-align: center;
+  border: 0 solid transparent;
+  border-image: url("../assets/lair/modal_frame.webp") 255 47 120 47 fill / 88px 16px 41px 16px stretch;
+  padding: 40px 24px 48px;
+  animation: gk-pop var(--t-pop) var(--ease-pop);
+}
+@keyframes gk-pop { from { scale: 0.8; opacity: 0; } to { scale: 1; opacity: 1; } }
+.gk-modal__head { position: relative; display: grid; min-height: 42px; align-content: center; margin-bottom: 8px; padding: 0 36px; }
+.gk-modal__head .gk-text--title { font-size: 20px; line-height: 30px; }
+.gk-modal__close { position: absolute; top: 50%; right: -8px; translate: 0 -50%; }
+.gk-modal__close .gk-ibtn { --_size: 30px; }
+.gk-modal__actions { display: flex; flex-wrap: wrap; gap: 12px 12px; justify-content: center; padding: 2px 8px 0; }
+.gk-modal__actions > * { flex: 0 0 auto; min-width: 124px; }
+.gk-modal__actions > :only-child { min-width: 196px; }
+
+/* ---------------------------------------------------------------- sheet from the bottom: the Lair's painted frame, open below */
+.gk-sheet-scrim { position: absolute; inset: 0; z-index: var(--z-sheet); background: var(--c-scrim); animation: gk-fade-in var(--t-pop) var(--ease-out); }
+.gk-sheet {
+  position: absolute; left: 0; right: 0; bottom: 0; z-index: var(--z-sheet); max-height: 86%;
+  display: grid; grid-template-rows: auto 1fr auto;
+  border: 0 solid transparent;
+  border-image: url("../assets/lair/sheet_frame.webp") 255 47 0 47 fill / 88px 16px 0 16px stretch;
+  filter: drop-shadow(0 -6px 18px color-mix(in srgb, black 45%, transparent));
+  padding: 44px 24px calc(var(--sp-4) + var(--lip-lg) + env(safe-area-inset-bottom));
+  animation: gk-sheet-up var(--t-sheet) var(--ease-out);
+}
+@keyframes gk-sheet-up { from { translate: 0 100%; } }
+.gk-sheet__head { position: relative; display: grid; place-items: center; height: 30px; margin-bottom: 20px; }
+.gk-sheet__head .gk-text--title { font-size: 20px; line-height: 30px; }
+.gk-sheet__head > .gk-ibtn { position: absolute; right: 0; top: 0; --_size: 30px; }
+.gk-sheet__body { overflow-y: auto; min-height: 0; scrollbar-width: none; }
+.gk-sheet__body::-webkit-scrollbar { display: none; }
+.gk-sheet__actions { display: flex; gap: 12px 12px; justify-content: center; padding-top: var(--sp-3); }
+.gk-sheet__actions > * { min-width: 124px; }
+
+/* ---------------------------------------------------------------- info section + dark row (hero box template) */
+.gk-isec {
+  display: grid; gap: var(--sp-1); padding: var(--sp-1) 8px 8px; border-radius: var(--r-lg);
+  border: 1.5px solid color-mix(in srgb, var(--violet-400) 38%, transparent);
+  background: color-mix(in srgb, var(--c-card-hi) 20%, transparent);
+}
+.gk-isec__head { display: flex; align-items: center; min-height: 24px; padding: 0 var(--sp-1); }
+.gk-row {
+  display: flex; align-items: center; gap: 8px; padding: 8px 8px 8px 8px; border-radius: var(--r-md); text-align: left;
+  background: var(--c-tray);
+  box-shadow: var(--sh-inset), inset 0 -1.5px 0 var(--c-tray-rim), 0 0 0 var(--ol-thin) color-mix(in srgb, var(--c-outline) 60%, transparent);
+}
+.gk-row > img { width: 48px; height: 48px; flex: none; object-fit: contain; }
+.gk-row__text { display: grid; gap: 2px; min-width: 0; }
+
+/* ---------------------------------------------------------------- toast and lock note */
+.gk-toast {
+  position: absolute; left: 50%; top: 22%; z-index: var(--z-toast); translate: -50% 0; padding: 12px 16px;
+  border-radius: var(--r-md); background: var(--c-tray-solid); white-space: nowrap; pointer-events: none;
+  box-shadow: inset 0 -1.5px 0 var(--c-tray-rim), 0 0 0 var(--ol-thin) var(--c-outline), var(--sh-ambient-lg);
+  animation: gk-toast 1.7s var(--ease-out) forwards;
+}
+@keyframes gk-toast { 0% { opacity: 0; translate: -50% 8px; } 9%, 80% { opacity: 1; translate: -50% 0; } 100% { opacity: 0; translate: -50% -10px; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .gk-scrim, .gk-modal, .gk-sheet, .gk-sheet-scrim, .gk-btn--pulse { animation: none; }
+}
+
+/* ---------------------------------------------------------------- bottom nav: the V2 painted medals (kit.css .gk-nav) */
+.gk-nav {
+  display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; grid-auto-rows: 100%; height: 76px; gap: 2px; padding: 4px 4px 0;
+  background: linear-gradient(180deg, var(--c-card-lip) 0%, var(--c-outline) 100%);
+  border-top: var(--ol) solid var(--c-outline);
+  box-shadow: var(--sh-nav);
+  --tx-ol-color: var(--c-outline);
+}
+.gk-nav__item {
+  position: relative; display: grid; grid-template-rows: 1fr auto; place-items: center; gap: 0; padding: 4px 0 8px; margin: 0; min-height: 0; overflow: visible;
+  border: 0; border-radius: var(--r-md) var(--r-md) 0 0; color: var(--white); font: inherit; cursor: pointer;
+  background: linear-gradient(180deg, var(--c-card) 0%, var(--c-card-lip) 100%);
+  box-shadow: var(--hl-subtle), inset 0 0 0 1px color-mix(in srgb, var(--c-outline) 60%, transparent);
+  -webkit-tap-highlight-color: transparent;
+}
+.gk-nav__item.is-active {
+  border: var(--rim-w-sm) solid transparent; border-bottom: 0;
+  background: linear-gradient(180deg, var(--c-neutral-hi) 0%, var(--c-neutral) 45%, var(--c-card) 100%) padding-box, var(--rim-gold) border-box;
+  box-shadow: var(--hl-strong), var(--rim-inner), 0 0 0 var(--ol-thin) var(--c-outline);
+  translate: 0 -4px;
+}
+.gk-nav--medals { height: 96px; }
+.gk-nav--medals .gk-nav__item { grid-template-rows: 1fr; padding: 2px 0 4px; }
+.gk-nav__artbox { position: relative; display: block; height: 80px; aspect-ratio: 254 / 300; transition: translate var(--t-pop) var(--ease-pop), scale var(--t-pop) var(--ease-pop); }
+.gk-nav__item .gk-nav__artbox .gk-nav__art { display: block; width: 100%; height: 100%; filter: var(--sh-drop-icon); }
+.gk-nav__item.is-active .gk-nav__artbox { translate: 0 -5px; scale: 1.06; }
+
+/* ---------------------------------------------------------------- calm text (2026-10-30, user: "tulisannya semua ganggu. terlalu
+   berisik" → "go"): two tiers. Small words (tag, label: chips, names, captions, values) = the UI face, no outline, no drop, a soft
+   shade for paintings. The display face with its thin outline stays for titles, numbers, button words, painted plates and bars. */
+.gk-text--tag, .gk-text--label {
+  font-family: var(--font-ui); font-weight: 700; letter-spacing: 0.005em;
+  -webkit-text-stroke: 0; text-shadow: 0 1px 2px rgba(16, 6, 28, 0.7);
+}
+.gk-btn .gk-text--tag, .gk-btn .gk-text--label,
+.gk-res .gk-text, .nav__label, .fbtn__plate .gk-text, .offer__price .gk-text,
+.hc__bar .gk-text, .bt__prog .gk-text, .coll__bar .gk-text, .tav__lvbar .gk-text, .exp__bar .gk-text, .bt__life .gk-text, .side__n .gk-text,
+.lock-note .gk-text, .gk-toast .gk-text {
+  font-family: var(--font-display); font-weight: var(--fw-display); letter-spacing: 0.01em;
+  -webkit-text-stroke: calc(var(--_ol) * 2) var(--tx-ol-color); text-shadow: 0 var(--_drop) 0 var(--tx-ol-color);
+}
+/* prices on the gold plate of a shop tile: dark ink on gold instead of white outlined text */
+.offer__price .gk-text { color: var(--yellow-ink); -webkit-text-stroke: 0; text-shadow: 0 1px 0 rgba(255, 240, 190, 0.6); }
+.gk-cream { font-weight: 600; }

@@ -1,0 +1,1418 @@
+/* =====================================================================================
+   DUNGEON DICE 2A — "Obsidian & Gold" (docs/TEMA_2A.md; 2026-10-31, user: "ganti tema aja.. buat tema serius. check chrome
+   referensi. buat di halaman home dan dungeon dulu. sisanya susul.. hero di kael dulu. yang pasti ga usah pakai aset dungeon
+   and dice. pakai gpt generate baru").
+   References (Pinterest): The Hobbit game UI (Sohyeon Park), "ЕGO / Caesar" poster, "Athena" poster, Uldor MMORPG UI.
+   = dark cinematic paintings, Roman serif capitals with wide tracking, thin gold hairlines, quiet dark panels, cold arcane blue.
+   Scope: #app.t2app (set by screens.js when DD.SKIN). Home and the battle are done; the other pages keep their old boxes until
+   they are redone, but the type, buttons, boxes, top bar and tab bar are already 2A everywhere.
+   ===================================================================================== */
+#app.t2app {
+  --o0: #07080a; --o1: #0d0f12; --o2: #15181d; --o3: #1f242b; --stone: #3a3f47; --marble: #e4ded0;
+  --g1: #8a6a32; --g2: #c9a45c; --g3: #e8d5a3; --arc: #4fb3d9; --blood: #a3262a;
+  --hair: rgba(201, 164, 92, 0.55); --hair-soft: rgba(201, 164, 92, 0.28);
+  --panel: linear-gradient(180deg, rgba(21, 24, 29, 0.9), rgba(9, 10, 13, 0.94));
+  --font-display: "Cinzel", "Crimson Pro", Georgia, serif;
+  --font-ui: "Crimson Pro", Georgia, serif;
+  --tx-ol-color: #050506;
+  background: var(--o1);
+  color: var(--marble);
+}
+/* type: no cartoon outline, a soft shadow; capitals carry the tracking */
+body #app.t2app .gk-text, body #app.t2app .gk-cream, body #app.t2app :is(.nav__label, .fbtn__plate .gk-text, .gk-btn .gk-text, .gk-res .gk-text) {
+  -webkit-text-stroke: 0; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8); letter-spacing: 0.02em;
+}
+body #app.t2app .gk-text--title, body #app.t2app .gk-text--hero, body #app.t2app .gk-btn__label { text-transform: none; letter-spacing: 0.08em; font-weight: 600; }
+body #app.t2app .gk-cream, body #app.t2app .gk-text--tag { color: color-mix(in srgb, var(--g3) 78%, white); font-weight: 500; }
+body #app.t2app .gk-text--number, body #app.t2app .gk-text--label { font-weight: 600; color: var(--marble); }
+
+/* ---------------------------------------------------------------- top bar */
+body #app.t2app .top { background: linear-gradient(180deg, rgba(7, 8, 10, 0.95), rgba(7, 8, 10, 0.55) 70%, rgba(7, 8, 10, 0)); padding: 8px 12px 12px; gap: 8px; }
+.t2lv { position: relative; flex: none; width: 40px; height: 40px; display: grid; place-items: center; border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, var(--o3), var(--o0) 75%); border: 1.5px solid var(--g2);
+  box-shadow: 0 0 0 3px rgba(7, 8, 10, 0.85), 0 0 0 4px var(--hair-soft), 0 3px 8px rgba(0, 0, 0, 0.6); }
+.t2lv span { font: 700 18px/1 var(--font-display); color: var(--g3); text-shadow: 0 1px 2px #000; }
+body #app.t2app .top .gk-res { height: 28px; border-radius: 3px; background: rgba(13, 15, 18, 0.88); border: 1px solid var(--hair); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04); padding-left: 24px; padding-right: 8px; }
+body #app.t2app .top .gk-res > img { width: 26px; height: 26px; left: -6px; filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.7)); }
+body #app.t2app .top .gk-res > .gk-text { font: 600 15px/1 var(--font-display); color: var(--marble); letter-spacing: 0.02em; }
+body #app.t2app .top__en.is-over .gk-text { color: #8fd6a0; }
+body #app.t2app #snd { --_size: 34px; border-radius: 4px; background: rgba(13, 15, 18, 0.88); border: 1px solid var(--hair); box-shadow: none; }
+body #app.t2app #snd img { width: 24px; height: 24px; object-fit: contain; }
+body #app.t2app .top__dev { left: 6px; top: 46px; height: 16px; border-radius: 2px; background: #2a1414; box-shadow: 0 0 0 1px var(--blood); }
+body #app.t2app .top__dev.is-on { background: var(--blood); }
+
+/* ---------------------------------------------------------------- tab bar */
+.t2nav { position: relative; z-index: var(--z-hud); display: grid; grid-template-columns: repeat(5, 1fr); align-items: end; height: 76px; padding: 0 4px calc(8px + env(safe-area-inset-bottom));
+  background: linear-gradient(180deg, rgba(13, 15, 18, 0.92), var(--o0)); border-top: 1px solid var(--hair); box-shadow: 0 -8px 20px rgba(0, 0, 0, 0.55); }
+.t2nav::before { content: ""; position: absolute; left: 0; right: 0; top: 3px; height: 1px; background: linear-gradient(90deg, transparent, var(--hair-soft) 20%, var(--hair-soft) 80%, transparent); }
+.t2nav__item { position: relative; display: grid; justify-items: center; gap: 2px; padding: 8px 0 0; border: 0; background: none; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.t2nav__icbox { position: relative; width: 42px; height: 42px; display: grid; place-items: center; transition: transform 160ms ease-out; }
+.t2nav__ic { width: 38px; height: 38px; object-fit: contain; filter: saturate(0.55) brightness(0.72) drop-shadow(0 2px 2px rgba(0, 0, 0, 0.7)); transition: filter 160ms; }
+.t2nav__label { font: 600 12px/1 var(--font-display); letter-spacing: 0.08em; text-transform: none; color: color-mix(in srgb, var(--g3) 55%, var(--stone)); }
+.t2nav__item.is-active .t2nav__icbox { transform: translateY(-4px) scale(1.12); }
+.t2nav__item.is-active .t2nav__ic { filter: drop-shadow(0 0 10px rgba(201, 164, 92, 0.45)) drop-shadow(0 2px 2px rgba(0, 0, 0, 0.7)); }
+.t2nav__item.is-active .t2nav__label { color: var(--g3); }
+.t2nav__item.is-active::before { content: ""; position: absolute; left: 22%; right: 22%; top: -1px; height: 2px; background: linear-gradient(90deg, transparent, var(--g2), transparent); box-shadow: 0 0 10px var(--g2); }
+.t2nav__item.is-locked .t2nav__ic { filter: grayscale(1) brightness(0.45); }
+.t2nav__lock { position: absolute; right: 0; bottom: 0; width: 18px; height: 18px; object-fit: contain; }
+.t2nav__item .dot { right: 2px; top: 0; }
+.t2nav__item .newtag { top: -6px; }
+
+/* ---------------------------------------------------------------- boxes and buttons everywhere (no painted Dungeon & Dice frames) */
+body #app.t2app .gk-scrim, body #app.t2app .gk-sheet-scrim { background: rgba(3, 4, 6, 0.72); }
+body #app.t2app .gk-modal, body #app.t2app .gk-sheet { border-image: none; border: 1px solid var(--hair); border-radius: 6px; background: var(--panel);
+  box-shadow: 0 0 0 4px rgba(7, 8, 10, 0.9), 0 0 0 5px var(--hair-soft), 0 18px 40px rgba(0, 0, 0, 0.7); }
+body #app.t2app .gk-modal { padding: 16px 16px 16px; }
+body #app.t2app .gk-sheet { border-radius: 6px 6px 0 0; padding: 16px 16px calc(16px + env(safe-area-inset-bottom)); filter: none; }
+body #app.t2app :is(.gk-modal__head, .gk-sheet__head) { min-height: 34px; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--hair-soft); }
+body #app.t2app :is(.gk-modal__head, .gk-sheet__head) .gk-text--title { font: 600 18px/30px var(--font-display); letter-spacing: 0.08em; color: var(--g3); text-transform: none; }
+body #app.t2app .gk-modal__close { right: -4px; }
+body #app.t2app :is(.gk-modal__close, .gk-sheet__head) .gk-ibtn { --_size: 28px; border-radius: 3px; background: rgba(13, 15, 18, 0.9); border: 1px solid var(--hair); box-shadow: none; }
+body #app.t2app .gk-btn { border-radius: 3px; border: 1px solid var(--hair); background: linear-gradient(180deg, #232830, #14171c); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 3px 8px rgba(0, 0, 0, 0.5); }
+body #app.t2app .gk-btn .gk-btn__label, body #app.t2app .gk-btn .gk-text { color: var(--marble); }
+body #app.t2app .gk-btn.gk--primary { border-color: var(--g2); background: linear-gradient(180deg, #4a3820, #2c2116 55%, #1d1610); box-shadow: inset 0 1px 0 rgba(255, 228, 170, 0.22), 0 0 0 1px rgba(7, 8, 10, 0.9), 0 4px 12px rgba(0, 0, 0, 0.55); }
+body #app.t2app .gk-btn.gk--primary :is(.gk-btn__label, .gk-text) { color: var(--g3); }
+body #app.t2app .gk-btn.gk--secondary { background: linear-gradient(180deg, #1d2b36, #121a21); border-color: rgba(79, 179, 217, 0.5); }
+body #app.t2app .gk-btn.gk--danger { background: linear-gradient(180deg, #3b1416, #220b0c); border-color: rgba(163, 38, 42, 0.8); }
+body #app.t2app .gk-btn.gk--success { background: linear-gradient(180deg, #1c3122, #111e15); border-color: rgba(120, 190, 130, 0.5); }
+body #app.t2app .gk-btn:active:not(:disabled) { transform: translateY(1px); }
+body #app.t2app .gk-isec, body #app.t2app .isec { background: rgba(255, 255, 255, 0.025); box-shadow: 0 0 0 1px var(--hair-soft); border-radius: 4px; }
+body #app.t2app :is(.irow, .gk-row) { background: rgba(7, 8, 10, 0.55); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04); border-radius: 3px; }
+body #app.t2app .lock-note { background: var(--panel); border: 1px solid var(--hair); }
+body #app.t2app .gk-toast { background: var(--panel); border: 1px solid var(--hair); }
+body #app.t2app .dot { background: var(--blood); box-shadow: 0 0 0 1.5px #1a0506, 0 0 8px rgba(163, 38, 42, 0.8); }
+
+/* ---------------------------------------------------------------- Home 2A */
+.lobby--t2home { background: var(--o1); }
+.lobby--t2home .page { overflow: hidden; }
+.t2home__bg { position: absolute; inset: -72px 0 0; z-index: -1; background-size: cover; background-position: center 30%; }
+.t2home__bg::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(7, 8, 10, 0.55) 0%, rgba(7, 8, 10, 0.05) 30%, rgba(7, 8, 10, 0.1) 52%, rgba(7, 8, 10, 0.88) 78%, var(--o0) 100%); }
+.t2home { position: absolute; inset: 0; display: flex; flex-direction: column; padding: 4px var(--gut, 12px) 12px; }
+.t2home__top { display: grid; grid-template-columns: 70px 1fr 70px; align-items: center; gap: 8px; }
+.t2pill { height: 26px; padding: 0 8px; border-radius: 2px; border: 1px solid var(--hair); background: rgba(7, 8, 10, 0.7); cursor: pointer;
+  font: 600 12px/1 var(--font-display); letter-spacing: 0.08em; text-transform: none; color: var(--g3); }
+.t2pill.is-on { border-color: var(--blood); color: #f2c9c9; background: rgba(60, 12, 14, 0.8); }
+.t2pill.is-locked { color: var(--stone); border-color: rgba(120, 120, 120, 0.35); }
+.t2home__stage { display: flex; justify-content: center; align-items: center; gap: 8px; }
+.t2home__no { font: 600 13px/1 var(--font-display); letter-spacing: 0.08em; text-transform: none; color: var(--g3); padding-left: 0.32em; }
+.t2arrow { position: relative; width: 30px; height: 30px; border: 0; background: none; cursor: pointer; }
+.t2arrow::before { content: ""; position: absolute; left: 12px; top: 10px; width: 9px; height: 9px; border-left: 1.5px solid var(--g2); border-bottom: 1.5px solid var(--g2); transform: rotate(45deg); }
+.t2arrow--r::before { left: 7px; transform: rotate(-135deg); }
+.t2home__title { margin-top: 8px; display: grid; justify-items: center; gap: 4px; text-align: center; }
+.t2home__world { margin: 0; font: 600 28px/1.1 var(--font-display); letter-spacing: 0.06em; color: var(--t1); text-shadow: 0 2px 10px rgba(0, 0, 0, 0.9), 0 0 24px rgba(0, 0, 0, 0.6); }
+.t2rule { position: relative; width: 180px; height: 9px; }
+.t2rule::before { content: ""; position: absolute; left: 0; right: 0; top: 4px; height: 1px; background: linear-gradient(90deg, transparent, var(--g2) 30%, var(--g2) 70%, transparent); }
+.t2rule i { position: absolute; left: 50%; top: 0; width: 8px; height: 8px; translate: -50% 0; rotate: 45deg; background: var(--o0); border: 1px solid var(--g2); }
+.t2home__sub { font: 500 15px/1.2 var(--font-ui); color: color-mix(in srgb, var(--g3) 82%, white); text-shadow: 0 1px 4px #000; }
+.t2el { font-style: normal; font-weight: 700; }
+.t2el--fire { color: #ff9a6a; } .t2el--water { color: #7fd0ff; } .t2el--electric { color: #c9a8ff; } .t2el--nature { color: #9fe08a; } .t2el--physical { color: #d6d0c4; }
+.t2el--ice { color: #bfefff; } .t2el--rock { color: #d8b27a; } .t2el--poison { color: #d79af0; } .t2el--dark { color: #a99af0; } .t2el--holy { color: #fff0b8; } .t2el--dragon { color: #ff8a8a; }
+.t2home__mid { flex: 1 1 auto; min-height: 0; display: flex; justify-content: space-between; align-items: center; padding: 8px 0; }
+.t2rail { display: grid; gap: 12px; align-content: center; }
+.t2f { position: relative; display: grid; justify-items: center; gap: 4px; width: 76px; padding: 0; border: 0; background: none; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.t2f__ring { position: relative; width: 56px; height: 56px; display: grid; place-items: center; border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, rgba(40, 46, 56, 0.95), rgba(7, 8, 10, 0.95) 72%); border: 1.5px solid var(--g2);
+  box-shadow: 0 0 0 3px rgba(7, 8, 10, 0.85), 0 0 0 4px var(--hair-soft), 0 6px 14px rgba(0, 0, 0, 0.6); transition: transform 120ms ease-out; }
+.t2f:active .t2f__ring { transform: translateY(1px) scale(0.97); }
+.t2f__ic { width: 38px; height: 38px; object-fit: contain; filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.7)); }
+.t2f__label { font: 600 12px/1 var(--font-display); letter-spacing: 0.08em; text-transform: none; color: var(--g3); text-shadow: 0 1px 3px #000, 0 0 8px #000; }
+.t2f.is-locked .t2f__ic { filter: grayscale(1) brightness(0.5); }
+.t2f.is-locked .t2f__ring { border-color: rgba(140, 140, 140, 0.5); }
+.t2f.is-locked .t2f__label { color: color-mix(in srgb, var(--g3) 45%, var(--stone)); }
+.t2f__lock { position: absolute; right: -4px; bottom: -4px; width: 22px; height: 22px; object-fit: contain; filter: drop-shadow(0 1px 2px #000); }
+.t2f__lv { position: absolute; left: -10px; top: -4px; padding: 1px 4px; border-radius: 2px; background: var(--o0); border: 1px solid var(--g2); font: 700 12px/1.3 var(--font-display); letter-spacing: 0.06em; color: var(--g3); }
+.t2f .dot { right: 10px; top: -2px; }
+.t2home__low { display: grid; gap: 8px; }
+.t2panel { position: relative; padding: 8px 16px 12px; border-radius: 4px; background: var(--panel); border: 1px solid var(--hair);
+  box-shadow: 0 0 0 3px rgba(7, 8, 10, 0.75), 0 10px 24px rgba(0, 0, 0, 0.55); }
+.t2panel::before, .t2panel::after { content: ""; position: absolute; top: -4px; width: 7px; height: 7px; rotate: 45deg; background: var(--o0); border: 1px solid var(--g2); }
+.t2panel::before { left: -4px; } .t2panel::after { right: -4px; }
+.t2cap { font: 600 12px/1 var(--font-display); letter-spacing: 0.08em; text-transform: none; color: color-mix(in srgb, var(--g3) 70%, var(--stone)); }
+.t2prog { display: grid; gap: 8px; }
+.t2prog__row { display: flex; justify-content: space-between; align-items: baseline; }
+.t2prog__pct { font: 700 15px/1 var(--font-display); color: var(--g3); }
+.t2prog__hard { display: flex; justify-content: center; align-items: center; gap: 8px; }
+.t2best.best { height: 6px; margin: 24px 12px 2px; border-radius: 0; background: rgba(0, 0, 0, 0.7); box-shadow: 0 0 0 1px var(--hair); }
+.t2best .best__fill { top: 0; bottom: 0; left: 0; border-radius: 0; background: linear-gradient(90deg, var(--g1), var(--g3)); box-shadow: 0 0 8px rgba(232, 213, 163, 0.5); }
+.t2best .best__chest { top: auto; bottom: 3px; width: 30px; height: 30px; translate: -50% 0; }
+.t2best .best__chest img { filter: grayscale(0.7) brightness(0.65) drop-shadow(0 2px 2px #000); }
+.t2best .best__chest.is-ready img, .t2best .best__chest.is-got img { filter: drop-shadow(0 0 6px rgba(232, 213, 163, 0.6)) drop-shadow(0 2px 2px #000); }
+.t2tick { position: absolute; right: -3px; bottom: 0; width: 13px; height: 13px; border-radius: 50%; background: #1f4a2a; box-shadow: 0 0 0 1px #8fd6a0; }
+.t2tick::after { content: ""; position: absolute; left: 4px; top: 2px; width: 3px; height: 6px; border-right: 1.5px solid #dff5e3; border-bottom: 1.5px solid #dff5e3; rotate: 40deg; }
+.t2prog { min-width: 0; max-width: 100%; }
+.t2prog__power { display: flex; justify-content: center; align-items: baseline; gap: 8px; min-width: 0; }
+.t2pw { display: inline-flex; align-items: baseline; gap: 8px; white-space: nowrap; }
+/* B1 (v4 numbers, 3 digits): when the two numbers do not fit side by side, Party Power and Recommended stand on two centred lines */
+.t2prog__power.is-wrap { flex-wrap: wrap; row-gap: 4px; }
+.t2prog__power.is-wrap .t2sep { display: none; }
+.t2prog__power.is-wrap .t2pw { flex: 0 0 100%; justify-content: center; }
+.t2prog__power b { font: 700 18px/1 var(--font-display); color: var(--marble); margin-right: 2px; }
+.t2prog__power b.is-low { color: #ff8a7a; }
+.t2sep { width: 1px; height: 12px; margin: 0 8px; background: var(--hair); align-self: center; }
+.t2party { display: flex; justify-content: center; gap: 12px; padding: 0; border: 0; background: none; cursor: pointer; }
+.t2party__m { display: grid; justify-items: center; gap: 4px; }
+.t2party__pic { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; border: 1.5px solid var(--g2); box-shadow: 0 0 0 3px rgba(7, 8, 10, 0.9), 0 0 0 4px var(--hair-soft), 0 4px 10px rgba(0, 0, 0, 0.6); }
+.t2party__n { font: 600 12px/1 var(--font-display); letter-spacing: 0.08em; text-transform: none; color: var(--g3); }
+.t2cta { position: relative; display: flex; justify-content: center; align-items: center; gap: 12px; height: 62px; width: 100%; border-radius: 3px; cursor: pointer;
+  border: 1px solid var(--g2); background: linear-gradient(180deg, #5a4423 0%, #3a2b18 42%, #1f1710 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 228, 170, 0.28), inset 0 -10px 18px rgba(0, 0, 0, 0.35), 0 0 0 3px rgba(7, 8, 10, 0.92), 0 0 0 4px var(--hair), 0 10px 26px rgba(0, 0, 0, 0.7);
+  transition: transform 120ms ease-out, filter 120ms; }
+.t2cta::before, .t2cta::after { content: ""; position: absolute; top: 50%; width: 9px; height: 9px; translate: 0 -50%; rotate: 45deg; background: var(--o0); border: 1px solid var(--g2); }
+.t2cta::before { left: -6px; } .t2cta::after { right: -6px; }
+.t2cta:active { transform: translateY(1px); filter: brightness(1.08); }
+.t2cta__t { font: 700 26px/1 var(--font-display); letter-spacing: 0.08em; text-transform: none; color: var(--t1); text-shadow: 0 2px 6px rgba(0, 0, 0, 0.85), 0 0 18px rgba(232, 213, 163, 0.25); padding-left: 0.16em; }
+.t2cta__cost { display: inline-flex; align-items: center; gap: 2px; padding: 4px 8px 4px 4px; border-radius: 2px; background: rgba(7, 8, 10, 0.6); border: 1px solid var(--hair-soft); font: 700 15px/1 var(--font-display); color: var(--g3); }
+.t2cta__cost img { width: 22px; height: 22px; object-fit: contain; }
+@media (max-height: 760px) {
+  .t2home__world { font-size: 24px; }
+  .t2rail { gap: 8px; }
+  .t2f__ring { width: 48px; height: 48px; }
+  .t2f__ic { width: 32px; height: 32px; }
+  .t2home__low { gap: 8px; }
+  .t2cta { height: 56px; }
+  .t2party__pic { width: 44px; height: 44px; }
+}
+@media (min-width: 420px) {
+  .t2f__ring { width: 62px; height: 62px; }
+  .t2f__ic { width: 42px; height: 42px; }
+  .t2home__world { font-size: 32px; }
+}
+
+/* ---------------------------------------------------------------- the dungeon (battle) 2A: the canvas paints the hall and its wall */
+body #app.t2app #battle .bt__bg, body #app.t2app #battle .bt__band { display: none; }
+body #app.t2app #battle { background: var(--o0); }
+body #app.t2app .bt__hud { padding: 0 8px; }
+body #app.t2app .bt__hud .gk-ibtn { --_size: 36px; border-radius: 3px; background: rgba(7, 8, 10, 0.82); border: 1px solid var(--hair); box-shadow: 0 3px 8px rgba(0, 0, 0, 0.6); }
+body #app.t2app .bt__hud .gk-ibtn .gk-text { font: 700 14px/1 var(--font-display); color: var(--g3); }
+body #app.t2app .bt__strow .gk-text--label { font: 600 13px/1 var(--font-display); letter-spacing: 0.08em; text-transform: none; color: var(--g3); }
+body #app.t2app .bt__clock { font: 500 13px/1 var(--font-ui); color: var(--marble); }
+body #app.t2app .bt__prog { height: 12px; border-radius: 0; background: rgba(0, 0, 0, 0.75); box-shadow: 0 0 0 1px var(--hair); }
+body #app.t2app .bt__prog > div { border-radius: 0; background: linear-gradient(90deg, var(--g1), var(--g3)); }
+body #app.t2app .bt__prog .gk-text { font: 600 12px/12px var(--font-display); letter-spacing: 0.08em; text-transform: none; color: var(--marble); }
+body #app.t2app .bt__hud .gk-res { height: 28px; border-radius: 3px; background: rgba(7, 8, 10, 0.82); border: 1px solid var(--hair); box-shadow: none; }
+body #app.t2app .bt__hud .gk-res .gk-text { font: 700 15px/1 var(--font-display); color: var(--g3); }
+body #app.t2app .bt__life .frame { display: none; }
+body #app.t2app .bt__life { border-radius: 0; background: rgba(0, 0, 0, 0.8); box-shadow: 0 0 0 1px var(--hair), 0 0 0 3px rgba(7, 8, 10, 0.85); }
+body #app.t2app .bt__life .fill { inset: 2px; border-radius: 0; }
+body #app.t2app .bt__life .fill > div { border-radius: 0; background: linear-gradient(90deg, #6e1418, #c2373b); }
+body #app.t2app .bt__life .gk-text { font: 700 13px/1 var(--font-display); letter-spacing: 0.08em; color: var(--marble); }
+body #app.t2app .bt__side .pic { --_s: 40px; }
+body #app.t2app .pic { border-radius: 50%; box-shadow: 0 0 0 1.5px var(--g2), 0 0 0 3px rgba(7, 8, 10, 0.85); background: var(--o2); }
+body #app.t2app .side__n { background: var(--o0); box-shadow: 0 0 0 1px var(--g2); }
+/* Victory / Defeat: the ribbon becomes engraved capitals over a gold rule */
+body #app.t2app .res__banner img { display: none; }
+body #app.t2app .res__banner .gk-text { font: 700 30px/1 var(--font-display); letter-spacing: 0.08em; color: var(--g3); text-shadow: 0 2px 10px #000, 0 0 24px rgba(232, 213, 163, 0.35); }
+body #app.t2app .res--lose .res__banner .gk-text { color: #e7a4a4; }
+body #app.t2app .rslot { border-radius: 3px; background: rgba(7, 8, 10, 0.7); box-shadow: 0 0 0 1px var(--hair-soft); }
+
+/* ---------------------------------------------------------------- dungeon choices 2A: Skill Selection / Hero Call cards without the painted
+   Dungeon & Dice frames and gems: a dark tablet, its rarity as a coloured hairline and a small diamond at the top */
+body #app.t2app .gk-modal { background: linear-gradient(180deg, rgba(21, 24, 29, 0.98), rgba(9, 10, 13, 0.99)); }
+body #app.t2app .card__frame, body #app.t2app .card__gem { display: none; }
+body #app.t2app .card { --_rc: var(--g2); }
+body #app.t2app .card:has(.card__win--rare) { --_rc: #4f8fd9; }
+body #app.t2app .card:has(.card__win--epic) { --_rc: #9c6fe0; }
+body #app.t2app .card:has(.card__win--legendary) { --_rc: #e09a3a; }
+body #app.t2app .card:has(.card__win--mythic) { --_rc: #d9474b; }
+body #app.t2app .card__win { inset: 0; border-radius: 4px; background: radial-gradient(120% 70% at 50% 30%, color-mix(in srgb, var(--_rc) 22%, var(--o2)), var(--o0) 80%);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--_rc) 70%, transparent), 0 0 0 3px rgba(7, 8, 10, 0.9), 0 0 0 4px var(--hair-soft), 0 8px 18px rgba(0, 0, 0, 0.6); }
+body #app.t2app .card::after { content: ""; position: absolute; left: 50%; top: -5px; width: 9px; height: 9px; translate: -50% 0; rotate: 45deg; background: var(--o0); border: 1px solid var(--_rc); box-shadow: 0 0 8px var(--_rc); }
+body #app.t2app .card--glow .card__win { box-shadow: inset 0 0 0 1px var(--_rc), 0 0 0 3px rgba(7, 8, 10, 0.9), 0 0 16px color-mix(in srgb, var(--_rc) 60%, transparent); }
+body #app.t2app .card__icon { object-fit: contain; filter: drop-shadow(0 0 8px rgba(79, 179, 217, 0.45)); }
+body #app.t2app .card__name { font: 600 13px/1.1 var(--font-display); letter-spacing: 0.06em; text-transform: none; color: var(--marble); }
+body #app.t2app .card__line .gk-text--number { font: 700 18px/1 var(--font-display); color: var(--g3); }
+body #app.t2app .card__who .pic { --_s: 26px; }
+body #app.t2app .card--hero .card__foot { background: linear-gradient(180deg, rgba(7, 8, 10, 0), rgba(7, 8, 10, 0.92) 40%); }
+body #app.t2app .tiers .odd, body #app.t2app .odd { border-radius: 2px; background: rgba(7, 8, 10, 0.7); box-shadow: inset 0 0 0 1px var(--_c, var(--hair)); }
+body #app.t2app .tiers .odd .gk-text, body #app.t2app .odd .gk-text { font: 600 12px/1.3 var(--font-display); letter-spacing: 0.08em; text-transform: none; color: var(--marble); }
+body #app.t2app .bt__offer { border-radius: 3px; background: linear-gradient(180deg, #2c2116, #1d1610); border: 1px solid var(--hair); box-shadow: none; }
+body #app.t2app .bt__offer .gk-text { color: var(--g3); font-family: var(--font-display); letter-spacing: 0.08em; text-transform: none; }
+body #app.t2app .tip { background: var(--panel); border: 1px solid var(--hair); }
+body #app.t2app .tip img { display: none; }
+body #app.t2app .tip .gk-text { font: 500 15px/1.2 var(--font-ui); color: var(--g3); }
+/* the right rail keeps an empty third place, so Recruit and Limited stand on the rows of Patrol and Missions */
+.t2f--ghost { visibility: hidden; pointer-events: none; height: calc(56px + 16px); }
+@media (max-height: 760px) { .t2f--ghost { height: calc(48px + 16px); } }
+@media (min-width: 420px) { .t2f--ghost { height: calc(62px + 16px); } }
+/* Victory / Defeat buttons: two words in Cinzel capitals fit the half-width buttons; the result bar is the gold line */
+body #app.t2app .res .gk-modal__actions .gk-btn__label { font-size: 15px; letter-spacing: 0.06em; white-space: normal; line-height: 1.1; }
+body #app.t2app .res .gk-modal__actions .gk-btn > .gk-text--tag { font-size: 12px; letter-spacing: 0.08em; text-transform: none; }
+body #app.t2app .res__prog .best { height: 8px; border-radius: 0; background: rgba(0, 0, 0, 0.75); box-shadow: 0 0 0 1px var(--hair); }
+body #app.t2app .res__prog .best__fill { top: 0; bottom: 0; left: 0; border-radius: 0; background: linear-gradient(90deg, var(--g1), var(--g3)); }
+body #app.t2app .res__pctn { font-family: var(--font-display); color: var(--g3); }
+/* short phones: three round features a side fit between the title and the progress panel */
+@media (max-height: 760px) {
+  .t2rail { gap: 4px; }
+  .t2f { gap: 4px; }
+  .t2f__ring { width: 44px; height: 44px; }
+  .t2f__ic { width: 30px; height: 30px; }
+  .t2f--ghost { height: calc(44px + 14px); }
+  .t2home__mid { padding: 4px 0; }
+  .t2home__title { margin-top: 2px; gap: 2px; }
+}
+/* the page around the 480 px frame: obsidian instead of the old purple */
+html body { background: #050608; }
+
+/* =====================================================================================
+   2A pages, part 2 (2026-10-31, user: "oke cocok. buatkan ke semua ... masuk ke heroes dan shop untuk assetnya"): Heroes and Shop.
+   Pictures: the 20 hero portraits (assets/2a/heroes) and the item sheet (assets/2a/it_*), the rest is CSS: dark tablets, gold
+   hairlines, rarity as a coloured line. No Dungeon & Dice tiles, banners, card backs or glyphs.
+   ===================================================================================== */
+/* ---- page heads on every page */
+body #app.t2app .phead .gk-text--title { font: 600 22px/1.1 var(--font-display); letter-spacing: 0.08em; text-transform: none; color: var(--t1); text-shadow: 0 2px 8px #000; }
+body #app.t2app .phead > .gk-text--tag { font: 500 14px/1.2 var(--font-ui); color: color-mix(in srgb, var(--g3) 80%, white); }
+body #app.t2app .phead__info { height: 26px; min-width: 0; padding: 0 8px; border-radius: 2px; border: 1px solid var(--hair); background: rgba(7, 8, 10, 0.75); box-shadow: none; }
+body #app.t2app .phead__info .gk-text { font: 600 12px/1 var(--font-display); letter-spacing: 0.08em; text-transform: none; color: var(--g3); }
+body #app.t2app .shead .gk-text--number { font: 600 15px/1 var(--font-display); letter-spacing: 0.08em; text-transform: none; }
+body #app.t2app .shead .gk-text--tag { font: 500 14px/1 var(--font-ui); }
+body #app.t2app .shead { border-bottom: 1px solid var(--hair-soft); padding-bottom: 8px; }
+body #app.t2app .exch { height: 30px; border-radius: 3px; border: 1px solid var(--hair); background: rgba(7, 8, 10, 0.8); box-shadow: none; }
+body #app.t2app .exch .gk-text { font: 600 14px/1 var(--font-display); color: var(--g3); }
+body #app.t2app .lobby--heroes, body #app.t2app .lobby--shop, body #app.t2app .lobby--kael { background: radial-gradient(120% 60% at 50% 0%, #1b1f26, var(--o1) 60%, var(--o0)); }
+
+/* ---- element chips: a dark chip with the element's colour as its line and word */
+body #app.t2app .el { --_ec: #d6d0c4; border-radius: 2px; background: rgba(7, 8, 10, 0.82); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--_ec) 70%, transparent); }
+body #app.t2app .el--fire { --_ec: #ff9a6a; } body #app.t2app .el--water { --_ec: #7fd0ff; } body #app.t2app .el--electric { --_ec: #c9a8ff; }
+body #app.t2app .el--nature { --_ec: #9fe08a; } body #app.t2app .el--physical { --_ec: #d6d0c4; }
+/* C43: the six new elements (Draft 38.1) */
+body #app.t2app .el--ice { --_ec: #bfefff; } body #app.t2app .el--rock { --_ec: #d8b27a; } body #app.t2app .el--poison { --_ec: #d79af0; }
+body #app.t2app .el--dark { --_ec: #a99af0; } body #app.t2app .el--holy { --_ec: #fff0b8; } body #app.t2app .el--dragon { --_ec: #ff8a8a; }
+body #app.t2app .el .gk-text { color: var(--_ec); font: 700 12px/1.4 var(--font-display); letter-spacing: 0.08em; text-transform: none; }
+
+/* ---- Heroes: portrait tablets, rarity as the line around them */
+body #app.t2app .hc { --_rc: var(--g2); }
+body #app.t2app .hc:has(.hc__win--rare) { --_rc: #4f8fd9; }
+body #app.t2app .hc:has(.hc__win--epic) { --_rc: #9c6fe0; }
+body #app.t2app .hc:has(.hc__win--legendary) { --_rc: #e09a3a; }
+body #app.t2app .hc:has(.hc__win--mythic) { --_rc: #d9474b; }
+body #app.t2app .hc__win { border-radius: 4px; background: var(--o2) !important; box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--_rc) 85%, transparent), 0 0 0 3px rgba(7, 8, 10, 0.9), 0 0 0 4px var(--hair-soft), 0 8px 16px rgba(0, 0, 0, 0.55); }
+body #app.t2app .hc__win img { inset: 0; object-fit: cover; object-position: 50% 18%; }
+body #app.t2app .hc__win::after { content: ""; position: absolute; inset: 0; border-radius: 4px; box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--_rc) 85%, transparent), inset 0 -40px 30px -20px rgba(7, 8, 10, 0.85); pointer-events: none; }
+body #app.t2app .hc__lv { z-index: 1; border-radius: 2px; background: rgba(7, 8, 10, 0.85); box-shadow: inset 0 0 0 1px var(--hair); font: 700 12px/18px var(--font-display); letter-spacing: 0.06em; color: var(--g3); }
+body #app.t2app .hc__el { z-index: 1; }
+body #app.t2app .hc__up { z-index: 1; border-radius: 2px; rotate: 45deg; width: 16px; height: 16px; background: var(--blood); box-shadow: 0 0 0 1px #f2c9c9, 0 0 8px rgba(163, 38, 42, 0.9); }
+body #app.t2app .hc__up .gk-glyph { display: none; }
+body #app.t2app .hc__up::after { content: "+"; position: absolute; inset: 0; display: grid; place-items: center; rotate: -45deg; font: 700 14px/1 var(--font-display); color: #fff; }
+body #app.t2app .hc__in { background: var(--o0); box-shadow: 0 0 0 1px var(--g2); }
+body #app.t2app .hc__in .gk-glyph { display: none; }
+body #app.t2app .hc__in::after { content: ""; width: 3px; height: 6px; margin-top: -2px; border-right: 1.5px solid var(--g3); border-bottom: 1.5px solid var(--g3); rotate: 40deg; }
+body #app.t2app .hc__name { font: 600 12px/1.2 var(--font-display); letter-spacing: 0.08em; text-transform: none; color: var(--g3); }
+body #app.t2app .hc.is-off .hc__name { color: color-mix(in srgb, var(--g3) 45%, var(--stone)); }
+body #app.t2app .hc__bar { height: 12px; border-radius: 0; background: rgba(0, 0, 0, 0.75); box-shadow: 0 0 0 1px var(--hair-soft); }
+body #app.t2app .hc__bar > span:first-child { background: linear-gradient(90deg, var(--g1), var(--g3)); }
+body #app.t2app .hc__bar .gk-text { font: 600 12px/12px var(--font-display); letter-spacing: 0.06em; color: var(--marble); }
+body #app.t2app .hc__trial { border-radius: 2px; background: rgba(60, 12, 14, 0.9); box-shadow: inset 0 0 0 1px var(--blood); }
+/* hero sheet: the portrait as a framed tablet */
+body #app.t2app .hsheet__pic--2a { width: 112px; height: 136px; object-fit: cover; object-position: 50% 18%; border-radius: 4px; box-shadow: 0 0 0 1px var(--g2), 0 0 0 4px rgba(7, 8, 10, 0.9), 0 0 0 5px var(--hair-soft); }
+body #app.t2app .hsheet__role { font: 600 15px/1.1 var(--font-display); letter-spacing: 0.08em; text-transform: none; color: var(--g3); }
+body #app.t2app .hchip { border-radius: 2px; background: rgba(7, 8, 10, 0.8); box-shadow: inset 0 0 0 1px var(--hair-soft); }
+
+/* ---- Shop: section titles between gold rules, item tablets, the chest, the pass, the packs */
+body #app.t2app .shop__banner { display: none; }
+body #app.t2app .shop__sec { height: 34px; margin: 16px 12px 8px; display: flex; align-items: center; gap: 12px; }
+body #app.t2app .shop__sec::before, body #app.t2app .shop__sec::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, transparent, var(--g2)); }
+body #app.t2app .shop__sec::after { background: linear-gradient(90deg, var(--g2), transparent); }
+body #app.t2app .shop__sect { font: 600 15px/1 var(--font-display); letter-spacing: 0.08em; text-transform: none; color: var(--g3); white-space: nowrap; }
+body #app.t2app .shop__bar .gk-cream { font: 500 14px/1.2 var(--font-ui); }
+body #app.t2app .offer:not(.offer--pack), body #app.t2app .offer--pack { border-image: none; border: 0; border-radius: 4px; background: radial-gradient(110% 70% at 50% 25%, #1f242b, var(--o0) 85%);
+  box-shadow: inset 0 0 0 1px var(--hair), 0 0 0 3px rgba(7, 8, 10, 0.9), 0 0 0 4px var(--hair-soft), 0 8px 16px rgba(0, 0, 0, 0.5); }
+body #app.t2app .offer--pack { background: radial-gradient(110% 70% at 50% 25%, #3a1418, #120708 85%); box-shadow: inset 0 0 0 1px rgba(201, 164, 92, 0.75), 0 0 0 3px rgba(7, 8, 10, 0.9), 0 0 0 4px var(--hair-soft), 0 8px 16px rgba(0, 0, 0, 0.5); }
+body #app.t2app .offer__art img { filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.7)); }
+body #app.t2app .offer__name { font: 600 13px/1.1 var(--font-display); letter-spacing: 0.06em; text-transform: none; color: var(--marble); }
+body #app.t2app .offer__price { left: 1px; right: 1px; bottom: 1px; height: 28px; border-radius: 0 0 3px 3px; background: linear-gradient(180deg, #2c2116, #17110c); border-top: 1px solid var(--hair); }
+body #app.t2app .offer__price .gk-text { color: var(--g3); font: 700 14px/1 var(--font-display); letter-spacing: 0.06em; -webkit-text-stroke: 0; text-shadow: 0 1px 2px #000; }
+body #app.t2app .offer__amt { border-radius: 2px; background: rgba(7, 8, 10, 0.9); box-shadow: inset 0 0 0 1px var(--hair); }
+body #app.t2app .offer__amt .gk-text { color: var(--g3); font-family: var(--font-display); }
+body #app.t2app .offer.is-sold { filter: grayscale(1) brightness(0.55); }
+body #app.t2app .chestbox__art { filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.7)); }
+body #app.t2app .chestbox .gk-text--label { font: 600 15px/1.1 var(--font-display); letter-spacing: 0.08em; text-transform: none; color: var(--g3); }
+body #app.t2app .chestbox .gk-cream { font: 500 14px/1.25 var(--font-ui); }
+body #app.t2app .odd--g-normal { --_c: #8c94a3; } body #app.t2app .odd--g-superior { --_c: #6fbf7a; } body #app.t2app .odd--g-rare { --_c: #4f8fd9; }
+body #app.t2app .odd--g-epic { --_c: #9c6fe0; } body #app.t2app .odd--g-legendary { --_c: #e09a3a; } body #app.t2app .odd--mythic { --_c: #d9474b; }
+body #app.t2app .odd--rare { --_c: #4f8fd9; } body #app.t2app .odd--epic { --_c: #9c6fe0; } body #app.t2app .odd--legendary { --_c: #e09a3a; }
+body #app.t2app .odd .gk-text { color: var(--_c, var(--marble)); }
+body #app.t2app .pass__head .gk-text--label { font: 600 15px/1 var(--font-display); letter-spacing: 0.08em; text-transform: none; color: var(--g3); }
+body #app.t2app .pass__tier .gk-text--tag { font: 600 12px/1 var(--font-display); letter-spacing: 0.08em; text-transform: none; }
+body #app.t2app .pass__cell { border-radius: 3px; background: rgba(7, 8, 10, 0.75); box-shadow: inset 0 0 0 1px var(--hair-soft); }
+body #app.t2app .pass__cell--prem { background: linear-gradient(180deg, rgba(58, 20, 24, 0.85), rgba(18, 7, 8, 0.9)); box-shadow: inset 0 0 0 1px rgba(201, 164, 92, 0.6); }
+body #app.t2app .pass__tier.is-ready .pass__cell--free { box-shadow: inset 0 0 0 1px var(--g3), 0 0 10px rgba(232, 213, 163, 0.5); }
+body #app.t2app .pass__lock { filter: grayscale(0.2); }
+body #app.t2app .gift .gk-text { color: var(--marble); font-family: var(--font-display); -webkit-text-stroke: 0; }
+body #app.t2app .best__tick { background: #1f4a2a; box-shadow: 0 0 0 1px #8fd6a0; }
+body #app.t2app .best__tick .gk-glyph { display: none; }
+body #app.t2app .best__tick::after { content: ""; position: absolute; left: 50%; top: 45%; width: 3px; height: 7px; translate: -50% -50%; rotate: 40deg; border-right: 1.5px solid #dff5e3; border-bottom: 1.5px solid #dff5e3; }
+/* hero names under the tablets: the sentence face (Crimson 13) so long names fit a 375 px column */
+body #app.t2app .hc__name { font: 600 13px/1.2 var(--font-ui); letter-spacing: 0.02em; text-transform: none; }
+body #app.t2app .pass__head .gk-text--label { white-space: nowrap; font-size: 14px; }
+
+/* =====================================================================================
+   2A pages, part 3 (2026-11-01, user: "lanjut party dan artfacts"): Party, Artifacts and their boxes (slot, artifact, Training,
+   Enchant, Collection). Pictures: the Lead standing and facing us on the obsidian dais (assets/2a/heroes/fig_*), the six slots
+   (art_*), the status icons (st_*), the relics (rel_*); the rest is CSS. The old trays were purple through the --c-tray tokens:
+   in 2A they are obsidian with a gold hairline, so every tray of these pages and boxes turns at once.
+   ===================================================================================== */
+#app.t2app, #app.t2app .theme-dungeon, #app.t2app .theme-purple {
+  --c-tray: rgba(7, 8, 10, 0.62); --c-tray-solid: #111418; --c-tray-rim: rgba(201, 164, 92, 0.3); --c-outline: #050506;
+}
+/* ---- the board (Party and Artifacts): an obsidian panel, gold hairline, a faint arcane glow behind the Lead */
+body #app.t2app .cmd3__board { border-radius: 4px; border: 1px solid var(--hair);
+  background: radial-gradient(60% 42% at 50% 52%, rgba(79, 179, 217, 0.12), transparent 72%), var(--panel);
+  box-shadow: 0 0 0 4px rgba(7, 8, 10, 0.9), 0 0 0 5px var(--hair-soft), 0 12px 28px rgba(0, 0, 0, 0.6); }
+body #app.t2app .cmd3__pedestal, body #app.t2app .arts__pedestal { filter: drop-shadow(0 8px 10px rgba(0, 0, 0, 0.7)); }
+body #app.t2app .cmd3__fig, body #app.t2app .arts__fig { filter: drop-shadow(0 6px 8px rgba(0, 0, 0, 0.65)); }
+/* Party Level: a dark chip and a gold bar under the title */
+body #app.t2app .cmd3__lvn { border-radius: 2px; background: var(--o0); box-shadow: inset 0 0 0 1px var(--g2); font: 700 13px/20px var(--font-display); letter-spacing: 0.06em; color: var(--g3); padding: 0 8px; }
+body #app.t2app .cmd3__lvbar { height: 16px; border-radius: 2px; background: rgba(0, 0, 0, 0.7); box-shadow: inset 0 0 0 1px var(--hair-soft); }
+body #app.t2app .cmd3__lvbar > span:first-child { background: linear-gradient(90deg, var(--g1), var(--g2)); }
+body #app.t2app .cmd3__lvbar .gk-text { font: 600 12px/16px var(--font-display); letter-spacing: 0.06em; color: var(--marble); }
+/* the Lead's name and chip, Party Power */
+body #app.t2app .party__lead .gk-text--label { font: 600 15px/1 var(--font-display); letter-spacing: 0.08em; text-transform: none; color: var(--marble); text-shadow: 0 1px 3px #000, 0 0 8px #000; }
+body #app.t2app .lead-tag { border-radius: 2px; background: var(--o0); box-shadow: inset 0 0 0 1px var(--g2); padding: 0 8px; }
+body #app.t2app .lead-tag .gk-text { font: 700 12px/16px var(--font-display); letter-spacing: 0.08em; text-transform: none; color: var(--g3); }
+body #app.t2app .cmd3__power .gk-text--tag { font: 600 12px/1 var(--font-display); letter-spacing: 0.08em; text-transform: none; color: var(--g3); }
+body #app.t2app .cmd3__power .gk-text--number { font: 600 24px/1 var(--font-display); color: var(--g3); }
+/* status cells: icon, the value big and white, the name small and cream */
+body #app.t2app .attr { border-radius: 3px; background: rgba(7, 8, 10, 0.62); box-shadow: inset 0 0 0 1px var(--hair-soft); }
+body #app.t2app .attr img { filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.7)); }
+body #app.t2app .attr .attr__v { font: 600 18px/1.1 var(--font-display); color: var(--marble); }
+body #app.t2app .attr .attr__n { font: 500 13px/1.15 var(--font-ui); color: color-mix(in srgb, var(--g3) 78%, white); }
+body #app.t2app .attr.is-zero { opacity: 0.55; }
+
+/* ---- artifact tiles: a dark tablet, the rarity as its line (the same colours as the Shop odds) */
+body #app.t2app .gear { --_c: #8c94a3; border-radius: 4px; background: linear-gradient(180deg, color-mix(in srgb, var(--_c) 24%, var(--o3)) 0%, var(--o1) 58%, var(--o0) 100%);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--_c) 80%, transparent), 0 0 0 2px rgba(7, 8, 10, 0.9), 0 0 0 3px var(--hair-soft), 0 6px 12px rgba(0, 0, 0, 0.5); }
+body #app.t2app .gear--normal { --_c: #8c94a3; } body #app.t2app .gear--superior { --_c: #6fbf7a; } body #app.t2app .gear--rare { --_c: #4f8fd9; }
+body #app.t2app .gear--epic { --_c: #9c6fe0; } body #app.t2app .gear--legendary { --_c: #e09a3a; }
+body #app.t2app .gear--empty { background: rgba(7, 8, 10, 0.55); box-shadow: inset 0 0 0 1px var(--hair-soft), 0 0 0 2px rgba(7, 8, 10, 0.9); }
+body #app.t2app .gear__ic { filter: drop-shadow(0 3px 3px rgba(0, 0, 0, 0.75)); }
+body #app.t2app .gear--empty .gear__ic { filter: grayscale(1) brightness(0.5); opacity: 0.7; }
+body #app.t2app .gear__val { font: 600 18px/1 var(--font-display); color: var(--marble); }
+body #app.t2app .gear__lab { font: 500 13px/1.15 var(--font-ui); color: color-mix(in srgb, var(--g3) 78%, white); }
+body #app.t2app .gear__aff i { background: rgba(228, 222, 208, 0.35); box-shadow: 0 0 0 1px #000; }
+body #app.t2app .gear__aff i.is-on { background: var(--g3); box-shadow: 0 0 0 1px #000, 0 0 4px rgba(232, 213, 163, 0.8); }
+body #app.t2app .gear__tiers i { box-shadow: 0 0 0 1px #000; }
+body #app.t2app .gear__tiers--silver { --_tc: #c9ced6; } body #app.t2app .gear__tiers--gold { --_tc: var(--g2); }
+body #app.t2app .gear__tiers--ruby { --_tc: #d9474b; } body #app.t2app .gear__tiers--violet { --_tc: #9c6fe0; }
+body #app.t2app .gear__lv { border-radius: 2px; background: var(--o0); box-shadow: inset 0 0 0 1px var(--g2); }
+body #app.t2app .gear__lv .gk-text { font: 700 12px/16px var(--font-display); letter-spacing: 0.06em; color: var(--g3); }
+/* better than worn: a dark diamond with a green line and a green chevron */
+body #app.t2app .gear__up { width: 16px; height: 16px; border-radius: 2px; rotate: 45deg; background: #10261a; box-shadow: 0 0 0 1px #8fd6a0, 0 0 8px rgba(111, 191, 122, 0.7); }
+body #app.t2app .gear__up::after { rotate: -45deg; border-width: 0 4px 6px; border-bottom-color: #dff5e3; }
+
+/* ---- Artifacts: Power between two gold rules (no painted ribbon), round buttons, the bag panel */
+body #app.t2app .arts__ribbon { display: none; }
+body #app.t2app .arts__power { aspect-ratio: auto; height: 34px; padding: 0 12px; border-top: 1px solid var(--hair-soft); border-bottom: 1px solid var(--hair-soft);
+  background: linear-gradient(90deg, transparent, rgba(201, 164, 92, 0.16) 30%, rgba(201, 164, 92, 0.16) 70%, transparent); }
+body #app.t2app .arts__power .gk-text--tag { font: 600 12px/1 var(--font-display); letter-spacing: 0.08em; text-transform: none; color: var(--g3); -webkit-text-stroke: 0; paint-order: normal; text-shadow: 0 1px 2px #000; }
+body #app.t2app .arts__power .gk-text--number { font: 600 22px/1 var(--font-display); color: var(--g3); }
+body #app.t2app .arts__foot { grid-template-columns: 86px minmax(0, 1fr) 86px; column-gap: 4px; }
+body #app.t2app .arts__foot .t2f { width: 86px; }
+body #app.t2app .arts__foot .t2f__label { letter-spacing: 0.06em; }
+body #app.t2app .arts__foot .t2f .dot { right: 8px; }
+body #app.t2app .arts__bag { border-radius: 4px; border: 1px solid var(--hair); background: var(--panel); box-shadow: 0 0 0 4px rgba(7, 8, 10, 0.9), 0 0 0 5px var(--hair-soft), 0 12px 28px rgba(0, 0, 0, 0.6); }
+body #app.t2app .arts__bagh > .gk-text--number { font: 600 15px/1 var(--font-display); letter-spacing: 0.08em; text-transform: none; color: var(--g3); }
+body #app.t2app .arts__bagh > .gk-text--tag { font: 500 14px/1 var(--font-ui); }
+body #app.t2app .arts__bar .gk-res { border-radius: 3px; background: rgba(13, 15, 18, 0.88); border: 1px solid var(--hair); box-shadow: none; }
+body #app.t2app .arts__bar .gk-res > .gk-text { font: 600 15px/1 var(--font-display); color: var(--marble); }
+body #app.t2app .cmd__none .gk-cream { font: 500 14px/1.3 var(--font-ui); }
+
+/* ---- the boxes: slot, artifact, Training, Enchant, Collection */
+body #app.t2app :is(.gbox__row, .trn__row, .trn__perk, .trn__got, .aff__row, .gbox__delta) { border-radius: 3px; background: rgba(7, 8, 10, 0.55); box-shadow: inset 0 0 0 1px var(--hair-soft); }
+body #app.t2app .trn__perk.is-ready { box-shadow: inset 0 0 0 1px var(--g2), 0 0 10px rgba(232, 213, 163, 0.35); }
+body #app.t2app .trn__perk .gk-text--label, body #app.t2app .coll__stat { color: var(--g3); }
+body #app.t2app .trn__rank .gk-text--label { font: 600 15px/1 var(--font-display); letter-spacing: 0.08em; text-transform: none; color: var(--g3); }
+body #app.t2app .trn__bar { height: 8px; border-radius: 0; background: rgba(0, 0, 0, 0.75); box-shadow: 0 0 0 1px var(--hair-soft); }
+body #app.t2app .trn__bar > span { background: linear-gradient(90deg, var(--g1), var(--g3)); }
+body #app.t2app .trn__ic { filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.7)); }
+body #app.t2app .pips i { background: rgba(228, 222, 208, 0.18); box-shadow: 0 0 0 1px #000; }
+body #app.t2app .pips i.is-on { background: var(--g3); box-shadow: 0 0 0 1px #000, 0 0 4px rgba(232, 213, 163, 0.7); }
+body #app.t2app .ench__slot.is-on .gear { box-shadow: inset 0 0 0 1px var(--g3), 0 0 0 2px rgba(7, 8, 10, 0.9), 0 0 0 3px var(--g2), 0 0 12px rgba(232, 213, 163, 0.5); }
+body #app.t2app .coll { border-radius: 4px; background: linear-gradient(180deg, color-mix(in srgb, var(--_c) 22%, var(--o3)) 0%, var(--o0) 100%);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--_c) 75%, transparent), 0 0 0 2px rgba(7, 8, 10, 0.9), 0 0 0 3px var(--hair-soft); }
+body #app.t2app .coll--fine { --_c: #8c94a3; } body #app.t2app .coll--superior { --_c: #6fbf7a; }
+body #app.t2app .coll--rare { --_c: #4f8fd9; } body #app.t2app .coll--epic { --_c: #9c6fe0; }
+body #app.t2app .coll__art { filter: drop-shadow(0 3px 3px rgba(0, 0, 0, 0.75)); }
+body #app.t2app .coll__name { font: 600 13px/1.1 var(--font-ui); color: var(--marble); }
+body #app.t2app .coll__bar { height: 14px; border-radius: 0; background: rgba(0, 0, 0, 0.75); box-shadow: 0 0 0 1px var(--hair-soft); }
+body #app.t2app .coll__bar > span:first-child { background: linear-gradient(90deg, var(--g1), var(--g2)); }
+body #app.t2app .coll__bar .gk-text { font: 600 12px/14px var(--font-display); color: var(--marble); }
+body #app.t2app .coll__lv { border-radius: 2px; background: var(--o0); box-shadow: inset 0 0 0 1px var(--g2); padding: 0 4px; }
+body #app.t2app .coll__lv .gk-text { font: 700 12px/14px var(--font-display); color: var(--g3); }
+/* the Lead stands ON the dais: feet on its blue top face, about 30 % of the dais width above its foot (the 2A dais is taller than
+   the old one); Party gets 40 px more height for it (812: Training still ends 68 px above the tab bar) */
+body #app.t2app .party .cmd3__hero { height: 272px; }
+body #app.t2app .party .cmd3__fig { height: 212px; margin-bottom: 56px; }
+body #app.t2app .arts__fig { height: calc(100% - 62px); max-height: 270px; margin-bottom: min(57px, 27.6%); }
+@media (max-height: 760px) {
+  body #app.t2app .party .cmd3__hero { height: 206px; }
+  body #app.t2app .party .cmd3__fig { height: 164px; margin-bottom: 40px; }
+}
+/* not owned / zero stay grey under the 2A shadow */
+body #app.t2app .coll.is-off .coll__art { filter: grayscale(1) brightness(0.6) drop-shadow(0 3px 3px rgba(0, 0, 0, 0.75)); }
+body #app.t2app .attr.is-zero img { filter: grayscale(0.8) drop-shadow(0 2px 2px rgba(0, 0, 0, 0.7)); }
+/* the 480 px frame on a tall screen has room: a larger dais and Lead */
+@media (min-width: 420px) and (min-height: 861px) {
+  body #app.t2app .party .cmd3__hero { height: 330px; }
+  body #app.t2app .party .cmd3__fig { height: 256px; margin-bottom: 64px; }
+  body #app.t2app .party .cmd3__pedestal { width: 220px; }
+}
+
+/* a won artifact that a full bag broke into Forge Ore (bug list C3): grey, under the line that says so */
+body #app.t2app .gear--broken { opacity: 0.45; filter: grayscale(1); }
+
+/* =====================================================================================
+   2A small signs (2026-11-01, user: "go" after bug group 4): the last Dungeon & Dice pictures go.
+   - The glyphs on buttons and rows (close, arrows, refresh, menu, tick, plus) are thin pale-gold lines drawn here, like the tick and
+     the "+" of the hero tablets above (TEMA_2A A6: the kit needs no pictures). js/screens.js glyph() gives 2A a span.g2 in place of
+     the old white picture; the sizes stay those of .gk-glyph in each place.
+   - The energy bolt is the 2A energy icon (js/skin-2a.js) without the old yellow coin behind it.
+   - Recruit and Limited stand their card on a dark red tablet with a gold hairline, like the packs in the Shop, in place of the old
+     red-gold tile; the card fits inside the tablet.
+   ===================================================================================== */
+body #app.t2app .g2 { --_lw: 2px; position: relative; display: inline-block; flex: none; color: var(--g3); filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.8)); }
+body #app.t2app .g2::before, body #app.t2app .g2::after { content: ""; position: absolute; box-sizing: border-box; }
+/* close: two crossed bars */
+body #app.t2app .g2--close::before, body #app.t2app .g2--close::after { left: 50%; top: 50%; width: 100%; height: var(--_lw); border-radius: 1px; background: currentColor; translate: -50% -50%; rotate: 45deg; }
+body #app.t2app .g2--close::after { rotate: -45deg; }
+/* next and prev: a chevron, centred by its own width */
+body #app.t2app :is(.g2--next, .g2--prev)::before { top: 50%; width: 46%; height: 46%; translate: 0 -50%; rotate: 45deg; }
+body #app.t2app .g2--next::before { left: 12%; border-top: var(--_lw) solid currentColor; border-right: var(--_lw) solid currentColor; }
+body #app.t2app .g2--prev::before { right: 12%; border-bottom: var(--_lw) solid currentColor; border-left: var(--_lw) solid currentColor; }
+/* tick and plus */
+body #app.t2app .g2--check::before { left: 50%; top: 44%; width: 30%; height: 58%; translate: -50% -50%; rotate: 40deg; border-right: var(--_lw) solid currentColor; border-bottom: var(--_lw) solid currentColor; }
+body #app.t2app .g2--plus::before { left: 10%; right: 10%; top: 50%; height: var(--_lw); translate: 0 -50%; background: currentColor; }
+body #app.t2app .g2--plus::after { top: 10%; bottom: 10%; left: 50%; width: var(--_lw); translate: -50% 0; background: currentColor; }
+/* menu: three bars */
+body #app.t2app .g2--menu { background: linear-gradient(currentColor 0 0) 50% 18% / 80% var(--_lw) no-repeat, linear-gradient(currentColor 0 0) 50% 50% / 80% var(--_lw) no-repeat, linear-gradient(currentColor 0 0) 50% 82% / 80% var(--_lw) no-repeat; }
+/* refresh: a ring open at the top right, its arrowhead at the top pointing round */
+body #app.t2app .g2--reroll::before { inset: 12%; border: var(--_lw) solid currentColor; border-top-color: transparent; border-radius: 50%; rotate: 45deg; }
+body #app.t2app .g2--reroll::after { left: 50%; top: 12%; width: 32%; height: 36%; translate: -30% calc(-50% + var(--_lw) / 2); background: currentColor; clip-path: polygon(0 0, 100% 50%, 0 100%); }
+/* the tick of a finished mission: the dark green seal of the chest ticks */
+body #app.t2app .qrow__ok { background: #1f4a2a; box-shadow: 0 0 0 1px #8fd6a0; }
+body #app.t2app .qrow__ok .g2 { --_lw: 1.5px; color: #dff5e3; }
+/* an empty hero circle (Desired Hero): a thin plus */
+body #app.t2app .pic--empty::after { inset: 34%; background: linear-gradient(var(--g3) 0 0) 50% 50% / 100% 2px no-repeat, linear-gradient(var(--g3) 0 0) 50% 50% / 2px 100% no-repeat; opacity: 0.7; }
+/* energy: the 2A icon alone */
+body #app.t2app .bolt { border-radius: 0; background: none; box-shadow: none; }
+body #app.t2app .bolt .gk-glyph { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.7)); }
+/* Recruit and Limited: the card on a dark red tablet */
+body #app.t2app .tav__tile { display: none; }
+body #app.t2app .tav__pack { border-radius: 4px; background: radial-gradient(60% 55% at 50% 50%, rgba(79, 179, 217, 0.16), transparent 70%), radial-gradient(110% 70% at 50% 25%, #3a1418, #120708 85%);
+  box-shadow: inset 0 0 0 1px rgba(201, 164, 92, 0.75), 0 0 0 3px rgba(7, 8, 10, 0.9), 0 0 0 4px var(--hair-soft), 0 8px 16px rgba(0, 0, 0, 0.5); }
+body #app.t2app .tav__pack:not(.tav__pack--sm) .tav__art { width: auto; height: 172px; }
+@media (max-height: 760px) {
+  body #app.t2app .tav__pack:not(.tav__pack--sm) .tav__art { height: 124px; }
+}
+/* the last purple of the old theme (epic stays purple: it is the rarity colour): the Recruit level bar = gold bar like Collection,
+   the mission points = a dark chip with a gold hairline like the amounts in the Shop, the lock note loses its purple lip */
+body #app.t2app .tav__lvbar { border-radius: 0; background: rgba(0, 0, 0, 0.75); box-shadow: 0 0 0 1px var(--hair-soft); }
+body #app.t2app .tav__lvbar > div { background: linear-gradient(90deg, var(--g1), var(--g2)); }
+body #app.t2app .tav__lvbar .gk-text { font: 600 12px/16px var(--font-display); color: var(--marble); }
+body #app.t2app .qrow__pts { border-radius: 2px; background: rgba(7, 8, 10, 0.85); box-shadow: inset 0 0 0 1px var(--hair); }
+body #app.t2app .qrow__pts .gk-text { color: var(--g3); font-family: var(--font-display); }
+body #app.t2app .lock-note { box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6); }
+
+/* =====================================================================================
+   Training on the Party page (2026-11-02, user: "pada training. tombolnya seharusnya langsung di page. jadi tidak perlu buka box
+   baru"): the panel replaces the Training button and its box. Dark rows with a gold hairline like the status cells; "TRAINING"
+   Cinzel 15 caps gold + "Rank r/10" cream 13; cells: icon 22, name 13 cream, value 15 white, gold bar 6, "Lv a/c" 12 cream, cost gold
+   13 with a coin 16; a line at its cap greys, a cell the coins cannot pay dims. The Lead stands smaller so the panel fits without
+   scrolling (feet still 30 % of the dais width above its foot).
+   ===================================================================================== */
+body #app.t2app .trn3 { border-radius: 4px; background: var(--panel); border: 1px solid var(--hair); box-shadow: 0 0 0 3px rgba(7, 8, 10, 0.9), 0 0 0 4px var(--hair-soft); }
+body #app.t2app .trn3__rank .gk-text--label { font: 600 15px/1 var(--font-display); letter-spacing: 0.08em; text-transform: none; color: var(--g3); }
+body #app.t2app .trn3__rank .gk-text--tag { font: 500 13px/1 var(--font-ui); color: color-mix(in srgb, var(--g3) 78%, white); }
+body #app.t2app .trn3__c { border-radius: 3px; background: rgba(7, 8, 10, 0.62); box-shadow: inset 0 0 0 1px var(--hair-soft); }
+body #app.t2app .trn3__c:active { translate: 0 1px; box-shadow: inset 0 0 0 1px var(--g2); }
+body #app.t2app .trn3__ic { filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.7)); }
+body #app.t2app .trn3__n { font: 500 13px/1 var(--font-ui); color: color-mix(in srgb, var(--g3) 78%, white); }
+body #app.t2app .trn3__v { font: 600 15px/1 var(--font-display); color: var(--marble); }
+body #app.t2app .trn3__foot .gk-text--tag { font: 500 12px/1 var(--font-ui); color: color-mix(in srgb, var(--g3) 78%, white); }
+body #app.t2app .trn3__cost .gk-text--label { font: 600 13px/1 var(--font-display); letter-spacing: 0.02em; color: var(--g3); }
+body #app.t2app .trn3__c.is-poor .trn3__cost { opacity: 0.5; }
+body #app.t2app .trn3__c.is-max { box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06); }
+body #app.t2app .trn3__c.is-max .trn3__cost .gk-text--tag { color: var(--stone); }
+body #app.t2app .trn3.has-new::before { background: var(--g3); color: #1a1206; }
+/* the Lead smaller so Training fits: 812 box 214 (figure 166, feet 45, dais 150); <= 760 tall box 134 (102, 28, 94) and a tighter panel */
+body #app.t2app .party .cmd3__hero { height: 214px; }
+body #app.t2app .party .cmd3__fig { height: 166px; margin-bottom: 44px; }
+body #app.t2app .party .cmd3__pedestal { width: 150px; }
+@media (max-height: 760px) {
+  body #app.t2app .party .cmd3__hero { height: 134px; }
+  body #app.t2app .party .cmd3__fig { height: 102px; margin-bottom: 28px; }
+  body #app.t2app .party .cmd3__pedestal { width: 94px; }
+  body #app.t2app .trn3 { gap: 4px; padding: 4px 8px 8px; }
+  body #app.t2app .trn3__c { gap: 4px; padding: 4px; } /* C38: 4 px each side on short screens so the cost keeps clear of the edge */
+}
+@media (min-width: 420px) and (min-height: 861px) {
+  body #app.t2app .party .cmd3__hero { height: 290px; }
+  body #app.t2app .party .cmd3__fig { height: 230px; margin-bottom: 56px; }
+  body #app.t2app .party .cmd3__pedestal { width: 190px; }
+}
+
+/* =====================================================================================
+   C27 D / E (2026-11-02): the party's five places on the Heroes tab and the hero's own page, in the 2A look: an obsidian panel with
+   a gold hairline for the party; Cinzel for the level and the grade, Crimson for the sentences; the diamonds of the 5-level block gold
+   when reached. Common = stone grey wherever a grade shows.
+   ===================================================================================== */
+body #app.t2app .prow { border-radius: 4px; background: var(--panel); border: 1px solid var(--hair); box-shadow: 0 0 0 3px rgba(7, 8, 10, 0.9), 0 0 0 4px var(--hair-soft); }
+body #app.t2app .prow__n { font: 600 12px/1.1 var(--font-ui); color: color-mix(in srgb, var(--g3) 78%, white); }
+body #app.t2app .prow__m--empty .prow__n { color: var(--stone); }
+body #app.t2app .hp__back .gk-text { font: 600 13px/1 var(--font-display); letter-spacing: 0.08em; text-transform: none; color: var(--g3); }
+body #app.t2app .hp__tier { border-radius: 2px; padding: 4px 8px; background: rgba(7, 8, 10, 0.85); box-shadow: inset 0 0 0 1px var(--_tc, var(--g2)); color: var(--_tc, var(--g3)); font: 600 12px/1 var(--font-display); letter-spacing: 0.08em; text-transform: none; }
+body #app.t2app .hp__tier--common { --_tc: #a9b0bc; } body #app.t2app .hp__tier--rare { --_tc: #4f8fd9; } body #app.t2app .hp__tier--epic { --_tc: #9c6fe0; }
+body #app.t2app .hp__tier--legendary { --_tc: #e09a3a; } body #app.t2app .hp__tier--mythic { --_tc: #d9474b; }
+body #app.t2app .hp__ped { filter: drop-shadow(0 8px 10px rgba(0, 0, 0, 0.7)); }
+body #app.t2app .hp__fig { filter: drop-shadow(0 6px 8px rgba(0, 0, 0, 0.65)); }
+body #app.t2app .hp__id .gk-text--title { font: 600 22px/1.1 var(--font-display); letter-spacing: 0.08em; text-transform: none; color: var(--t1); }
+body #app.t2app .hp__lvn { font: 600 22px/1 var(--font-display); color: var(--g3); }
+body #app.t2app .hp__pips i { background: rgba(0, 0, 0, 0.7); box-shadow: 0 0 0 1px var(--hair); }
+body #app.t2app .hp__pips i.is-on { background: linear-gradient(135deg, var(--g3), var(--g1)); box-shadow: 0 0 6px rgba(232, 213, 163, 0.5); }
+body #app.t2app .hp__cards { font: 500 13px/1 var(--font-ui); color: color-mix(in srgb, var(--g3) 78%, white); }
+body #app.t2app .hp__next { font: 500 13px/1.3 var(--font-ui); }
+body #app.t2app .hp__sec .gk-isec__head .gk-text--label { font: 600 15px/1 var(--font-display); letter-spacing: 0.08em; text-transform: none; color: var(--g3); }
+body #app.t2app .hc:has(.hc__win--common) { --_rc: #a9b0bc; }
+body #app.t2app .odd--common { --_c: #a9b0bc; }
+
+/* C27 G: the Artifacts tab in the 2A look: worn places = dark cells with a gold hairline (empty = dim), a worn artifact in the grid = gold line */
+body #app.t2app .artw__m { border-radius: 4px; background: var(--panel); box-shadow: inset 0 0 0 1px var(--hair), 0 0 0 3px rgba(7, 8, 10, 0.9); }
+body #app.t2app .artw__m--empty { opacity: 0.6; }
+body #app.t2app .artw__pic, body #app.t2app .artb__pic { filter: drop-shadow(0 3px 4px rgba(0, 0, 0, 0.75)); }
+body #app.t2app .artw__n { font: 600 12px/1.1 var(--font-display); letter-spacing: 0.06em; text-transform: none; color: var(--g3); }
+body #app.t2app .coll.is-worn { box-shadow: inset 0 0 0 1px var(--g3), 0 0 10px rgba(232, 213, 163, 0.35); }
+
+/* C27 F: stars on an equipment tile (gold when earned), a weapon off the Lead's type in a dim rose */
+body #app.t2app .gear__stars i { background: rgba(0, 0, 0, 0.65); box-shadow: 0 0 0 1px var(--hair-soft); }
+body #app.t2app .gear__stars i.is-on { background: linear-gradient(135deg, var(--g3), var(--g1)); box-shadow: 0 0 4px rgba(232, 213, 163, 0.6); }
+body #app.t2app .gear--off .gear__val { color: #d9a39a; }
+body #app.t2app .arts__lead .gk-text--label { font: 600 15px/1 var(--font-display); letter-spacing: 0.08em; text-transform: none; color: var(--marble); }
+body #app.t2app .arts__lead .gk-cream { font: 500 13px/1 var(--font-ui); }
+body #app.t2app .arts__foot.arts__foot--solo { grid-template-columns: minmax(0, 1fr); justify-items: center; }
+
+/* Heroes: the backing of the frozen party panel in the 2A obsidian */
+body #app.t2app .hparty::before { background: linear-gradient(180deg, rgba(10, 11, 14, 0.97), rgba(10, 11, 14, 0.97) calc(100% - 14px), rgba(10, 11, 14, 0)); }
+
+/* the hero page's arrows: dark discs with a gold hairline */
+body #app.t2app .hp__nav { background: rgba(7, 8, 10, 0.72); box-shadow: inset 0 0 0 1px var(--hair), 0 2px 6px rgba(0, 0, 0, 0.6); }
+
+/* C29 D: the hero page tray (dark iron with a gold top edge, like the user's photo 2), its three cards, the Bag chip */
+body #app.t2app .hp__tray { background: linear-gradient(180deg, #17130e, #0c0a08); box-shadow: inset 0 1px 0 var(--g2), inset 0 0 0 1px #000, 0 -10px 18px rgba(0, 0, 0, 0.6); }
+body #app.t2app .hcard { border-radius: 3px; background: rgba(0, 0, 0, 0.55); box-shadow: inset 0 0 0 1px var(--hair-soft); }
+body #app.t2app .hcard .gk-text--number { font: 600 18px/1.1 var(--font-display); color: var(--marble); }
+body #app.t2app .hp__pow .gk-text--number { font: 600 18px/1 var(--font-display); color: var(--g3); }
+body #app.t2app .hp__stage .hp__id .gk-text--title { font-size: 22px; text-align: left; }
+body #app.t2app .hp__bag { border-radius: 3px; background: rgba(0, 0, 0, 0.6); box-shadow: inset 0 0 0 1px var(--hair); }
+body #app.t2app .hp__gearh .gk-text--label { font: 600 13px/1 var(--font-display); letter-spacing: 0.08em; text-transform: none; color: var(--g3); }
+
+/* =====================================================================================
+   C29 E (2026-11-02, user photo 1): Home as stage cards. The gate painting stays behind, darker; the deck takes the free height:
+   the main card (5 : 8, up to 400 px tall) with a gold frame and a warm glow, the stages before / after as dim cards peeking
+   60 px at the sides (a lock on one not open yet); Dungeon at the deck's top left; Start (the plain 2A button: its rays and glow
+   went, user no. 70: "startnya jelek banget. ga usah ada sinarnya lah.."), Patrol left and Missions right of it. */
+.t2go .t2cta__t { font-size: 24px; }
+.t2home__bg--deck::after { background: linear-gradient(180deg, rgba(7, 8, 10, 0.78) 0%, rgba(7, 8, 10, 0.6) 40%, rgba(7, 8, 10, 0.9) 78%, var(--o0) 100%); }
+.t2home--deck { gap: 8px; }
+.t2deck { position: relative; flex: 1 1 auto; min-height: 0; display: flex; align-items: center; justify-content: center; margin: 2px calc(-1 * var(--gut, 12px)) 0; touch-action: pan-y; }
+.t2card { position: relative; overflow: hidden; border-radius: 10px; aspect-ratio: 5 / 8; padding: 0; border: 0; background: var(--o0); }
+.t2card__art { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 20%; pointer-events: none; }
+.t2card__shade { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(7, 8, 10, 0.35), transparent 22%, transparent 52%, rgba(7, 8, 10, 0.92) 88%); pointer-events: none; }
+.t2card--main { z-index: 2; height: calc(100% - 6px); max-height: 400px;
+  box-shadow: 0 0 0 2px #2a1d0e, 0 0 0 3px var(--g2), 0 0 0 7px #120c06, 0 0 0 8px var(--hair), 0 0 34px rgba(255, 170, 80, 0.32); }
+.t2card--main.is-locked .t2card__art { filter: grayscale(0.7) brightness(0.55); }
+.t2card--main.is-in-r { animation: t2card-in-r 0.22s ease-out; } .t2card--main.is-in-l { animation: t2card-in-l 0.22s ease-out; }
+@keyframes t2card-in-r { from { opacity: 0.4; transform: translateX(36px) scale(0.96); } }
+@keyframes t2card-in-l { from { opacity: 0.4; transform: translateX(-36px) scale(0.96); } }
+.t2card--side { position: absolute; top: 50%; z-index: 1; height: 74%; max-height: 330px; translate: 0 -50%; cursor: pointer; filter: brightness(0.5) saturate(0.75);
+  box-shadow: 0 0 0 2px #2a1d0e, 0 0 0 3px var(--g1); }
+.t2card--side.is-empty { visibility: hidden; }
+.t2card--l { right: calc(50% + 62px); } .t2card--r { left: calc(50% + 62px); }
+.t2card--side.is-locked { filter: brightness(0.32) grayscale(0.8); }
+.t2card__lock { position: absolute; left: 50%; top: 42%; width: 40px; height: 40px; translate: -50% -50%; object-fit: contain; filter: drop-shadow(0 2px 4px #000); }
+.t2card__no { position: absolute; left: 50%; bottom: 10px; translate: -50% 0; font: 600 13px/1 var(--font-display); letter-spacing: 0.08em; color: var(--g3); }
+.t2card__tag { position: absolute; top: 10px; left: 50%; translate: -50% 0; white-space: nowrap; padding: 4px 8px; background: rgba(7, 8, 10, 0.66); box-shadow: inset 0 0 0 1px var(--hair);
+  font: 600 12px/1.2 var(--font-display); letter-spacing: 0.08em; text-transform: none; color: var(--g3); }
+.t2card__title { position: absolute; left: 8px; right: 8px; bottom: 14px; display: grid; justify-items: center; gap: 4px; text-align: center; }
+.t2card__world { margin: 0; font: 700 22px/1.1 var(--font-display); letter-spacing: 0.05em; color: var(--t1); text-shadow: 0 2px 8px #000; }
+.t2card__sub { font: 500 13px/1.25 var(--font-ui); color: color-mix(in srgb, var(--g3) 85%, white); text-shadow: 0 1px 4px #000; }
+.t2deck .t2f { position: absolute; left: 12px; top: 0; z-index: 3; width: 64px; }
+.t2deck .t2f .t2f__ring { width: 44px; height: 44px; } .t2deck .t2f .t2f__ic { width: 30px; height: 30px; }
+.t2go { display: grid; grid-template-columns: 64px minmax(0, 1fr) 64px; align-items: center; gap: 8px; }
+.t2go .t2f { width: 64px; } .t2go .t2f__ring { width: 48px; height: 48px; } .t2go .t2f__ic { width: 32px; height: 32px; }
+.t2go__mid { position: relative; display: grid; }
+@media (max-height: 760px) { .t2card__world { font-size: 18px; } .t2card__sub { font-size: 12px; } .t2go .t2cta { height: 52px; } }
+
+/* =====================================================================================
+   C30 (2026-11-03, user no. 71 with photos 1 and 2): new painted boxes (assets/2a/ui: panel, card, button, slot, header, divider,
+   stage_frame; sheets docs/art-2a/ui), the hero big on the profile, Home on a plain glowing background. The old CSS boxes of these
+   two screens are replaced. */
+body #app.t2app .hcard { border-radius: 0; background: rgba(8, 7, 6, 0.72); box-shadow: none; border: 10px solid transparent; border-image: url("../assets/2a/ui/card.webp") 54 / 10px stretch; padding: 0 0 2px; gap: 1px; }
+body #app.t2app .hcard .gk-cream { font-size: 12px; line-height: 1.15; }
+/* ---- Home (user: "buat yang di home semi2 glowing ... bentuk kartunya juga tidak pure kotak, ada sudut tanjamnya ... background
+   juga polos tapi glowing"): no painting behind; a soft glow in the stage's element; the card in the painted gold frame */
+.t2home__bg--deck { background: radial-gradient(70% 42% at 50% 40%, var(--t2glow, rgba(255, 150, 60, 0.42)), transparent 72%), radial-gradient(130% 90% at 50% 10%, #1b140f, #08090b 72%) !important; }
+.t2home__bg--deck::after { background: linear-gradient(180deg, transparent 70%, rgba(7, 8, 10, 0.85)) !important; }
+.t2glow--fire { --t2glow: rgba(255, 130, 50, 0.45); } .t2glow--water { --t2glow: rgba(70, 160, 255, 0.4); } .t2glow--nature { --t2glow: rgba(110, 210, 90, 0.36); }
+.t2glow--electric { --t2glow: rgba(170, 100, 255, 0.42); } .t2glow--physical { --t2glow: rgba(255, 190, 110, 0.36); }
+@keyframes t2glow { from { opacity: 0.82; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .t2home__bg--deck { animation: none; } }
+.t2card { aspect-ratio: 640 / 1038; border-radius: 0; overflow: visible; background: none; }
+.t2card--main { box-shadow: none; filter: drop-shadow(0 0 22px rgba(255, 170, 80, 0.35)); }
+.t2card--side { box-shadow: none; }
+/* the painting sits inside the frame's window, cut to the same sharp corners */
+.t2card__art, .t2card__shade { left: 4.6%; top: 3.2%; right: auto; bottom: auto; width: 90.8%; height: 93.6%; clip-path: polygon(10% 0, 90% 0, 100% 6%, 100% 94%, 90% 100%, 10% 100%, 0 94%, 0 6%); }
+.t2card__frame { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.t2card__tag { top: 7%; } .t2card__title { bottom: 8%; } .t2card__no { bottom: 7%; }
+
+/* C30 (no. 71): frame above the shade, words above the frame */
+.t2card__frame { z-index: 1; }
+.t2card__tag, .t2card__title, .t2card__lock, .t2card__no { z-index: 2; }
+/* C30 (no. 71): the painting fills the frame's own window (traced from stage_frame.webp, 7 px under the gold) */
+.t2card__art, .t2card__shade { left: 0; top: 0; width: 100%; height: 100%;
+  clip-path: polygon(8.1% 26%, 17.4% 13.4%, 26.4% 7.8%, 74.4% 7.8%, 84% 13.8%, 92.7% 26%, 92.7% 70%, 85.7% 79.2%, 74% 86.3%, 59.7% 89.8%, 41.4% 89.8%, 26.8% 86.3%, 15.1% 79.3%, 8% 70%); }
+.t2card__tag { top: 12%; } .t2card__title { bottom: 12.5%; left: 10%; right: 10%; } .t2card__no { bottom: 12%; }
+.t2card__title { bottom: 16%; }
+@media (max-height: 760px) { .t2card__tag { letter-spacing: 0.08em; padding: 2px 8px; } }
+@media (max-height: 760px) { .t2card__title { left: 13%; right: 13%; } .t2card__sub { white-space: normal; } }
+
+/* ---- C31 (user no. 72 + "go", 2026-11-03; Ledger Draft 26): the hero profile v2 = photo 2's structure. The scene fills the
+   page between the bars: the element's land, the hero's own 1024 × 1536 painting (A26) at 84 % of the height, the name plate on
+   top; the tray holds three tabs; the main action sits under it. Heights follow the page (container units). */
+body #app.t2app .lobby--hero2 .page { overflow: hidden; }
+body #app.t2app .hp2 { position: absolute; inset: 0; overflow: hidden; container-type: size; background: var(--o0); }
+body #app.t2app .hp2__bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+body #app.t2app .hp2__hero { position: absolute; left: 50%; top: 7.5cqh; height: 84cqh; width: auto; max-width: none; translate: -50% 0; pointer-events: none;
+  filter: drop-shadow(0 10px 16px rgba(0, 0, 0, 0.55)); }
+body #app.t2app .hp2__hero.is-fig { top: 14cqh; height: 110cqh; }
+body #app.t2app .hp2--in-r .hp2__hero { animation: hp2-in-r 0.22s ease-out; } body #app.t2app .hp2--in-l .hp2__hero { animation: hp2-in-l 0.22s ease-out; }
+@keyframes hp2-in-r { from { opacity: 0.3; translate: calc(-50% + 40px) 0; } }
+@keyframes hp2-in-l { from { opacity: 0.3; translate: calc(-50% - 40px) 0; } }
+body #app.t2app .hp2__shade { position: absolute; inset: 0; pointer-events: none; background: linear-gradient(180deg, rgba(7, 8, 10, 0.6) 0, transparent 16%, transparent 46%, rgba(7, 8, 10, 0.55) 70%, rgba(7, 8, 10, 0.85)); }
+body #app.t2app .hp2__head { position: absolute; left: 10px; right: 10px; top: 8px; z-index: 2; display: grid; grid-template-columns: 82px minmax(0, 1fr) 82px; align-items: start; }
+body #app.t2app .hp2__round { width: 40px; height: 40px; padding: 0; border: 0; border-radius: 50%; display: grid; place-items: center; cursor: pointer;
+  background: rgba(7, 8, 10, 0.72); box-shadow: inset 0 0 0 1.5px var(--g2), 0 2px 6px rgba(0, 0, 0, 0.6); }
+body #app.t2app .hp2__round .gk-glyph { width: 16px; height: 16px; }
+body #app.t2app .hp2__nav { position: absolute; top: 30cqh; z-index: 2; }
+body #app.t2app .hp2__nav--l { left: 10px; } body #app.t2app .hp2__nav--r { right: 10px; } body #app.t2app .hp2__nav--r .gk-glyph { rotate: 180deg; }
+body #app.t2app .hp2__title { justify-self: center; display: grid; justify-items: center; min-width: 0; }
+body #app.t2app .hp2__plate { width: 196px; height: 64px; display: grid; place-items: center; padding: 4px 24px 0; background: url("../assets/2a/ui/header.webp") center / 100% 100% no-repeat; }
+body #app.t2app .hp2__name { font: 700 15px/1 var(--font-display); letter-spacing: 0.08em; text-transform: none; color: var(--t1); text-shadow: 0 1px 3px #000; white-space: nowrap; }
+body #app.t2app .hp2__plate--long .hp2__name { font-size: 13px; letter-spacing: 0.05em; }
+body #app.t2app .hp2__plate--xl .hp2__name { font-size: 12px; letter-spacing: 0.02em; }
+body #app.t2app .hp2__line { margin-top: -2px; font: 500 13px/1.2 var(--font-ui); color: var(--g3); text-align: center; text-shadow: 0 1px 4px #000, 0 0 8px #000; }
+body #app.t2app .hp2__side { justify-self: end; display: grid; justify-items: end; gap: 8px; }
+body #app.t2app .hp2__pow { display: grid; justify-items: end; }
+body #app.t2app .hp2__pow .gk-text--tag { font: 600 12px/1 var(--font-display); letter-spacing: 0.08em; text-transform: none; color: var(--g3); text-shadow: 0 1px 3px #000; }
+body #app.t2app .hp2__pow .gk-text--number { font: 700 22px/1.1 var(--font-display); color: var(--t1); text-shadow: 0 2px 6px #000; }
+body #app.t2app .hp2__lead { height: 26px; padding: 0 8px; border: 0; border-radius: 13px; display: grid; place-items: center; background: rgba(7, 8, 10, 0.78); box-shadow: inset 0 0 0 1px var(--g2); }
+body #app.t2app .hp2__lead .gk-text { font: 600 12px/1 var(--font-display); letter-spacing: 0.06em; color: var(--g3); white-space: nowrap; }
+body #app.t2app .hp2__lead--btn { cursor: pointer; }
+body #app.t2app .hp2__tray { position: absolute; left: 6px; right: 6px; bottom: 4px; z-index: 3; display: grid; }
+body #app.t2app .hp2__tabs { position: relative; z-index: 2; display: flex; justify-content: center; gap: 2px; margin-bottom: -15px; }
+body #app.t2app .hp2__plaque, body #app.t2app .hp2__tab { position: relative; isolation: isolate; border: 0; background: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; white-space: nowrap; }
+body #app.t2app .hp2__plaque::before, body #app.t2app .hp2__tab::before { content: ""; position: absolute; inset: 0; z-index: -1; border: 0 solid transparent; border-width: 0 20px;
+  border-image: url("../assets/2a/ui/button.webp") 0 72 fill / 0 20px stretch; }
+body #app.t2app .hp2__plaque .gk-text, body #app.t2app .hp2__tab .gk-text { font: 700 13px/1 var(--font-display); letter-spacing: 0.06em; text-transform: none; color: var(--t1); text-shadow: 0 1px 2px #000; }
+body #app.t2app .hp2__tab { height: 34px; min-width: 112px; padding: 0 24px; }
+body #app.t2app .hp2__tab::before { border-width: 0 18px; border-image-width: 0 18px; filter: brightness(0.36) saturate(0.5); }
+body #app.t2app .hp2__tab .gk-text { color: rgba(232, 213, 163, 0.78); letter-spacing: 0.08em; }
+body #app.t2app .hp2__tab.is-on::before { filter: none; } body #app.t2app .hp2__tab.is-on .gk-text { color: var(--t1); text-shadow: 0 1px 2px #000, 0 0 6px rgba(0, 0, 0, 0.6); }
+body #app.t2app .hp2__panel { border: 20px solid transparent; border-image: url("../assets/2a/ui/panel.webp") 70 fill / 20px stretch; padding: 12px 2px 24px; }
+body #app.t2app .hp2__body { height: max(164px, 30cqh); overflow-y: auto; overscroll-behavior: contain; scrollbar-width: none; }
+body #app.t2app .hp2__foot { position: relative; z-index: 2; display: grid; grid-template-columns: 138px minmax(0, 1fr); gap: 8px; margin: -28px 8px 0; }
+body #app.t2app .hp2__foot--solo { grid-template-columns: minmax(0, 1fr); padding: 0 40px; }
+body #app.t2app .hp2__plaque { height: 40px; padding: 0 24px; }
+body #app.t2app .hp2__plaque--dark::before { filter: brightness(0.45) saturate(0.55); } body #app.t2app .hp2__plaque--dark .gk-text { color: var(--g3); }
+body #app.t2app .hp2__cta { height: 52px; padding: 0 28px; }
+body #app.t2app .hp2__cta::before { border-width: 0 24px; border-image-width: 0 24px; }
+body #app.t2app .hp2__cta .gk-text { font-size: 18px; } body #app.t2app .hp2__cta--long .gk-text { font-size: 13px; }
+body #app.t2app .hp2__cta .in-ic { width: 22px; height: 22px; }
+body #app.t2app .hp2__cta.is-poor::before { filter: saturate(0.35) brightness(0.7); } body #app.t2app .hp2__cta.is-poor .gk-text { color: var(--t3); }
+body #app.t2app .hp2__slots { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+body #app.t2app .hp2__slot { position: relative; height: clamp(54px, 9.5cqh, 64px); padding: 0; cursor: pointer; background: none; border: 8px solid transparent;
+  border-image: url("../assets/2a/ui/slot.webp") 52 fill / 8px stretch; display: grid; grid-template-columns: 42px minmax(0, 1fr); align-items: center; column-gap: 4px; text-align: left; }
+body #app.t2app .hp2__art { width: 46px; height: 46px; margin-left: -4px; display: grid; place-items: center; border-radius: 50%; background: radial-gradient(closest-side, var(--_rc, transparent), transparent); }
+body #app.t2app .hp2__ic { width: 44px; height: 44px; object-fit: contain; filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.8)); }
+body #app.t2app .hp2__slot--empty .hp2__ic { width: 32px; height: 32px; filter: grayscale(1) brightness(0.6); opacity: 0.7; }
+body #app.t2app .hp2__slot--normal { --_rc: rgba(200, 200, 200, 0.28); } body #app.t2app .hp2__slot--superior { --_rc: rgba(110, 210, 110, 0.4); }
+body #app.t2app .hp2__slot--rare { --_rc: rgba(80, 160, 255, 0.45); } body #app.t2app .hp2__slot--epic { --_rc: rgba(180, 110, 255, 0.5); }
+body #app.t2app .hp2__slot--legendary { --_rc: rgba(255, 170, 60, 0.55); }
+body #app.t2app .hp2__stxt { display: grid; min-width: 0; }
+body #app.t2app .hp2__val { font: 700 18px/1 var(--font-display); color: var(--t1); white-space: nowrap; }
+body #app.t2app .hp2__lab { font: 500 12px/1.15 var(--font-ui); color: color-mix(in srgb, var(--g3) 80%, white); white-space: nowrap; }
+body #app.t2app .hp2__lab--slot { font-weight: 600; letter-spacing: 0; text-transform: none; }
+body #app.t2app .hp2__empty { font: 500 12px/1.15 var(--font-ui); color: rgba(228, 222, 208, 0.55); }
+body #app.t2app .hp2__stars { position: static; display: flex; gap: 2px; margin-top: 4px; }
+body #app.t2app .hp2__stars i { width: 5px; height: 5px; rotate: 45deg; }
+body #app.t2app .hp2__slot .gear__up { right: -10px; top: -10px; }
+body #app.t2app .hp2__row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
+body #app.t2app .hp2__row--sm { margin: 8px 4px; }
+body #app.t2app .hp2__cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+body #app.t2app .hp2__cards .hcard { min-height: 96px; display: grid; justify-items: center; align-content: center; gap: 2px; text-align: center; }
+body #app.t2app .hp2__cards .hcard .gk-text--number { font-size: 18px; }
+body #app.t2app .hp2__next, body #app.t2app .hp2__note { margin: 8px 4px 4px; text-align: center; }
+body #app.t2app .hp2__body .hp__sec { margin: 8px 4px 12px; }
+
+/* ---- C32 (user no. 74, 2026-11-03) */
+/* G2 ("pada nama hero di profile ... tulisannya tabrak bingkai. bikin tuliannya kecil aja, jadi semua nama bisa masuk"): one small
+   size for every name, the longest (Borrik Stonebeard) inside the plate's dark bar */
+body #app.t2app .hp2__name, body #app.t2app .hp2__plate--long .hp2__name, body #app.t2app .hp2__plate--xl .hp2__name { font-size: 12px; letter-spacing: 0.04em; }
+/* G3 ("background di home kurang terang ... harusnya cahayanya lebih memancar"): a bright core, a wide halo of the dragon's
+   element and a tinted base instead of near black */
+.t2home__bg--deck { background: radial-gradient(closest-side at 50% 40%, rgba(255, 244, 220, 0.2), transparent 45%), radial-gradient(85% 55% at 50% 40%, var(--t2glow, rgba(255, 150, 60, 0.7)) 0%, transparent 74%),
+  radial-gradient(140% 95% at 50% 25%, var(--t2tint, #2a1d12) 0%, #0b0a0d 82%) !important; }
+.t2home__bg--deck::after { background: linear-gradient(180deg, transparent 74%, rgba(7, 8, 10, 0.75)) !important; }
+.t2glow--fire { --t2glow: rgba(255, 128, 48, 0.78); --t2tint: #3e1c0c; } .t2glow--water { --t2glow: rgba(70, 160, 255, 0.72); --t2tint: #0d2440; }
+.t2glow--nature { --t2glow: rgba(110, 215, 90, 0.66); --t2tint: #132c12; } .t2glow--electric { --t2glow: rgba(172, 104, 255, 0.74); --t2tint: #26143e; }
+.t2glow--physical { --t2glow: rgba(255, 192, 112, 0.68); --t2tint: #33240f; }
+@keyframes t2glow { from { opacity: 0.86; } to { opacity: 1; } }
+/* G3 ("tulisan pada nama boss element dan weak to, terlalu tabrak keluar bingkai, sebaiknya taro di luar dari bingkai"): the
+   world's name and its line sit under the card, outside the frame; the card is shorter to leave them room */
+.t2card--main { height: calc(100% - 62px); margin-bottom: 56px; }
+.t2card--main .t2card__title { top: calc(100% + 6px); bottom: auto; left: -40%; right: -40%; gap: 2px; }
+.t2card--main .t2card__world { font-size: 18px; white-space: nowrap; }
+.t2card--main .t2card__sub { white-space: nowrap; }
+.t2card--main .t2card__shade { background: linear-gradient(180deg, rgba(7, 8, 10, 0.35), transparent 24%, transparent 78%, rgba(7, 8, 10, 0.45)); }
+@media (max-height: 760px) { .t2card--main .t2card__title { left: -40%; right: -40%; } .t2card--main .t2card__sub { white-space: nowrap; } .t2card--main .t2card__world { font-size: 18px; } }
+/* G3 ("tulisan normal di home tidak center"): the two pills centre their word; the letter spacing no longer pushes it right */
+.t2pill { display: inline-flex; align-items: center; justify-content: center; padding: 0 8px 0 calc(6px + 0.14em); min-width: 0; }
+.t2pill--claim { height: 24px; margin-left: auto; margin-right: 8px; border-color: var(--g2); background: rgba(60, 40, 10, 0.85); }
+.t2pill--claim .gk-text { font: 600 12px/1 var(--font-display); letter-spacing: 0.08em; color: var(--t1); }
+.qrow__need { display: inline-flex; align-items: center; gap: 4px; opacity: 0.75; }
+.qrow__need .in-ic { width: 14px; height: 14px; }
+
+/* ==== C32 (user no. 74, 2026-11-03): the gold frame of the Home dungeon card on every box, and every screen in the hero
+   page's way. Kit = tools/make-frame-kit.py: frame_gold(.webp, no fill) / frame_gold_fill (dark inside), 9-slice 280 180,
+   corners keep the card frame's stepped cut; crest_top = the card frame's crest. --fw / --fh = the corner's drawn size
+   (always 180 : 280). G4 ("buat bingkai pada semua memiliki aksen seperti bingkai dugenon naga pada home") + G9 ("rubah semua
+   ui seperti hero page"). */
+body #app.t2app { --chamf: polygon(calc(var(--fw) * 0.29) calc(var(--fh) * 0.96), calc(var(--fw) * 0.62) calc(var(--fh) * 0.5), calc(var(--fw) * 0.94) calc(var(--fh) * 0.29),
+  calc(100% - var(--fw) * 0.94) calc(var(--fh) * 0.29), calc(100% - var(--fw) * 0.62) calc(var(--fh) * 0.5), calc(100% - var(--fw) * 0.29) calc(var(--fh) * 0.96),
+  calc(100% - var(--fw) * 0.29) calc(100% - var(--fh) * 0.96), calc(100% - var(--fw) * 0.62) calc(100% - var(--fh) * 0.5), calc(100% - var(--fw) * 0.94) calc(100% - var(--fh) * 0.29),
+  calc(var(--fw) * 0.94) calc(100% - var(--fh) * 0.29), calc(var(--fw) * 0.62) calc(100% - var(--fh) * 0.5), calc(var(--fw) * 0.29) calc(100% - var(--fh) * 0.96)); }
+/* a framed picture card: the window is 4:5 unless the card says otherwise; art and backing cut to the frame's corners */
+body #app.t2app .gfc { --fw: 14px; --fh: 22px; --_gc: var(--g2); }
+body #app.t2app .gfc--rare, body #app.t2app .gfc--g-rare { --_gc: #4f8fd9; } body #app.t2app .gfc--epic, body #app.t2app .gfc--g-epic { --_gc: #9c6fe0; }
+body #app.t2app .gfc--legendary, body #app.t2app .gfc--g-legendary { --_gc: #e09a3a; } body #app.t2app .gfc--mythic { --_gc: #d9474b; }
+body #app.t2app .gfc--common, body #app.t2app .gfc--g-normal { --_gc: #a9b0bc; } body #app.t2app .gfc--g-superior { --_gc: #6fbf7a; }
+body #app.t2app .gfc__win { position: relative; isolation: isolate; display: block; width: 100%; aspect-ratio: 4 / 5; height: auto; border-radius: 0 !important; overflow: visible;
+  background: none !important; box-shadow: none !important; }
+body #app.t2app .gfc__win::before { content: ""; position: absolute; inset: 0; z-index: -1; clip-path: var(--chamf);
+  background: radial-gradient(90% 70% at 50% 35%, color-mix(in srgb, var(--_gc) 40%, #1a1510), #0b0a09 85%); }
+body #app.t2app .gfc__win > img, body #app.t2app .gfc__win > .gk-icon:first-child { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 15%; clip-path: var(--chamf); }
+body #app.t2app .gfc__win::after { content: ""; position: absolute; inset: 0; z-index: 3; pointer-events: none; border-radius: 0; box-shadow: none;
+  border: solid transparent; border-width: var(--fh) var(--fw); border-image: url("../assets/2a/ui/frame_gold.webp") 280 180 / var(--fh) var(--fw) stretch; }
+body #app.t2app .gfc__win > :not(img):not(.gk-icon:first-child) { z-index: 4; }
+/* a framed panel (dark inside), with the card frame's crest on top when it has a .gfp__crest */
+body #app.t2app .gfp { --fw: 24px; --fh: 37px; position: relative; border: 9px solid transparent; border-radius: 0;
+  border-image: url("../assets/2a/ui/frame_gold_fill.webp") 280 180 fill / var(--fh) var(--fw) stretch; background: none; box-shadow: none; }
+body #app.t2app .gfp__crest { position: absolute; left: 50%; top: -9px; z-index: 2; width: calc(var(--fh) * 0.49); height: calc(var(--fh) * 0.45); translate: -50% 0; pointer-events: none;
+  background: url("../assets/2a/ui/crest_top.webp") center / 100% 100% no-repeat; }
+
+/* ---- G5 Heroes: 4:5 hero cards, three to a row (user: "pada kartu heroes, buat ukurannya 4:5 jangan kotak kecil begitu") */
+body #app.t2app .hgrid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px 8px; padding: 0 16px 20px; }
+body #app.t2app .hgrid .shead, body #app.t2app .hgrid .hgrid__tier { grid-column: 1 / -1; }
+body #app.t2app .hc { --fw: 16px; --fh: 25px; gap: 4px; }
+body #app.t2app .hc .hc__win img { object-position: 50% 12%; inset: 0; }
+body #app.t2app .hc.is-off .gfc__win > img { filter: grayscale(1) brightness(0.55); }
+body #app.t2app .hc .hc__el { left: 7px; top: 9px; right: auto; bottom: auto; }
+body #app.t2app .hc .hc__lv { left: 7px; bottom: 8px; top: auto; font: 700 13px/1 var(--font-display); color: var(--t1); text-shadow: 0 1px 2px #000, 0 0 4px #000; }
+body #app.t2app .hc .hc__up { right: 6px; bottom: 7px; }
+body #app.t2app .hc .hc__trial { left: 6px; right: 6px; bottom: 6px; clip-path: none; }
+body #app.t2app .hc .hc__name { font: 600 13px/1.1 var(--font-display); letter-spacing: 0.04em; color: var(--t1); }
+body #app.t2app .hc .hc__bar { height: 14px; }
+/* the party: five 4:5 portraits (user: "party di heroes juga buat lebih besar, dan jangan lingkaran") */
+body #app.t2app .prow.prow--big { --fw: 13px; --fh: 20px; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; padding: 12px 8px 8px; border: 9px solid transparent; border-radius: 0;
+  border-image: url("../assets/2a/ui/frame_gold_fill.webp") 280 180 fill / 33px 21px stretch; background: none; box-shadow: none; }
+body #app.t2app .prow--big .prow__m { position: relative; display: grid; gap: 4px; padding: 0; border: 0; background: none; cursor: pointer; min-width: 0; }
+body #app.t2app .prow--big .prow__m .gfc__win > img { object-position: 50% 10%; }
+body #app.t2app .prow--big .prow__plus { position: absolute; inset: 0; display: grid; place-items: center; z-index: 4; }
+body #app.t2app .prow--big .prow__plus .gk-glyph { width: 20px; height: 20px; opacity: 0.7; }
+body #app.t2app .prow--big .prow__lead { position: absolute; left: 50%; top: -6px; translate: -50% 0; z-index: 5; }
+body #app.t2app .prow--big .prow__n { font: 600 12px/1.1 var(--font-display); color: var(--t1); text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+body #app.t2app .prow--big .prow__m--empty .prow__n { color: var(--stone); }
+body #app.t2app .prow--big .prow__m--empty .gfc__win::before { background: rgba(10, 9, 8, 0.85); }
+/* the Add to the Party box: every hero the player has, a gold glow behind the chosen ones (user: "yang di select memiliki
+   glowing di belakang warna emas, bisa select semua di sana, uncheck tidak masuk team") */
+body #app.t2app .ppick__head { display: grid; justify-items: center; gap: 2px; margin: 0 0 12px; text-align: center; }
+body #app.t2app .ppick__head .gk-text--label { font: 700 15px/1 var(--font-display); letter-spacing: 0.08em; color: var(--g3); }
+body #app.t2app .ppick__grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px 8px; padding: 4px 2px 8px; }
+body #app.t2app .ppick__it { --fw: 13px; --fh: 20px; position: relative; display: grid; gap: 4px; padding: 0; border: 0; background: none; cursor: pointer; min-width: 0; }
+body #app.t2app .ppick__it::before { content: ""; position: absolute; left: -8px; right: -8px; top: -8px; bottom: 14px; z-index: -1; border-radius: 50%; opacity: 0; transition: opacity 0.18s;
+  background: radial-gradient(closest-side, rgba(255, 210, 110, 0.85), rgba(255, 170, 60, 0.35) 55%, transparent 100%); filter: blur(4px); }
+body #app.t2app .ppick__it.is-sel::before { opacity: 1; }
+body #app.t2app .ppick__it:not(.is-sel) .gfc__win > img { filter: brightness(0.6) saturate(0.7); }
+body #app.t2app .ppick__it .hc__el { left: 6px; top: 8px; right: auto; bottom: auto; }
+body #app.t2app .ppick__it .hc__lv { left: 6px; bottom: 7px; top: auto; font: 700 12px/1 var(--font-display); color: var(--t1); text-shadow: 0 1px 2px #000; }
+body #app.t2app .ppick__lead { position: absolute; left: 50%; top: -6px; translate: -50% 0; z-index: 5; }
+body #app.t2app .ppick__no { position: absolute; right: 2px; top: -6px; z-index: 5; width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center; background: #2a1d0e; box-shadow: 0 0 0 1.5px var(--g2); }
+body #app.t2app .ppick__no .gk-text { font: 700 12px/1 var(--font-display); color: var(--g3); }
+body #app.t2app .ppick__n { font: 600 12px/1.1 var(--font-display); color: var(--t1); text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+body #app.t2app .ppick__it:not(.is-sel) .ppick__n { color: var(--stone); }
+body #app.t2app .gk-sheet__actions .ppick__done { width: 100%; }
+
+/* ---- G6 Shop: tabs on plaques, one framed card per thing (user: "tampilan shop sangat amat berantakan. coba rombak lagi") */
+body #app.t2app .lobby--shop2 .stabs { display: flex; justify-content: center; gap: 2px; margin: 4px 8px 16px; }
+body #app.t2app .lobby--shop2 .stabs .hp2__tab { min-width: 0; flex: 1 1 0; padding: 0 16px; }
+body #app.t2app .stabs .hp2__tab .dot { position: absolute; right: 10px; top: 2px; }
+body #app.t2app .shop2 { display: grid; gap: 24px; padding: 8px 12px 24px; }
+body #app.t2app .scard { display: grid; gap: 8px; padding: 16px 12px 12px; }
+body #app.t2app .scard.is-locked { filter: grayscale(0.6) brightness(0.75); }
+body #app.t2app .scard__top { display: grid; grid-template-columns: 104px minmax(0, 1fr); gap: 12px; align-items: center; }
+body #app.t2app .scard__art { width: 104px; height: 104px; object-fit: contain; filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.7)); }
+body #app.t2app .scard__txt { display: grid; gap: 4px; justify-items: start; min-width: 0; }
+body #app.t2app .scard__plate { display: inline-grid; place-items: center; min-width: 150px; height: 38px; padding: 2px 24px 0; background: url("../assets/2a/ui/header.webp") center / 100% 100% no-repeat; }
+body #app.t2app .scard__plate .gk-text { font: 700 12px/1 var(--font-display); letter-spacing: 0.08em; text-transform: none; color: var(--t1); white-space: nowrap; }
+body #app.t2app .scard__txt .gk-cream { font-size: 13px; line-height: 1.3; }
+body #app.t2app .scard__odds { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; }
+body #app.t2app .scard__foot { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 8px; }
+body #app.t2app .scard__bar { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+body #app.t2app .scard__bar .gk-cream { font-size: 13px; }
+body #app.t2app .soffers { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px 8px; }
+body #app.t2app .soffers--2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+body #app.t2app .soffer { --fw: 14px; --fh: 22px; position: relative; display: grid; gap: 4px; justify-items: center; padding: 0; border: 0; background: none; cursor: pointer; min-width: 0; }
+body #app.t2app .soffer__win { aspect-ratio: 1 / 1; }
+body #app.t2app .soffers--2 .soffer__win { aspect-ratio: 5 / 3; }
+body #app.t2app .soffer__art { position: absolute; inset: 16%; display: grid; place-items: center; }
+body #app.t2app .soffer__art .gk-icon, body #app.t2app .soffer__art img { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.7)); }
+body #app.t2app .soffer__amt { position: absolute; right: 8px; bottom: 7px; padding: 1px 4px; background: rgba(7, 8, 10, 0.8); box-shadow: inset 0 0 0 1px var(--hair); }
+body #app.t2app .soffer__amt .gk-text { font: 700 12px/1.2 var(--font-display); color: var(--t1); }
+body #app.t2app .soffer__name { font: 600 12px/1.15 var(--font-display); letter-spacing: 0.04em; text-transform: none; color: var(--t1); text-align: center; }
+body #app.t2app .soffer__price { display: inline-flex; align-items: center; gap: 4px; min-height: 26px; padding: 0 12px; background: rgba(7, 8, 10, 0.75); box-shadow: inset 0 0 0 1px var(--hair); }
+body #app.t2app .soffer__price .gk-text { font: 700 12px/1 var(--font-display); color: var(--g3); }
+body #app.t2app .soffer__price .in-ic { width: 16px; height: 16px; }
+body #app.t2app .soffer.is-sold { opacity: 0.45; }
+body #app.t2app .spass { margin: 2px -4px; }
+body #app.t2app .hp2__plaque--gold .gk-text { color: var(--t1); }
+body #app.t2app .hp2__plaque.is-poor::before { filter: saturate(0.35) brightness(0.6); } body #app.t2app .hp2__plaque.is-poor .gk-text { color: var(--t3); }
+body #app.t2app .hp2__plaque .in-ic { width: 18px; height: 18px; }
+
+/* ---- G7 the Bag (user: "saat back di buka, buat ui yang lebih baik"): count bar + materials, slot filter, framed 4:5 pieces */
+body #app.t2app .bagsheet .gk-sheet__body { padding-top: 2px; }
+body #app.t2app .bag__top { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 8px; margin-bottom: 12px; }
+body #app.t2app .bag__cap { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 8px; }
+body #app.t2app .bag__cap .gk-text { font: 700 15px/1 var(--font-display); color: var(--g3); }
+body #app.t2app .bag__bar { height: 8px; background: rgba(0, 0, 0, 0.6); box-shadow: inset 0 0 0 1px var(--hair); }
+body #app.t2app .bag__bar > span { display: block; height: 100%; background: linear-gradient(90deg, var(--g1), var(--g3)); }
+body #app.t2app .bag__mats { display: flex; gap: 8px; }
+body #app.t2app .bag__f { display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; margin: 0 -4px 12px; padding: 0 4px; }
+body #app.t2app .bag__fb { flex: none; height: 30px; padding: 0 12px; border: 0; background: rgba(7, 8, 10, 0.75); box-shadow: inset 0 0 0 1px var(--hair-soft); cursor: pointer; }
+body #app.t2app .bag__fb .gk-text { font: 600 12px/1 var(--font-display); letter-spacing: 0.06em; text-transform: none; color: rgba(232, 213, 163, 0.7); }
+body #app.t2app .bag__fb.is-on { background: linear-gradient(180deg, #5a4220, #2e2212); box-shadow: inset 0 0 0 1px var(--g2); } body #app.t2app .bag__fb.is-on .gk-text { color: var(--t1); }
+body #app.t2app .bag__grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px 8px; }
+body #app.t2app .btile { --fw: 12px; --fh: 19px; position: relative; display: grid; justify-items: center; gap: 1px; padding: 0; border: 0; background: none; cursor: pointer; min-width: 0; }
+body #app.t2app .btile.is-off { opacity: 0.45; }
+body #app.t2app .btile__art { position: absolute; inset: 14%; display: grid; place-items: center; }
+body #app.t2app .btile__ic { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 3px 4px rgba(0, 0, 0, 0.8)); }
+body #app.t2app .btile__tier { position: absolute; right: 7px; bottom: 7px; font: 700 12px/1 var(--font-display) !important; color: var(--t1) !important; text-shadow: 0 1px 2px #000; }
+body #app.t2app .btile__val { margin-top: 4px; font: 700 15px/1 var(--font-display); color: var(--t1); }
+body #app.t2app .btile__lab { font: 500 12px/1.1 var(--font-ui); color: color-mix(in srgb, var(--g3) 80%, white); }
+body #app.t2app .btile__stars { position: static; display: flex; gap: 2px; margin-top: 2px; } body #app.t2app .btile__stars i { width: 5px; height: 5px; rotate: 45deg; }
+body #app.t2app .btile .gear__up { right: -4px; top: -4px; z-index: 6; }
+body #app.t2app .bag__empty { display: grid; justify-items: center; gap: 8px; padding: 16px 12px 12px; text-align: center; }
+body #app.t2app .bag__emptyart { width: 96px; height: 96px; object-fit: contain; opacity: 0.85; }
+body #app.t2app .bagsheet .gk-sheet__actions { display: grid; grid-template-columns: minmax(0, 1fr) 120px; gap: 8px; }
+
+/* ---- G9 every box like the hero page: sheets and centre boxes in the gold frame, titles on the plate, round gold-ringed X */
+body #app.t2app .gk-sheet, body #app.t2app .gk-modal { --fw: 30px; --fh: 47px; border: 10px solid transparent; border-radius: 0; box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.6);
+  border-image: url("../assets/2a/ui/frame_gold_fill.webp") 280 180 fill / var(--fh) var(--fw) stretch; background: none !important; }
+body #app.t2app .gk-sheet { border-bottom-width: 0; border-image-width: var(--fh) var(--fw) 0; padding-left: 16px; padding-right: 16px; }
+body #app.t2app .gk-sheet::before, body #app.t2app .gk-modal::before { content: ""; position: absolute; left: 50%; top: -12px; width: 26px; height: 24px; translate: -50% 0; z-index: 3; pointer-events: none;
+  background: url("../assets/2a/ui/crest_top.webp") center / 100% 100% no-repeat; }
+body #app.t2app :is(.gk-sheet__head, .gk-modal__head) { position: relative; display: grid; justify-items: center; padding: 8px 44px 12px; border-bottom: 0; background: url("../assets/2a/ui/divider.webp") center bottom / 70% 10px no-repeat; margin-bottom: 8px; }
+body #app.t2app :is(.gk-sheet__head, .gk-modal__head) .gk-text--title { font: 700 18px/1.1 var(--font-display); letter-spacing: 0.08em; text-transform: none; color: var(--t1); text-align: center; }
+body #app.t2app .gk-sheet__head .x, body #app.t2app .gk-modal__close { position: absolute; right: 0; top: 2px; translate: none; }
+body #app.t2app :is(.gk-sheet__head, .gk-modal__head) .gk-ibtn, body #app.t2app :is(.gk-sheet__head, .gk-modal__head) .x { width: 34px; height: 34px; border-radius: 50%; border: 0; background: rgba(7, 8, 10, 0.8) !important;
+  box-shadow: inset 0 0 0 1.5px var(--g2), 0 2px 6px rgba(0, 0, 0, 0.6) !important; }
+body #app.t2app :is(.gk-sheet__head, .gk-modal__head) :is(.gk-ibtn, .x)::before, body #app.t2app :is(.gk-sheet__head, .gk-modal__head) :is(.gk-ibtn, .x)::after { display: none; }
+/* buttons = the hero page's plaques (gold for the main action, dark for the rest) */
+body #app.t2app .gk-btn { position: relative; isolation: isolate; border: 0; border-radius: 0; background: none !important; box-shadow: none !important; padding: 0 24px; min-height: 42px; }
+body #app.t2app .gk-btn::before { content: ""; position: absolute; inset: 0; z-index: -1; display: block; border: 0 solid transparent; border-width: 0 20px; border-radius: 0; box-shadow: none; background: none;
+  border-image: url("../assets/2a/ui/button.webp") 0 72 fill / 0 20px stretch; filter: brightness(0.42) saturate(0.55); }
+body #app.t2app .gk-btn::after { display: none; }
+body #app.t2app .gk-btn :is(.gk-btn__label, .gk-text) { color: var(--g3) !important; text-shadow: 0 1px 2px #000; }
+body #app.t2app .gk-btn:is(.gk--primary, .gk--success, .gk--special)::before { filter: none; }
+body #app.t2app .gk-btn:is(.gk--primary, .gk--success, .gk--special) :is(.gk-btn__label, .gk-text) { color: var(--t1) !important; }
+body #app.t2app .gk-btn.gk--danger::before { filter: brightness(0.5) sepia(0.6) hue-rotate(-30deg) saturate(2.2); }
+body #app.t2app .gk-btn.gk--locked::before, body #app.t2app .gk-btn.gk-btn--poor::before { filter: grayscale(0.8) brightness(0.4); }
+body #app.t2app .gk-btn.gk-btn--poor :is(.gk-btn__label, .gk-text) { color: #b9ae98 !important; }
+body #app.t2app .gk-btn.gk-btn--sm { min-height: 32px; padding: 0 16px; }
+body #app.t2app .gk-btn.gk-btn--sm::before { border-width: 0 13px; border-image-width: 0 13px; }
+body #app.t2app .gk-btn.gk-btn--sm :is(.gk-btn__label, .gk-text) { font-size: 12px; }
+/* page heads: the title on the plate, section heads over the gold divider */
+body #app.t2app .phead .gk-text--title { display: inline-grid; place-items: center; min-width: 170px; height: 46px; padding: 2px 32px 0; font-size: 18px;
+  background: url("../assets/2a/ui/header.webp") center / 100% 100% no-repeat; }
+body #app.t2app .shead { border-bottom: 0; padding-bottom: 12px; background: url("../assets/2a/ui/divider.webp") center bottom / 100% 8px no-repeat; }
+body #app.t2app .shead .gk-text--number { color: var(--t1); }
+/* panels in the gold frame: Home's progress, the Party board and Training, the Artifacts boxes, the Heroes party */
+body #app.t2app :is(.t2panel, .cmd3__board, .trn3, .artw, .artc, .artp) { --fw: 24px; --fh: 37px; position: relative; border: 9px solid transparent !important; border-radius: 0 !important; box-shadow: none !important;
+  border-image: url("../assets/2a/ui/frame_gold_fill.webp") 280 180 fill / var(--fh) var(--fw) stretch !important; background: none !important; }
+body #app.t2app :is(.t2panel, .cmd3__board, .trn3, .artw, .artc, .artp)::before { content: ""; position: absolute; left: 50%; top: -9px; width: 18px; height: 17px; translate: -50% 0; z-index: 2; pointer-events: none;
+  background: url("../assets/2a/ui/crest_top.webp") center / 100% 100% no-repeat; }
+/* C32 fixes after the first look: pictures sit inside their tiles (a grid row of auto height ignored their 100 %) */
+body #app.t2app :is(.soffer__art, .btile__art) { display: block; }
+body #app.t2app :is(.soffer__art, .btile__art) > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+body #app.t2app .t2prog__power .t2cap { letter-spacing: 0.08em; white-space: nowrap; }
+body #app.t2app .ppick__it::before { left: -10px; right: -10px; top: -10px; bottom: 10px; background: radial-gradient(closest-side, rgba(255, 214, 120, 0.95), rgba(255, 172, 60, 0.5) 55%, transparent 100%); filter: blur(5px); }
+body #app.t2app .ppick__it.is-sel .gfc__win::after { filter: brightness(1.25) drop-shadow(0 0 6px rgba(255, 200, 100, 0.9)); }
+body #app.t2app .ppick .gk-sheet__body { padding-bottom: 8px; }
+body #app.t2app .plq__cost { display: inline-flex; align-items: center; gap: 4px; margin-left: 2px; padding-left: 8px; border-left: 1px solid rgba(255, 230, 170, 0.35); }
+body #app.t2app .plq__cost .gk-text { font-size: 12px; }
+body #app.t2app .scard__want { display: inline-flex; align-items: center; gap: 8px; margin-top: 2px; padding: 0; border: 0; background: none; cursor: pointer; }
+body #app.t2app .scard__want .pic { width: 30px; height: 30px; }
+body #app.t2app .scard__want .gk-text { font: 600 12px/1 var(--font-display); color: var(--g3); text-decoration: underline; text-underline-offset: 3px; }
+body #app.t2app :is(.ppick__lead, .prow--big .prow__lead) { bottom: auto; height: 18px; display: grid; place-items: center; }
+body #app.t2app .lead-tag .gk-text { font-size: 12px; letter-spacing: 0.08em; line-height: 18px; }
+/* C32 G4 on the hero page itself and the Artifacts tiles: the dungeon card's gold frame over the wood tray, on the six slots,
+   on the Stats cards and on every artifact */
+body #app.t2app .hp2__panel { position: relative; }
+body #app.t2app .hp2__panel::after { content: ""; position: absolute; inset: -20px; z-index: 1; pointer-events: none; border: solid transparent; border-width: 44px 28px;
+  border-image: url("../assets/2a/ui/frame_gold.webp") 280 180 / 44px 28px stretch; }
+body #app.t2app .hp2__body { position: relative; z-index: 2; }
+body #app.t2app .hp2__slot { border-width: 7px; border-image: url("../assets/2a/ui/frame_gold_fill.webp") 280 180 fill / 19px 12px stretch; }
+body #app.t2app .hcard { border-width: 8px; border-image: url("../assets/2a/ui/frame_gold_fill.webp") 280 180 fill / 22px 14px stretch; background: none; }
+body #app.t2app .coll { --_tg: rgba(201, 164, 92, 0.25); position: relative; border: 8px solid transparent !important; border-radius: 0 !important; box-shadow: none !important; background: none !important;
+  border-image: url("../assets/2a/ui/frame_gold_fill.webp") 280 180 fill / 25px 16px stretch !important; }
+body #app.t2app .coll--rare { --_tg: rgba(80, 160, 255, 0.4); } body #app.t2app .coll--epic { --_tg: rgba(180, 110, 255, 0.45); }
+body #app.t2app .coll--superior, body #app.t2app .coll--uncommon { --_tg: rgba(110, 210, 110, 0.4); } body #app.t2app .coll--legendary { --_tg: rgba(255, 170, 60, 0.5); }
+body #app.t2app .coll__art { filter: drop-shadow(0 0 10px var(--_tg)) drop-shadow(0 4px 5px rgba(0, 0, 0, 0.7)); }
+body #app.t2app .coll.is-off .coll__art { filter: grayscale(1) brightness(0.55); }
+body #app.t2app .coll.is-worn { filter: drop-shadow(0 0 6px rgba(255, 200, 100, 0.7)); }
+
+/* ==== C33 (user no. 75, 2026-11-03) */
+/* G2 ("tulisan semua judul ngelebihin bingkai"): the title plate grows with its words: ornate ends fixed, the bar stretches
+   (ui/plate_base.webp 3-slice 0 120), the crest with its wings on top and the small diamond under it ride on top unstretched.
+   --ph = the plate's height; the words sit in the bar (61 % down the picture). Page titles, hero names, Shop card names. */
+body #app.t2app :is(.phead .gk-text--title, .hp2__plate, .scard__plate) { --ph: 44px; position: relative; display: inline-grid; place-items: center; box-sizing: border-box;
+  width: auto; min-width: 0; height: var(--ph); padding: calc(var(--ph) * 0.2) 2px 0; background: none !important;
+  border: 0 solid transparent; border-width: 0 calc(var(--ph) * 0.84); border-image: url("../assets/2a/ui/plate_base.webp") 0 120 fill / 0 calc(var(--ph) * 0.89) stretch; }
+body #app.t2app :is(.phead .gk-text--title, .hp2__plate, .scard__plate)::before { content: ""; position: absolute; left: 50%; top: 0; width: calc(var(--ph) * 0.9); height: calc(var(--ph) * 0.52);
+  translate: -50% 0; background: url("../assets/2a/ui/plate_top.webp") center top / 100% 100% no-repeat; pointer-events: none; }
+body #app.t2app :is(.phead .gk-text--title, .hp2__plate, .scard__plate)::after { content: ""; position: absolute; left: 50%; bottom: 0; width: calc(var(--ph) * 0.45); height: calc(var(--ph) * 0.27);
+  translate: -50% 0; background: url("../assets/2a/ui/plate_bot.webp") center bottom / 100% 100% no-repeat; pointer-events: none; }
+body #app.t2app .phead .gk-text--title { --ph: 46px; font: 700 15px/1 var(--font-display); letter-spacing: 0.08em; padding-left: calc(2px + 0.14em); white-space: nowrap; }
+body #app.t2app .hp2__plate { --ph: 42px; width: auto; max-width: 100%; }
+body #app.t2app .hp2__plate .hp2__name, body #app.t2app .hp2__plate--long .hp2__name, body #app.t2app .hp2__plate--xl .hp2__name { font-size: 13px; letter-spacing: 0.06em; white-space: nowrap; }
+body #app.t2app .hp2__head { grid-template-columns: 64px minmax(0, 1fr) 64px; }
+body #app.t2app .hp2__side .hp2__lead { position: absolute; right: 0; top: 52px; }
+body #app.t2app .scard__plate { --ph: 36px; min-width: 0; }
+body #app.t2app .scard__plate .gk-text { font-size: 12px; letter-spacing: 0.06em; }
+body #app.t2app .scard__bar .scard__plate { flex: none; }
+/* G3 ("tulisan mythic legendary epic itu sangat ganggu karena beda style. apa lagi ga center middle"): the odds = one centred
+   line in the card's own cream type, each grade's name in its colour */
+body #app.t2app .oddl { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 2px 8px; text-align: center; font: 500 13px/1.3 var(--font-ui); color: color-mix(in srgb, var(--g3) 80%, white); }
+body #app.t2app .oddl__n { font-weight: 700; }
+body #app.t2app .oddl__dot { color: var(--g1); }
+body #app.t2app .oddl--common, body #app.t2app .oddl--g-normal { color: #c7ccd4; } body #app.t2app .oddl--rare, body #app.t2app .oddl--g-rare { color: #6fa8ec; }
+body #app.t2app .oddl--epic, body #app.t2app .oddl--g-epic { color: #b48af0; } body #app.t2app .oddl--legendary, body #app.t2app .oddl--g-legendary { color: #f0a94a; }
+body #app.t2app .oddl--mythic { color: #ef6a6a; } body #app.t2app .oddl--g-superior { color: #7fcf8a; }
+/* the Limited card's pull rewards: one row of small boxes */
+body #app.t2app .limr { display: grid; gap: 8px; }
+body #app.t2app .limr__h { text-align: center; font-size: 13px; }
+body #app.t2app .limr__row { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 4px; }
+body #app.t2app .limr__m { position: relative; display: grid; justify-items: center; gap: 2px; padding: 4px 0 4px; border: 0; cursor: pointer; background: rgba(7, 8, 10, 0.75); box-shadow: inset 0 0 0 1px var(--hair-soft); }
+body #app.t2app .limr__m .gk-text--tag { font: 600 12px/1 var(--font-display); color: var(--g3); white-space: nowrap; letter-spacing: 0; }
+body #app.t2app .limr__g { display: inline-flex; align-items: center; gap: 2px; } body #app.t2app .limr__g .in-ic { width: 14px; height: 14px; }
+body #app.t2app .limr__g .gk-text { font: 700 12px/1 var(--font-display); color: var(--t1); }
+body #app.t2app .limr__m.is-ready { box-shadow: inset 0 0 0 1px var(--g2), 0 0 8px rgba(255, 200, 100, 0.6); }
+body #app.t2app .limr__m.is-got { opacity: 0.55; }
+body #app.t2app .limr__m .best__tick { position: absolute; right: 2px; top: 2px; }
+body #app.t2app .scard__foot--one { grid-auto-columns: auto; justify-content: center; }
+/* G5 ("kotak claim, ngambang"): the Highest Survival chests sit on the bar, centred on its line, inside the panel */
+body #app.t2app .t2best.best { height: 8px; margin: 24px 24px 16px; }
+body #app.t2app .t2best .best__chest { top: 50%; bottom: auto; width: 32px; height: 32px; translate: -50% -50%; }
+body #app.t2app .t2best .best__chest .t2tick { right: -2px; bottom: -2px; }
+/* G10 (Defeat / Victory "Double Rewards Ad 3/3" went out of its plaque): two-line buttons grow with their words */
+body #app.t2app .gk-btn:has(> .gk-text--tag) { height: auto; min-height: 54px; padding-top: 8px; padding-bottom: 8px; flex-direction: column; gap: 2px; }
+body #app.t2app .gk-btn > .gk-text--tag { font: 600 12px/1 var(--font-display) !important; letter-spacing: 0.06em; }
+body #app.t2app .res .gk-modal__actions .gk-btn__label { font-size: 13px; line-height: 1.1; white-space: normal; }
+/* G4 Hero Call cards (user: "semua hero tulisan namanya keluar"): a framed 4:5 portrait, the name and the attack under it */
+body #app.t2app .pick--call .cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+body #app.t2app .card2 { --fw: 14px; --fh: 22px; position: relative; display: grid; gap: 4px; align-content: start; padding: 0; border: 0; background: none; cursor: pointer; min-width: 0; }
+body #app.t2app .card2__win > img { object-position: 50% 12%; }
+body #app.t2app .card2__el { position: absolute; left: 6px; top: 8px; }
+body #app.t2app .card2__foot { display: grid; justify-items: center; gap: 2px; text-align: center; min-width: 0; }
+body #app.t2app .card2__name { font: 700 13px/1.1 var(--font-display); letter-spacing: 0.04em; text-transform: none; color: var(--t1); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+body #app.t2app .card2__aim { font: 500 12px/1.15 var(--font-ui) !important; letter-spacing: 0 !important; text-transform: none !important; color: color-mix(in srgb, var(--g3) 80%, white) !important; }
+body #app.t2app .card2 .card__combo { position: static; display: grid; justify-items: center; margin-top: 2px; }
+body #app.t2app .res .gk-modal__actions .gk-btn { height: auto !important; min-height: 60px; padding: 8px 24px; }
+body #app.t2app .res .gk-modal__actions .gk-btn__row { flex-wrap: wrap; justify-content: center; }
+/* Shop cards: the name plate on its own row across the card, so a long name never leaves the frame */
+body #app.t2app .scard__head { display: flex; justify-content: center; margin: -2px 0 2px; }
+body #app.t2app .limr__row { grid-template-columns: repeat(7, minmax(0, 1fr)); grid-auto-flow: row; }
+
+/* C33 G8 the Sound menu (top bar burger and the battle's pause box): a row per sound, the switch plate right, the slider under */
+body #app.t2app .top__menu .gk-glyph { width: 18px; height: 18px; }
+body #app.t2app .sets__h { margin: 2px 0 8px; text-align: center; }
+body #app.t2app .sets__h .gk-text { font: 700 14px/1 var(--font-display); letter-spacing: 0.08em; text-transform: none; color: var(--g3); }
+body #app.t2app .sndp { display: grid; gap: 8px; margin: 0 0 8px; }
+body #app.t2app .sndrow { display: grid; grid-template-columns: minmax(0, 1fr) 44px; align-items: center; gap: 4px 8px; padding: 12px 12px; background: rgba(7, 8, 10, 0.6); box-shadow: inset 0 0 0 1px var(--hair-soft); }
+body #app.t2app .sndrow__top { grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; }
+body #app.t2app .sndrow__top .gk-text--label { font: 700 14px/1 var(--font-display); letter-spacing: 0.08em; text-transform: none; color: var(--t1); }
+body #app.t2app .sndrow__sw { position: relative; isolation: isolate; min-width: 78px; height: 32px; padding: 0 16px; border: 0; background: none; cursor: pointer; }
+body #app.t2app .sndrow__sw::before { content: ""; position: absolute; inset: 0; z-index: -1; border: 0 solid transparent; border-width: 0 13px; border-image: url("../assets/2a/ui/button.webp") 0 72 fill / 0 13px stretch; filter: brightness(0.42) saturate(0.55); }
+body #app.t2app .sndrow__sw.is-on::before { filter: none; }
+body #app.t2app .sndrow__sw .gk-text { font: 700 12px/1 var(--font-display); letter-spacing: 0.08em; text-transform: none; color: var(--g3); }
+body #app.t2app .sndrow__sw.is-on .gk-text { color: var(--t1); }
+body #app.t2app .sndrow__vol { width: 100%; height: 24px; accent-color: var(--g2); cursor: pointer; }
+body #app.t2app .sndrow__vol:disabled { opacity: 0.35; }
+body #app.t2app .sndrow__pct { font: 600 12px/1 var(--font-display) !important; color: var(--g3) !important; text-align: right; }
+body #app.t2app .pausebox .pause__snd { margin-bottom: 12px; }
+
+/* ==== C34 (user no. 77 + 78, 2026-11-03) */
+/* G1 ("kamu bukannya memperbaiki ukuran kotak, atau per kecil tulisan, tapi edit potong tulisannya"): no ornament crosses the words.
+   The crest ends at the bar's top rim, the diamond starts at its bottom rim (ui/plate_top.webp 121 x 62, plate_bot.webp 61 x 34);
+   the bar = 28 % of the plate's height (rows 63-101 of 135, centre 61 %), so each plate is tall enough for its words with room
+   above and below: page title 56 px / 15 px, hero name 50 px / 13 px, Shop card name 46 px / 12 px */
+body #app.t2app :is(.phead .gk-text--title, .hp2__plate, .scard__plate) { padding-top: calc(var(--ph) * 0.214); }
+body #app.t2app :is(.phead .gk-text--title, .hp2__plate, .scard__plate)::before { width: calc(var(--ph) * 0.896); height: calc(var(--ph) * 0.459); }
+body #app.t2app :is(.phead .gk-text--title, .hp2__plate, .scard__plate)::after { width: calc(var(--ph) * 0.452); height: calc(var(--ph) * 0.252); }
+body #app.t2app .phead .gk-text--title { --ph: 56px; font-size: 15px; }
+body #app.t2app .hp2__plate { --ph: 50px; }
+body #app.t2app .scard__plate { --ph: 46px; }
+/* names never end in "…": they wrap to a second line instead */
+body #app.t2app :is(.prow--big .prow__n, .ppick__n, .card2__name) { white-space: normal; overflow: visible; text-overflow: clip; text-wrap: balance; overflow-wrap: anywhere; }
+/* G5 (user no. 78): a hero not recruited: the scene in black and white, a Locked chip under the line, the other tabs locked */
+body #app.t2app .hp2--locked :is(.hp2__hero, .hp2__bg) { filter: grayscale(1) brightness(0.8); }
+body #app.t2app .hp2__locked { display: inline-flex; align-items: center; gap: 4px; margin-top: 4px; padding: 4px 12px; background: rgba(7, 8, 10, 0.72); box-shadow: inset 0 0 0 1px var(--hair-soft); }
+body #app.t2app .hp2__locked .in-ic { width: 14px; height: 14px; }
+body #app.t2app .hp2__locked .gk-text { font: 700 12px/1 var(--font-display); letter-spacing: 0.08em; text-transform: none; color: var(--t3); }
+body #app.t2app .hp2__tab.is-locked { filter: grayscale(1) brightness(0.62); }
+body #app.t2app .hp2__tab .hp2__tlock { width: 13px; height: 13px; margin-right: 4px; vertical-align: -2px; }
+/* G1: words keep 8 px clear of a plaque's pointed ends (ends 20 px, the big plaque 24 px, a tab 18 px); a plaque with a cost =
+   two lines, the words on top (13 px), the cost under them (12 px), the plaque 50 px high (the big one 58 px) */
+body #app.t2app .hp2__plaque { padding: 0 28px; }
+body #app.t2app .hp2__cta { padding: 0 32px; }
+body #app.t2app .hp2__plaque:has(> .plq__cost) { flex-direction: column; gap: 4px; height: auto; min-height: 50px; padding-block: 8px; }
+body #app.t2app .hp2__cta:has(> .plq__cost) { min-height: 58px; }
+body #app.t2app .hp2__plaque > .plq__cost { margin: 0; padding: 0; border: 0; gap: 4px; }
+body #app.t2app .hp2__plaque > .plq__cost .gk-text { font-size: 12px; letter-spacing: 0.04em; }
+body #app.t2app .hp2__plaque > .plq__cost .in-ic { width: 15px; height: 15px; }
+body #app.t2app .hp2__cta:has(> .plq__cost) > .gk-text { font-size: 15px; }
+body #app.t2app .hp2__cta--long:has(> .plq__cost) > .gk-text { font-size: 13px; }
+/* the tabs: as wide as their words (Shop: four in a row), words 12 px, the red dot on the tab's corner, not on the words */
+body #app.t2app .hp2__tab { padding: 0 24px; }
+body #app.t2app .hp2__tab .gk-text { font-size: 12px; letter-spacing: 0.05em; }
+body #app.t2app .lobby--shop2 .stabs { gap: 0; }
+body #app.t2app .lobby--shop2 .stabs .hp2__tab { flex: 1 1 auto; padding: 0 24px; }
+body #app.t2app .stabs .hp2__tab .dot { right: 4px; top: -7px; }
+/* the Limited pull rewards: the gift's picture over its number, so "+500" fits its box */
+body #app.t2app .limr__g { flex-direction: column; gap: 2px; }
+body #app.t2app .limr__g .in-ic { width: 16px; height: 16px; }
+body #app.t2app .limr__m .gk-text--tag { font-size: 12px; }
+body #app.t2app .limr__g .gk-text { font-size: 12px; letter-spacing: -0.01em; }
+body #app.t2app .scard__want { padding-right: 8px; }
+body #app.t2app .gk-btn.gk-btn--sm { padding-inline: 20px; }
+body #app.t2app .hp2__foot { grid-template-columns: 150px minmax(0, 1fr); }
+body #app.t2app .hp2__foot #join .gk-text { font-size: 12px; letter-spacing: 0.04em; }
+body #app.t2app .soffer__name { padding-inline: 4px; text-wrap: balance; }
+/* the hero page's three tabs: each as wide as its words, together never wider than the tray (a lock 12 px on a locked tab) */
+body #app.t2app .hp2__tray .hp2__tabs .hp2__tab { flex: 0 1 auto; min-width: 0; padding: 0 24px; }
+body #app.t2app .hp2__tray .hp2__tabs .hp2__tab .gk-text { letter-spacing: 0.03em; }
+body #app.t2app .hp2__tab .hp2__tlock { width: 12px; height: 12px; margin-right: 0; }
+
+/* G7 (user no. 78): each tab page's painting (2a/pages/<tab>.webp, 1024 x 1536): it covers the screen from the top, a soft light
+   left at the top, darker towards the middle and the foot so the boxes stay readable */
+body #app.t2app .pgbg { position: absolute; inset: 0; z-index: -1; pointer-events: none; background: #07080a center top / cover no-repeat; }
+body #app.t2app .pgbg::after { content: ""; position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(7, 8, 10, 0.3) 0%, rgba(7, 8, 10, 0.12) 18%, rgba(7, 8, 10, 0.5) 46%, rgba(7, 8, 10, 0.78) 80%, rgba(7, 8, 10, 0.92) 100%); }
+body #app.t2app .pgbg--shop { background-image: url("../assets/2a/pages/shop.webp"); }
+body #app.t2app .pgbg--heroes { background-image: url("../assets/2a/pages/heroes.webp"); }
+body #app.t2app .pgbg--party { background-image: url("../assets/2a/pages/party.webp"); }
+body #app.t2app .pgbg--artifacts { background-image: url("../assets/2a/pages/artifacts.webp"); }
+/* the three Missions tabs (Daily, Sign-in, Newcomer) share 3 equal columns: tighter letters keep "Newcomer" off the pointed ends */
+body #app.t2app .mtabs .gk-btn :is(.gk-btn__label, .gk-text) { letter-spacing: 0.02em; }
+body #app.t2app .mtabs { display: flex; justify-content: center; gap: 4px; }
+body #app.t2app .mtabs .gk-btn.gk-btn--sm { flex: 1 1 auto; padding-inline: 24px; }
+
+/* ==== C35 (user no. 79, 2026-11-03: "ANIMASI PADA SAAT BUKA KARTU TERLALU JELEK.. HANYANYA JUGA SANGAT JELEK.. SEMUA KASAR..")
+   The card opening (js/reveal.js). Layers, back to front: the shrine painting (pushed in 6 % over the whole opening) · a dimmer
+   (dark at the burst, dark red in a Mythic storm) · the back light canvas (dust, the bell's waves, the falling light, the orb,
+   the flames round the hidden cards, each open card's light) · the bell · the cards · the front light canvas (burst, rings,
+   flares, lightning, sparks, embers) · the flash. Both canvases are laid on with screen blending (painted light on black). */
+body #app.t2app .rv { position: absolute; inset: 0; z-index: 90; overflow: hidden; background: #050407; opacity: 0; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+body #app.t2app .rv__cam { position: absolute; inset: -14px; will-change: transform; }
+body #app.t2app .rv__bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 60%; transform-origin: 50% 62%; }
+body #app.t2app .rv__dim { position: absolute; inset: 0; background: #05030a; opacity: 0; pointer-events: none; }
+body #app.t2app .rv__fx { position: absolute; left: 14px; top: 14px; width: calc(100% - 28px); height: calc(100% - 28px); mix-blend-mode: screen; pointer-events: none; }
+body #app.t2app .rv__bellw { position: absolute; left: calc(50% + 0px); top: calc(14px + 52px); width: 118px; transform-origin: 50% 0; will-change: transform; }
+body #app.t2app .rv__bell { display: block; width: 100%; filter: drop-shadow(0 8px 12px rgba(0, 0, 0, 0.75)); }
+body #app.t2app .rv__cards { position: absolute; left: 14px; top: 14px; right: 14px; bottom: 14px; perspective: 1100px; }
+body #app.t2app .rvc { position: absolute; left: 0; top: 0; transform-origin: 50% 50%; will-change: transform, opacity; }
+/* while a Mythic among ten has its storm, the other cards go dark (a shade over them, not see-through) */
+body #app.t2app .rvc::after { content: ""; position: absolute; inset: -1px; z-index: 3; background: rgba(5, 3, 10, 0.66); opacity: 0; transition: opacity 0.35s; pointer-events: none; }
+body #app.t2app .rvc.is-dim::after { opacity: 1; }
+body #app.t2app .rvc.is-dim .rvc__info { opacity: 0.3 !important; }
+body #app.t2app .rvc__in { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; }
+body #app.t2app .rvc__back, body #app.t2app .rvc__face { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+body #app.t2app .rvc__back img { display: block; width: 100%; height: 100%; object-fit: fill; filter: drop-shadow(0 10px 16px rgba(0, 0, 0, 0.7)); }
+/* a slow sheen crossing the hidden card */
+body #app.t2app .rvc__sheen { position: absolute; inset: 3% 4%; pointer-events: none; mix-blend-mode: screen; border-radius: 4px;
+  background: linear-gradient(110deg, transparent 38%, rgba(255, 236, 190, 0.32) 48%, rgba(255, 255, 255, 0.5) 50%, rgba(255, 236, 190, 0.32) 52%, transparent 62%) 0 0 / 300% 100% no-repeat;
+  animation: rvc-sheen 2.6s ease-in-out infinite; }
+@keyframes rvc-sheen { 0% { background-position: 110% 0; } 60%, 100% { background-position: -10% 0; } }
+body #app.t2app .rvc__face { transform: rotateY(180deg); }
+body #app.t2app .rvc__face.gfc { --fw: 12px; --fh: 19px; }
+body #app.t2app .rv--one .rvc__face.gfc { --fw: 22px; --fh: 34px; }
+body #app.t2app .rvc__face .gfc__win { height: 100%; aspect-ratio: auto; filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.75)); }
+body #app.t2app .rvc__face .gfc__win > img.rvc__land { object-position: 50% 55%; }
+body #app.t2app .rvc__face .gfc__win > img.rvc__hero { object-fit: cover; object-position: 50% 4%; }
+body #app.t2app .rvc__new { position: absolute; right: 7%; top: 5%; z-index: 6; padding: 2px 8px; background: linear-gradient(180deg, #e2463d, #9c1e1a); box-shadow: 0 0 0 1px #f4c76a, 0 2px 6px rgba(0, 0, 0, 0.6); }
+body #app.t2app .rvc__new .gk-text { font: 700 12px/1.1 var(--font-display); letter-spacing: 0.06em; text-transform: none; color: var(--t1); }
+body #app.t2app .rv--many .rvc__new { right: -5px; top: -7px; padding: 1px 4px; }
+/* under a small card: its name; under the big card: the name plate, the grade's gems, the line */
+body #app.t2app .rvc__info { position: absolute; left: 50%; top: 100%; width: max-content; max-width: 150%; translate: -50% 0; display: grid; justify-items: center; opacity: 0; pointer-events: none; }
+body #app.t2app .rv--many .rvc__info { margin-top: 4px; }
+body #app.t2app .rvc__name { font: 600 13px/1.1 var(--font-ui) !important; color: var(--t1); text-shadow: 0 1px 3px #000, 0 0 8px #000; text-transform: none !important; letter-spacing: 0 !important; }
+body #app.t2app .rv--one .rvc__info { top: calc(100% - 26px); }
+body #app.t2app .rvc__plate .gk-text { --ph: 50px; position: relative; display: inline-grid; place-items: center; box-sizing: border-box; height: var(--ph); padding: calc(var(--ph) * 0.214) 2px 0;
+  border: 0 solid transparent; border-width: 0 calc(var(--ph) * 0.84); border-image: url("../assets/2a/ui/plate_base.webp") 0 120 fill / 0 calc(var(--ph) * 0.89) stretch;
+  font: 700 14px/1 var(--font-display); letter-spacing: 0.07em; text-transform: none; color: var(--t1); white-space: nowrap; }
+body #app.t2app .rvc__gems { display: flex; gap: 4px; margin-top: 4px; }
+body #app.t2app .rvc__gems i { width: 18px; height: 18px; background: center / contain no-repeat; filter: drop-shadow(0 1px 2px #000); }
+body #app.t2app .rvc--common .rvc__gems i { background-image: url("../assets/2a/ui/gem_common.webp"); }
+body #app.t2app .rvc--rare .rvc__gems i { background-image: url("../assets/lair/sheet_gem_rare.webp"); }
+body #app.t2app .rvc--epic .rvc__gems i { background-image: url("../assets/lair/sheet_gem_epic.webp"); }
+body #app.t2app :is(.rvc--legendary, .rvc--mythic) .rvc__gems i { background-image: url("../assets/lair/sheet_gem_legendary.webp"); }
+body #app.t2app .rvc--mythic .rvc__gems i { filter: hue-rotate(-38deg) saturate(1.6) drop-shadow(0 1px 2px #000); }
+body #app.t2app .rvc__line { margin-top: 4px; font-size: 13px; text-shadow: 0 1px 3px #000, 0 0 10px #000; }
+body #app.t2app .rv__flash { position: absolute; inset: 0; z-index: 5; pointer-events: none; opacity: 0; background: radial-gradient(circle at 50% 48%, #fff 0%, #ffe6dc 35%, rgba(255, 190, 170, 0.6) 100%); }
+body #app.t2app .rv__ui { position: absolute; inset: 0; z-index: 6; pointer-events: none; }
+body #app.t2app .rv__title { position: absolute; left: 84px; right: 84px; top: calc(var(--sat, 0px) + 18px); text-align: center; }
+body #app.t2app .rv__title .gk-text { font: 700 13px/1.2 var(--font-display); letter-spacing: 0.06em; text-transform: none; color: var(--t1); text-shadow: 0 1px 3px #000, 0 0 10px #000; text-wrap: balance; }
+body #app.t2app .rv__skip { position: absolute; right: 12px; top: calc(var(--sat, 0px) + 10px); height: 34px; padding: 0 16px; border: 0; pointer-events: auto; cursor: pointer;
+  background: rgba(7, 8, 10, 0.72); box-shadow: inset 0 0 0 1px var(--hair); }
+body #app.t2app .rv__skip .gk-text { font: 700 12px/1 var(--font-display); letter-spacing: 0.08em; text-transform: none; color: var(--g3); }
+body #app.t2app .rv.is-done .rv__skip { display: none; }
+body #app.t2app .rv__hint { position: absolute; left: 0; right: 0; bottom: calc(var(--sab, 0px) + 26px); text-align: center; opacity: 0; transition: opacity 0.5s; }
+body #app.t2app .rv__hint .gk-text { font-size: 14px; text-shadow: 0 1px 3px #000, 0 0 10px #000; }
+body #app.t2app .rv.is-done .rv__hint { opacity: 1; }
+@keyframes rv-blink { 50% { opacity: 0.45; } }
+@media (prefers-reduced-motion: reduce) { body #app.t2app .rvc__sheen, body #app.t2app .rv.is-done .rv__hint { animation: none; } }
+/* the card face cuts its picture to its own frame size (--chamf is worked out where it is declared, so it is declared again here) */
+body #app.t2app .rvc__face { --chamf: polygon(calc(var(--fw) * 0.29) calc(var(--fh) * 0.96), calc(var(--fw) * 0.62) calc(var(--fh) * 0.5), calc(var(--fw) * 0.94) calc(var(--fh) * 0.29),
+  calc(100% - var(--fw) * 0.94) calc(var(--fh) * 0.29), calc(100% - var(--fw) * 0.62) calc(var(--fh) * 0.5), calc(100% - var(--fw) * 0.29) calc(var(--fh) * 0.96),
+  calc(100% - var(--fw) * 0.29) calc(100% - var(--fh) * 0.96), calc(100% - var(--fw) * 0.62) calc(100% - var(--fh) * 0.5), calc(100% - var(--fw) * 0.94) calc(100% - var(--fh) * 0.29),
+  calc(var(--fw) * 0.94) calc(100% - var(--fh) * 0.29), calc(var(--fw) * 0.62) calc(100% - var(--fh) * 0.5), calc(var(--fw) * 0.29) calc(100% - var(--fh) * 0.96)); }
+
+/* ==== C36 (user no. 80, 2026-11-03) */
+/* G2 ("common pakai color code grey aja ya"): Common is grey everywhere (the old tokens made it green) */
+body #app.t2app { --tier-common-hi: #c4cad3; --tier-common: #8d949e; --tier-common-lo: #3a3f47; }
+/* G1 ("tidak ada pembeda pada tier ya? harusnya di heroes bisa feel yang mana rare yang mana mythic"): every hero card wears its
+   grade, the more precious the more alive. Frame metal (ui/frame_<grade>.webp, tools/make-tier-frames.py): Common dull iron,
+   Rare blue steel, Epic amethyst, Legendary gold, Mythic crimson. Light round the card: Common none, Rare a still blue glow 5 px,
+   Epic a violet glow breathing 3 s, Legendary a gold glow 9 px and a light sweeping over the picture every 4 s, Mythic a red glow
+   pulsing 1.8 s and a red-gold sweep every 3 s. Names in the grade's colour. Used by every hero card: Heroes, the party, Add to the
+   Party, Hero Call, the card opening. A hero not owned keeps its frame but no glow and no motion. */
+body #app.t2app .gfc--common { --_tn: #b9c0c9; } body #app.t2app .gfc--rare { --_tn: #7db8ff; } body #app.t2app .gfc--epic { --_tn: #c99dff; }
+body #app.t2app .gfc--legendary { --_tn: #ffca6a; } body #app.t2app .gfc--mythic { --_tn: #ff7b68; }
+body #app.t2app .gfc--common .gfc__win::after { border-image-source: url("../assets/2a/ui/frame_common.webp"); }
+body #app.t2app .gfc--rare .gfc__win::after { border-image-source: url("../assets/2a/ui/frame_rare.webp"); }
+body #app.t2app .gfc--epic .gfc__win::after { border-image-source: url("../assets/2a/ui/frame_epic.webp"); }
+body #app.t2app .gfc--mythic .gfc__win::after { border-image-source: url("../assets/2a/ui/frame_mythic.webp"); }
+body #app.t2app .gfc--rare .gfc__win { filter: drop-shadow(0 0 5px rgba(79, 163, 255, 0.5)); }
+body #app.t2app .gfc--epic .gfc__win { filter: drop-shadow(0 0 7px rgba(180, 122, 255, 0.6)); }
+body #app.t2app .gfc--legendary .gfc__win { filter: drop-shadow(0 0 9px rgba(255, 191, 71, 0.6)); }
+body #app.t2app .gfc--mythic .gfc__win { animation: gfc-mythic 1.8s ease-in-out infinite; }
+@keyframes gfc-epic { 0%, 100% { filter: drop-shadow(0 0 4px rgba(180, 122, 255, 0.45)); } 50% { filter: drop-shadow(0 0 10px rgba(180, 122, 255, 0.85)); } }
+@keyframes gfc-mythic { 0%, 100% { filter: drop-shadow(0 0 7px rgba(255, 58, 44, 0.55)); } 50% { filter: drop-shadow(0 0 15px rgba(255, 58, 44, 0.95)); } }
+body #app.t2app .gfc--mythic .gfc__win::after { background: linear-gradient(115deg, transparent 42%, rgba(255, 236, 190, 0.3) 50%, transparent 58%) 0 0 / 300% 100% no-repeat;
+  background-clip: padding-box; animation: gfc-sheen 4s ease-in-out infinite; }
+body #app.t2app .gfc--mythic .gfc__win::after { background-image: linear-gradient(115deg, transparent 40%, rgba(255, 168, 140, 0.36) 50%, transparent 60%); animation-duration: 3s; }
+@keyframes gfc-sheen { 0% { background-position: 120% 0; } 55%, 100% { background-position: -20% 0; } }
+body #app.t2app .hc.is-off .gfc__win { filter: none; animation: none; }
+body #app.t2app .hc.is-off .gfc__win::after { animation: none; background: none; }
+body #app.t2app .gfc :is(.hc__name, .prow__n, .ppick__n, .card2__name, .rvc__name), body #app.t2app .rvc :is(.rvc__name) { color: var(--_tn, #f3ead6); }
+body #app.t2app .hc.is-off.gfc .hc__name { color: color-mix(in srgb, var(--_tn, var(--g3)) 50%, var(--stone)); }
+/* the Heroes page's grade headings in the grade's colour */
+body #app.t2app .hgrid__tier--common .gk-text--number { color: #b9c0c9; } body #app.t2app .hgrid__tier--rare .gk-text--number { color: #7db8ff; }
+body #app.t2app .hgrid__tier--epic .gk-text--number { color: #c99dff; } body #app.t2app .hgrid__tier--legendary .gk-text--number { color: #ffca6a; }
+body #app.t2app .hgrid__tier--mythic .gk-text--number { color: #ff7b68; }
+@media (prefers-reduced-motion: reduce) { body #app.t2app .gfc__win, body #app.t2app .gfc__win::after { animation: none !important; } }
+/* G5 ("tulisan artifact di page artifact masih keluar dari bingkai, kecilkan font tulisan"): a page title keeps clear of the plate's
+   curled ends (12 px inside the bar on each side) and is 14 px; hero names and Shop card names get the same room */
+body #app.t2app .phead .gk-text--title { font-size: 14px; letter-spacing: 0.08em; padding-left: calc(12px + 0.12em); padding-right: 12px; }
+body #app.t2app .hp2__plate, body #app.t2app .scard__plate { padding-left: 12px; padding-right: 12px; }
+/* ("tulisan empty di artifact page, kurang tengah"): the empty worn slot holds its words in the middle */
+body #app.t2app .artw__m--empty { align-content: center; justify-content: center; }
+body #app.t2app .rvc--common { --_tn: #b9c0c9; } body #app.t2app .rvc--rare { --_tn: #7db8ff; } body #app.t2app .rvc--epic { --_tn: #c99dff; }
+body #app.t2app .rvc--legendary { --_tn: #ffca6a; } body #app.t2app .rvc--mythic { --_tn: #ff7b68; }
+
+/* ==== C38 (user no. 82, 2026-11-03: "gunakan skill unslop pada ui ini"; Ledger Draft 33). Direction: stern, gilded, candle-lit;
+   a castle armoury and chapel at night. The hero paintings, the Home stage card and the card opening are the bright moments; lists,
+   panels and labels stay quiet dark stone with thin gold. Three text roles; nothing slanted; no endless motion but the Mythic. */
+body #app.t2app { --t1: #f1e8d6; --t2: var(--g3); --t3: #9a9080; }
+body #app.t2app, body #app.t2app * { font-style: normal !important; }
+/* the Patrol timer in the 2A look (it was the old theme's sky-blue pill) */
+body #app.t2app .exp__bar { height: 20px; border-radius: 2px; background: rgba(7, 8, 10, 0.82); box-shadow: inset 0 0 0 1px var(--hair); }
+body #app.t2app .exp__bar > div { background: linear-gradient(180deg, #e3c27a, #9c722b); }
+body #app.t2app .exp__bar .gk-text { font: 600 12px/1 var(--font-display); color: var(--t1); text-shadow: 0 1px 2px #000; }
+
+/* ==== C38 G4 (user no. 83 "go", 2026-11-04; Ledger Draft 33.4): layout per screen. One page edge 12 px, 16 px between framed
+   panels, the Info pill on the same line as on Home, every hero card the same height (room for the card bar on cards without one), the Party panels at the foot of the page
+   (Training in thumb reach, where it stood before the Lead figure left; the war table of the backdrop shows above them), the Offers plate centred like every card, rows of 4 rewards 2 x 2. */
+body #app.t2app .phead { padding-top: 8px; }
+body #app.t2app .phead__info { top: 4px; }
+body #app.t2app .lobby--heroes:not(.lobby--hero) .hgrid { padding: 0 12px 24px; }
+body #app.t2app .hparty { margin-bottom: 16px; }
+/* every hero card one height: a card without the card bar (not owned) keeps its room (bar 14 px + 1 px) */
+body #app.t2app .hgrid .hc:not(:has(> .hc__bar))::after { content: ""; height: 15px; }
+body #app.t2app .page:has(> .cmd3.party) { display: flex; flex-direction: column; }
+body #app.t2app .page > .cmd3.party { flex: 1 0 auto; display: flex; flex-direction: column; justify-content: flex-end; gap: 16px; }
+body #app.t2app .cmd3.party > .cmd3__enh { align-self: center; width: auto; min-width: 200px; }
+body #app.t2app .shop2 { gap: 16px; }
+body #app.t2app .t2cta { padding: 0 8px; }
+body #app.t2app .soffer__price { justify-self: stretch; justify-content: center; margin: 0 4px; padding: 0 8px; }
+body #app.t2app .scard__bar { flex-direction: column; justify-content: center; gap: 4px; }
+body #app.t2app .oddl__row { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 2px 8px; flex-basis: 100%; }
+body #app.t2app .reward:has(> .gk-res:nth-child(4):last-child) { display: grid; grid-template-columns: repeat(2, auto); justify-content: center; }
+/* Add to the Party: 3 cards a row, the size of the Heroes list (at 4 a row the cards were 74 px and "Physical" ran over the frame corner) */
+body #app.t2app .ppick__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+body #app.t2app .ppick__it { --fw: 16px; --fh: 25px; }
+body #app.t2app .ppick__it .hc__el { left: 7px; top: 9px; }
+body #app.t2app .ppick__it .hc__lv { left: 7px; bottom: 8px; }
+body #app.t2app .ppick__n { font-size: 13px; white-space: normal; overflow: visible; text-overflow: clip; min-height: 2.2em; }
+/* Training cells: 4 px at the sides (the base grid moved them to 8 and "Haste +120" ran 2 px past the cell) */
+body #app.t2app .trn3__c { padding-left: 4px; padding-right: 4px; }
+
+/* ==== C39 (user no. 84, 2026-11-04: "cahaya di kartu2 hero mythic dan legend, terlalu aneh. membentuk kotak dengan jelas,
+   seharusnya lebih mulus. bordernya juga tidak pas"; Ledger Draft 34). --chamf was worked out at #app, where --fw / --fh do not
+   exist, so it was empty: every card picture stayed a square running 3 px past the gold line, and the glow drew that square.
+   Now the picture and the backing are masked by the outline of the frame itself (ui/frame_mask.webp, tools/make-frame-mask.py,
+   same 9-slice as the frame), and the tier glow is a soft core plus a wide halo following that outline. */
+body #app.t2app .gfc__win::before, body #app.t2app .gfc__win > img, body #app.t2app .gfc__win > .gk-icon:first-child {
+  clip-path: none; -webkit-mask-box-image: url("../assets/2a/ui/frame_mask.webp") 280 180 fill / var(--fh) var(--fw) stretch; }
+body #app.t2app .gfc--rare .gfc__win { filter: drop-shadow(0 0 3px rgba(79, 163, 255, 0.45)) drop-shadow(0 0 8px rgba(79, 163, 255, 0.25)); }
+body #app.t2app .gfc--epic .gfc__win { filter: drop-shadow(0 0 3px rgba(180, 122, 255, 0.5)) drop-shadow(0 0 9px rgba(180, 122, 255, 0.3)); }
+body #app.t2app .gfc--legendary .gfc__win { filter: drop-shadow(0 0 3px rgba(255, 196, 90, 0.55)) drop-shadow(0 0 10px rgba(255, 160, 50, 0.35)); }
+body #app.t2app .gfc--mythic .gfc__win { animation: gfc-mythic2 2.4s ease-in-out infinite; }
+@keyframes gfc-mythic2 { 0%, 100% { filter: drop-shadow(0 0 3px rgba(255, 80, 60, 0.55)) drop-shadow(0 0 9px rgba(255, 40, 30, 0.3)); }
+  50% { filter: drop-shadow(0 0 4px rgba(255, 90, 70, 0.75)) drop-shadow(0 0 14px rgba(255, 40, 30, 0.5)); } }
+body #app.t2app .hc.is-off .gfc__win { filter: none; animation: none; }
+/* C39 G1b (user no. 85: "kotak cahanya masih berada didalam"): the Mythic sheen in the shape of the card, not a square inside it */
+body #app.t2app .gfc--mythic .gfc__win::after {
+  background: linear-gradient(115deg, transparent 44%, rgba(255, 200, 175, 0.16) 48%, rgba(255, 214, 190, 0.34) 50%, rgba(255, 200, 175, 0.16) 52%, transparent 56%) 0 0 / 300% 100% no-repeat;
+  background-origin: border-box; background-clip: border-box;
+  -webkit-mask-box-image: url("../assets/2a/ui/frame_mask_outer.webp") 280 180 fill / var(--fh) var(--fw) stretch;
+  animation: gfc-sheen 3s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) { body #app.t2app .gfc--mythic .gfc__win::after { animation: none; } body #app.t2app .gfc--mythic .gfc__win { animation: none; filter: drop-shadow(0 0 3px rgba(255, 80, 60, 0.6)) drop-shadow(0 0 11px rgba(255, 40, 30, 0.4)); } }
+
+/* C44 (user no. 93): items.html. The reveal's New badge (.rvc__new) in a line, and an artifact with no painting yet (the Artifacts icon, dimmed) */
+body #app.t2app .it-new { display: inline-block; padding: 1px 6px; background: linear-gradient(180deg, #e2463d, #9c1e1a); box-shadow: 0 0 0 1px #f4c76a, 0 2px 6px rgba(0, 0, 0, 0.6); }
+body #app.t2app .it-new .gk-text { font: 700 12px/1.1 var(--font-display); letter-spacing: 0.06em; text-transform: none; color: var(--t1); }
+body #app.t2app .it-noart .coll__art { filter: grayscale(1) brightness(0.6) drop-shadow(0 3px 3px rgba(0, 0, 0, 0.75)); opacity: 0.75; }
+body #app.t2app .it-art__pic { font-style: italic; }
+/* C45 items.html: one level of an artifact's strip, in the empty-slot tray look (.gear--empty) */
+body #app.t2app .it-lv { background: rgba(7, 8, 10, 0.55); box-shadow: inset 0 0 0 1px var(--hair-soft); }
+/* C46: Mythic equipment (only from a fuse of two Legendary pieces), in the Mythic card red */
+body #app.t2app .gear--mythic { --_c: #d9474b; } body #app.t2app .hp2__slot--mythic { --_rc: rgba(230, 70, 75, 0.55); }
+body #app.t2app .gfc--g-mythic { --_gc: #d9474b; --_tn: #ff7b68; } body #app.t2app .oddl--g-mythic { color: #ef6a6a; } body #app.t2app .odd--g-mythic { --_c: #d9474b; }
+/* C46: a Mythic artifact (locked) and its Locked tag, in the Mythic red; the tag like the New badge but dark */
+body #app.t2app .coll--mythic { --_c: #d9474b; --_tg: rgba(230, 70, 75, 0.45); }
+body #app.t2app .it-lock { display: inline-block; padding: 1px 6px; background: linear-gradient(180deg, #2a2d33, #121418); box-shadow: 0 0 0 1px #d9474b, 0 2px 6px rgba(0, 0, 0, 0.6); }
+body #app.t2app .it-lock .gk-text { font: 700 12px/1.1 var(--font-display); letter-spacing: 0.06em; text-transform: none; color: #ef6a6a; }
+
+/* ---- C54 story and how-to-play (js/story.js; user no. 116: "buat tutorial yang memiliki story, alur cerita. dan cara bermain";
+   MEKANISME_UI "Cerita dan tutorial"): a gold-framed box at the bottom, the speaker's framed bust on the left, the name over the
+   line; a full-screen dungeon hall behind the narrator's scenes; the spotlight darkens all but one control. Above every sheet and
+   box (z 80), under the card reveal (90) and the splash. */
+body #app.t2app .story { position: absolute; inset: 0; z-index: 80; cursor: pointer; animation: storyIn 0.22s ease-out both; }
+body #app.t2app .story.is-out { opacity: 0; transition: opacity 0.2s ease-in; }
+@keyframes storyIn { from { opacity: 0; } to { opacity: 1; } }
+body #app.t2app .story__bg { position: absolute; inset: 0; background: #050407 center / cover no-repeat; animation: storyBg 6s ease-out both; }
+@keyframes storyBg { from { transform: scale(1.06); } to { transform: scale(1); } }
+body #app.t2app .story__dim { position: absolute; inset: 0; background: rgba(5, 4, 3, 0.45); }
+body #app.t2app .story--scene .story__dim { background: linear-gradient(180deg, rgba(5, 4, 3, 0.15) 0%, rgba(5, 4, 3, 0.1) 45%, rgba(5, 4, 3, 0.82) 100%); }
+body #app.t2app .story--battle .story__dim { background: rgba(5, 4, 3, 0.28); }
+body #app.t2app .story__skip { position: absolute; top: calc(12px + var(--sat, 0px)); right: 12px; z-index: 2; min-width: 64px; height: 44px; padding: 0 16px;
+  display: grid; place-items: center; background: var(--panel); border: 1px solid var(--hair); border-radius: 22px; color: var(--g3); }
+body #app.t2app .story__box { position: absolute; left: 12px; right: 12px; bottom: calc(28px + var(--sab, 0px)); z-index: 1; display: grid;
+  grid-template-columns: 64px minmax(0, 1fr); align-items: center; column-gap: 12px; row-gap: 6px; padding: 14px 12px 10px; min-height: 104px; }
+body #app.t2app .story--battle .story__box { bottom: calc(150px + var(--sab, 0px)); }
+body #app.t2app .story--scene .story__box { bottom: calc(40px + var(--sab, 0px)); }
+body #app.t2app .story__box--narr { grid-template-columns: minmax(0, 1fr); text-align: center; }
+body #app.t2app .story__pic { --fw: 10px; --fh: 16px; width: 64px; }
+body #app.t2app .story__txt { display: grid; gap: 4px; min-width: 0; }
+body #app.t2app .story__name { color: var(--g3); }
+body #app.t2app .story__line { overflow-wrap: anywhere; }
+body #app.t2app .story__tap { grid-column: 1 / -1; justify-self: end; opacity: 0.7; animation: storyTap 1.6s ease-in-out infinite; }
+@keyframes storyTap { 50% { opacity: 0.35; } }
+body #app.t2app .story--spot { background: none; }
+body #app.t2app .story__hole { position: absolute; border-radius: 16px; box-shadow: 0 0 0 9999px rgba(5, 4, 3, 0.74); outline: 2px solid var(--g2);
+  outline-offset: 2px; pointer-events: none; animation: storyRing 1.4s ease-in-out infinite; }
+@keyframes storyRing { 50% { outline-color: var(--g3); outline-offset: 5px; } }
+body #app.t2app .story--spot .story__box { bottom: auto; }
+@media (prefers-reduced-motion: reduce) { body #app.t2app .story, body #app.t2app .story__bg, body #app.t2app .story__tap, body #app.t2app .story__hole { animation: none; } }
+
+/* ==== Rancangan v4 B5 (2026-11-10; js/v4-artifacts.js, only with ?v4; MEKANISME_UI "Artifact v4 B5"): 4 or 5 worn places, the Lv chip
+   on a worn artifact, the Relic Dust row (tier circle, number, tier name), the Common tier glow, the chest result's New / +1 Dust line */
+body #app.t2app .artw--4 { grid-template-columns: repeat(2, 1fr); }
+body #app.t2app .artw--5 { grid-template-columns: repeat(6, 1fr); }
+body #app.t2app .artw--5 > * { grid-column: span 2; }
+body #app.t2app .artw--5 > :nth-child(4) { grid-column: 2 / span 2; }
+body #app.t2app .artw__m { position: relative; }
+body #app.t2app .coll--common { --_tg: rgba(185, 192, 201, 0.35); }
+body #app.t2app .artc--v4 { display: grid; gap: 6px; }
+body #app.t2app .artd__h { justify-self: center; font: 600 12px/1.1 var(--font-display); letter-spacing: 0.06em; color: var(--g3); }
+body #app.t2app .artd { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; }
+body #app.t2app .artd__it { display: grid; justify-items: center; align-content: center; gap: 3px; min-width: 0; padding: 5px 2px; border-radius: 2px;
+  background: rgba(7, 8, 10, 0.6); box-shadow: inset 0 0 0 1px var(--hair-soft); }
+body #app.t2app .artd__dot { width: 10px; height: 10px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, var(--white, #fff) 0 16%, var(--_tc) 55%); box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.8); }
+body #app.t2app .artd__it .gk-text--number { font: 700 15px/1 var(--font-display); color: var(--t1); }
+body #app.t2app .artd__it .gk-text--tag { font: 600 12px/1.1 var(--font-ui); letter-spacing: 0; text-transform: none; color: var(--_tc); }
+body #app.t2app .artd--common { --_tc: #b9c0c9; } body #app.t2app .artd--rare { --_tc: #7db8ff; }
+body #app.t2app .artd--epic { --_tc: #c99dff; } body #app.t2app .artd--legendary { --_tc: #ffca6a; }
+body #app.t2app .artc__row { display: flex; align-items: center; gap: 8px; }
+body #app.t2app .artc__row .gk-cream { flex: 1; min-width: 0; font-size: 13px; line-height: 1.25; }
+body #app.t2app .reward__sub { font-size: 12px; line-height: 1.1; text-align: center; }
+/* Rancangan v4 B3 (behind ?v4: js/v4-heroes.js puts .dd-v4 on <html>): a name wider than its plate overflows both sides evenly (flex centring) instead of to
+   the right, where it met the wider v4 Power ("4.33K") of the hero page head (375 px: "Kael, Dragon Ascendance" ran 13 px under it) */
+html.dd-v4 body #app.t2app .hp2__plate { display: inline-flex; align-items: center; justify-content: center; }
+
+/* Rancangan v4 B4 (G9, only with ?v4; docs/MEKANISME_UI.md "Equipment v4"): rarity colours by the hero names (Common = the old Normal grey),
+   the tier as T12 on every tile, a red dot for Fuse ready, a twin mark, three plates on a hero's Equipment tab, Party Gear, one Training cell */
+body #app.t2app .gear--common { --_c: #8c94a3; } body #app.t2app .hp2__slot--common { --_rc: rgba(200, 200, 200, 0.28); } body #app.t2app .gfc--g-common { --_gc: #a9b0bc; } .tier-common { color: #a9b0bc; }
+body #app.t2app .v4tier { position: absolute; left: 3px; top: 3px; z-index: 3; padding: 1px 3px; border-radius: 2px; background: rgba(7, 8, 10, 0.78); line-height: 1; pointer-events: none; }
+body #app.t2app .v4dot { position: absolute; right: 3px; top: 3px; z-index: 4; width: 10px; height: 10px; border-radius: 50%; background: #e2342b; box-shadow: 0 0 0 1.5px #1a0d0b; pointer-events: none; }
+body #app.t2app .v4pair { position: absolute; left: 4px; bottom: 4px; z-index: 3; width: 7px; height: 9px; border: 1.5px solid #e9c46a; border-radius: 1px; box-shadow: 3px -2px 0 -1.5px #0b0a0d, 3px -2px 0 0 #e9c46a; pointer-events: none; }
+body #app.t2app .hp2__row--3 { grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin-top: 4px; }
+body #app.t2app .hp2__row--3 .hp2__plaque { padding: 0 12px; }
+body #app.t2app .v4plq { display: flex; flex-direction: column; align-items: center; gap: 2px; line-height: 1; }
+body #app.t2app .hp2__row--3 .hp2__plaque, body #app.t2app .pgear__foot .hp2__plaque { height: 44px; }
+body #app.t2app .v4note { display: block; margin-top: 6px; }
+body #app.t2app .v4eq { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 8px; text-align: left; }
+body #app.t2app .v4fuse { display: flex; align-items: center; justify-content: center; gap: 6px; margin-bottom: 8px; }
+body #app.t2app .v4fuse .gear { width: 64px; }
+body #app.t2app .pgear__open { margin: 8px auto 0; width: 160px; }
+body #app.t2app .pgear__open.has-dot::after { content: ""; position: absolute; right: 10px; top: 6px; width: 9px; height: 9px; border-radius: 50%; background: #e2342b; }
+body #app.t2app .pgear__bar { display: flex; justify-content: space-between; gap: 8px; margin: 8px 16px 0; }
+body #app.t2app .pgear__bar .hp2__plaque { padding: 0 18px; }
+body #app.t2app .pgear { display: grid; justify-content: center; gap: 6px; margin: 8px 12px 0; padding: 10px 0; }
+body #app.t2app .pgear__row { display: grid; grid-template-columns: 44px repeat(6, 44px); gap: 5px; align-items: center; height: 52px; }
+body #app.t2app .pgear__hero { width: 44px; height: 44px; padding: 0; border: 0; background: none; cursor: pointer; }
+body #app.t2app .pgear__hero .pic { width: 44px; height: 44px; }
+body #app.t2app .pgear__t { position: relative; width: 44px; height: 50px; padding: 0; border: 0; background: none; cursor: pointer; }
+body #app.t2app .pgear__t .gfc__win { position: absolute; inset: 0; aspect-ratio: auto; height: 100%; }
+body #app.t2app .pgear__t--empty .btile__art { opacity: 0.32; filter: grayscale(1); }
+body #app.t2app .pgear__foot { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 12px 16px 0; }
+body #app.t2app .trn3__cells--one { grid-template-columns: 1fr; }
+/* B4: long ATK numbers stay inside the hero slot (5 characters 15 px, 6 characters 14 px, picture 32 px); markers inside the panel edge */
+body #app.t2app .hp2__slot--long { grid-template-columns: 30px minmax(0, 1fr); }
+body #app.t2app .hp2__slot--long .hp2__art { width: 32px; height: 32px; margin-left: -2px; }
+body #app.t2app .hp2__slot--long .hp2__ic { width: 30px; height: 30px; }
+body #app.t2app .hp2__slot--long .hp2__val { font-size: 15px; }
+body #app.t2app .hp2__slot--long6 .hp2__val { font-size: 14px; }
+body #app.t2app .hp2__slot .gear__up { right: 2px; top: -8px; }
+body #app.t2app .hp2__slot .v4dot { top: auto; bottom: 3px; }
+body #app.t2app .btile .gear__up { right: 4px; }
+/* B4: a centre box taller than the screen scrolls (Equipment Chest 10 Pull on 375 × 667); auto margins keep its top reachable */
+body #app.t2app .gk-scrim { overflow-y: auto; overscroll-behavior: contain; }
+body #app.t2app .gk-scrim > .gk-modal { margin-block: auto; }
+/* ---- Rancangan v4 B6 (G7): Wish, hero card lines (MEKANISME_UI "Ekonomi v4") */
+body #app.t2app .hc .hc__wish { position: absolute; right: 6px; top: 8px; z-index: 1; padding: 2px 4px; border-radius: 2px; background: rgba(7, 8, 10, 0.85); box-shadow: inset 0 0 0 1px var(--g2); line-height: 1; }
+body #app.t2app .hc .hc__wish .gk-text { font: 700 12px/1 var(--font-display); letter-spacing: 0.04em; color: var(--g3); }
+body #app.t2app .v4wish__pics { display: inline-flex; gap: 2px; }
+body #app.t2app .tav__want.v4wish { display: grid; justify-items: center; gap: 4px; }
+body #app.t2app .tav__want.v4wish .pic { width: 34px; height: 34px; }
+body #app.t2app .v4card { display: block; margin: 4px 16px 0; text-align: center; }
+body #app.t2app .v4odds { display: block; margin: 0 0 2px; text-align: center; }
+body #app.t2app .v4wishsh .v4note { display: block; margin: 0 0 8px; text-align: center; }

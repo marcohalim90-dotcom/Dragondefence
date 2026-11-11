@@ -1,0 +1,201 @@
+/* =====================================================================================
+   DESIGN TOKENS — Roll Game V2. Single source of visual values for CSS.
+   Documented in docs/visual/DESIGN_TOKENS.md; the same palette lives in tokens.ts for three.js.
+   Rule: components use these tokens only. No new raw colours, shadows or radii elsewhere.
+   ===================================================================================== */
+
+:root {
+  /* ---------------------------------------------------------------- palette (primitives) */
+  --blue-950: #06164f; --blue-900: #0d2a78; --blue-800: #173a9c; --blue-700: #1d4fc4; --blue-600: #2a60dc;
+  --blue-500: #3a70ea; --blue-400: #5f8ff5; --blue-300: #9dbcff; --blue-200: #cfe0ff;
+  --cyan-600: #0a8fd8; --cyan-500: #05c8ef; --cyan-400: #3fd8ff; --cyan-300: #8ae8ff;
+  --purple-950: #1a0840; --purple-900: #2a1160; --purple-800: #3d1a86; --purple-700: #4f22a6; --purple-600: #6233bf;
+  --purple-500: #7f4bc3; --purple-400: #9c76c5; --purple-300: #c3a8e6; --purple-100: #ebe0fd;
+  --peri-600: #4d66d2; --peri-500: #6986ee; --peri-400: #8ea3f7;
+  --yellow-ink: #5a2f0b; --yellow-600: #f28a00; --yellow-500: #ffbe12; --yellow-400: #ffd84a; --yellow-300: #ffeaa0;
+  --green-900: #1f6a16; --green-600: #2e8f20; --green-500: #4fc42f; --green-400: #8fe85a;
+  --red-900: #8a1020; --red-600: #b81f30; --red-500: #ee3c46; --red-400: #ff7c70;
+  --sky-600: #0a6cc8; --sky-500: #19a6f2; --sky-400: #6ad8ff;
+  --violet-600: #6a2ac4; --violet-500: #9a52ee; --violet-400: #c290ff;
+  --magenta-600: #b0169a; --magenta-500: #e23bd0; --magenta-400: #ff8af0;
+  --gold-900: #9a6a08; --gold-600: #d99a10; --gold-500: #f5c030; --gold-400: #ffe27a;
+  --cream-300: #f3e6c8; --cream-200: #fff1d6; --cream-100: #fffaf0;
+  --gray-900: #4a5580; --gray-600: #7d8ab0; --gray-500: #a6b1cf; --gray-400: #c5cde4;
+  --ink-dark: #2a1a4a; --ink-600: #3d2d63;
+  /* Stage 3's shadow die (2026-10-07): near black with a violet cast */
+  --shadow-950: #06040a;
+  /* card tier windows (user decisions 2026-09-30 / 2026-10-02: Common green, Rare blue, Epic purple, Legendary gold-orange,
+     God red); the dark ends and the Legendary hues are the approved card colours of 2026-10-01 */
+  --tier-common-hi: var(--green-400); --tier-common: var(--green-500); --tier-common-lo: var(--green-900);
+  --tier-rare-hi: var(--blue-300); --tier-rare: var(--blue-500); --tier-rare-lo: #1c3494;
+  --tier-epic-hi: var(--violet-400); --tier-epic: var(--violet-500); --tier-epic-lo: #45168a;
+  --tier-legendary-hi: #ffc47a; --tier-legendary: #f2821f; --tier-legendary-lo: #9c3f08;
+  --tier-god-hi: var(--red-400); --tier-god: var(--red-500); --tier-god-lo: var(--red-900);
+  /* dungeon (target art 2026-09-29): warm plum-grey stone, lava, candle wood */
+  --stone-950: #1c121c; --stone-900: #2c2029; --stone-800: #3e2f39; --stone-700: #54434c; --stone-600: #6e5d63; --stone-500: #8d7c7e; --stone-400: #ada0a0;
+  --lava-700: #9c2a0c; --lava-600: #d2460f; --lava-500: #f2701c; --lava-400: #ffa23c; --lava-300: #ffd07a;
+  --wood-700: #5a3218; --wood-600: #7a4620; --wood-500: #a0622e;
+  /* printed dice (die chips, face strips) */
+  --ivory-400: #fbf3e1; --ivory-500: #f1e4c6; --ivory-600: #d8c49c;
+  --white: #ffffff;
+
+  /* ---------------------------------------------------------------- typography */
+  --font-display: "Lilita One", "Fredoka", system-ui, sans-serif;
+  --font-ui: "Fredoka", "Nunito", system-ui, sans-serif;
+  --fw-display: 400; /* Lilita One has one weight; Fredoka uses 700 */
+  --fs-hero: 34px; --fs-cta-xl: 38px; --fs-cta: 26px; --fs-title: 22px; --fs-button: 18px; --fs-number: 18px;
+  --fs-label: 14px; --fs-button-sm: 14px; --fs-tag: 12px; --fs-meta: 12px; --fs-body: 13.5px; --fs-banner: 46px;
+  /* text outline = visible width outside the glyph (stroke is drawn at 2x behind the fill) */
+  /* 2026-10-30 (user: "tulisannya semua ganggu. terlalu berisik"): thinner, even outlines; was 2 / 1.5 / 1.25 / 1 and drops 3 / 2 / 1.5 / 1 */
+  --tx-ol-lg: 1.5px; --tx-ol-md: 1px; --tx-ol-sm: 1px; --tx-ol-xs: 1px;
+  --tx-drop-lg: 2px; --tx-drop-md: 1px; --tx-drop-sm: 1px; --tx-drop-xs: 1px;
+
+  /* ---------------------------------------------------------------- structure */
+  --ol-thin: 1.5px; --ol: 2px; --ol-strong: 2.5px;
+  /* gold rim (target art): a metal ring lit from above, used on round buttons, frames, plaques and trays */
+  --rim-w-sm: 3px; --rim-w: 4px; --rim-w-lg: 5px;
+  --rim-gold: linear-gradient(180deg, var(--gold-400) 0%, var(--gold-500) 38%, var(--gold-600) 72%, var(--gold-900) 100%);
+  --rim-inner: inset 0 0 0 1px rgba(90, 47, 11, 0.55);
+  --lip-xs: 2px; --lip-sm: 3px; --lip-md: 4px; --lip-lg: 5px;
+  --ext-sm: 1px; --ext-md: 2px; --ext-lg: 3px;
+  --r-xs: 6px; --r-sm: 9px; --r-md: 12px; --r-lg: 16px; --r-xl: 22px; --r-pill: 999px;
+  --sp-1: 4px; --sp-2: 8px; --sp-3: 12px; --sp-4: 16px; --sp-5: 24px;
+  /* the smallest touch target (Shop revision 3, 2026-10-05) */
+  --hit: 44px;
+
+  /* ---------------------------------------------------------------- light (upper-left) */
+  --hl-subtle: inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  --hl-normal: inset 0 1.5px 0 rgba(255, 255, 255, 0.55), inset 1px 0 0 rgba(255, 255, 255, 0.15);
+  --hl-strong: inset 0 2px 0 rgba(255, 255, 255, 0.75), inset 1.5px 0 0 rgba(255, 255, 255, 0.2);
+  --sh-ambient-sm: 0 2px 4px rgba(0, 8, 40, 0.22);
+  --sh-ambient-md: 0 4px 8px rgba(0, 8, 40, 0.28);
+  --sh-ambient-lg: 0 10px 24px rgba(0, 8, 40, 0.4);
+  --sh-inset: inset 0 2px 3px rgba(0, 0, 0, 0.35);
+  --sh-drop-icon: drop-shadow(0 3px 2px rgba(0, 8, 40, 0.35));
+  --sh-nav: 0 -4px 12px rgba(0, 8, 40, 0.3);
+  --well-edge: inset 0 0 0 1.5px rgba(0, 8, 40, 0.35);
+  --shade-art: linear-gradient(180deg, transparent, rgba(0, 8, 40, 0.55));
+  --hl-fill: inset 0 1px 0 rgba(255, 255, 255, 0.55);
+  --glow-select: 0 0 16px rgba(255, 216, 74, 0.55);
+  --glow-cyan: 0 0 18px rgba(63, 216, 255, 0.6);
+  --glow-magenta: 0 0 14px rgba(255, 138, 240, 0.6);
+  --pulse-ring: rgba(255, 255, 255, 0.7);
+  --divider-light: rgba(255, 255, 255, 0.22);
+  --text-body: rgba(255, 255, 255, 0.94);
+  --glow-text-gold: drop-shadow(0 0 16px rgba(255, 210, 60, 0.6));
+  --glow-text-red: drop-shadow(0 0 16px rgba(255, 70, 50, 0.65));
+  --glow-text-green: drop-shadow(0 0 16px rgba(120, 255, 90, 0.55));
+  --glow-text-cyan: drop-shadow(0 0 14px rgba(120, 220, 255, 0.6));
+  --glow-card-select: drop-shadow(0 0 10px rgba(63, 216, 255, 0.75));
+  /* Lair pit: lava light, brighter when the dragon wakes */
+  --lava-glow: radial-gradient(closest-side, rgba(255, 150, 60, 0.7) 0%, rgba(242, 80, 20, 0.35) 60%, rgba(242, 80, 20, 0) 100%);
+  /* stage 3's crypt pit: violet shadow light instead of lava */
+  --crypt-glow: radial-gradient(closest-side, rgba(205, 160, 255, 0.6) 0%, rgba(130, 60, 220, 0.3) 60%, rgba(130, 60, 220, 0) 100%);
+  /* lobby island gate: warm light breathing in the painted archway */
+  --gate-glow: radial-gradient(closest-side, rgba(255, 226, 122, 0.85) 0%, rgba(255, 150, 50, 0.4) 55%, rgba(255, 150, 50, 0) 100%);
+  /* stage 2 Home: icy light breathing in the frost gate */
+  --gate-glow-frost: radial-gradient(closest-side, rgba(200, 245, 255, 0.8) 0%, rgba(63, 216, 255, 0.4) 55%, rgba(63, 216, 255, 0) 100%);
+  /* stage 3 Home: green light breathing in the crypt gate */
+  --gate-glow-crypt: radial-gradient(closest-side, rgba(190, 255, 215, 0.8) 0%, rgba(60, 230, 140, 0.4) 55%, rgba(60, 230, 140, 0) 100%);
+  /* hero reveal: warm gold light behind the hero, cool rim further out */
+  --reveal-burst: radial-gradient(closest-side, rgba(255, 226, 122, 0.55) 0%, rgba(157, 188, 255, 0.28) 45%, rgba(157, 188, 255, 0) 100%);
+  /* creature splash: a red burst behind the art (dragon wakes) */
+  --splash-danger: radial-gradient(closest-side, rgba(238, 60, 70, 0.8) 0%, rgba(138, 16, 32, 0.5) 55%, rgba(138, 16, 32, 0) 100%);
+
+  /* a card lifted off the screen (chest reveal): a soft long shadow under it */
+  --sh-float: drop-shadow(0 16px 20px rgba(0, 8, 40, 0.5));
+  /* Shop offers (revision 3, 2026-10-05): the light pool behind a chest (gold Tavern, violet Dragon), a soft pool behind a
+     tile's art, the warm rays of an offer with a free claim, and the tilt of a deal seal */
+  --offer-light-gold: radial-gradient(closest-side, rgba(255, 226, 122, 0.85) 0%, rgba(255, 190, 18, 0.32) 50%, rgba(255, 190, 18, 0) 100%);
+  --offer-light-violet: radial-gradient(closest-side, rgba(255, 138, 240, 0.8) 0%, rgba(255, 138, 240, 0.55) 55%, rgba(194, 144, 255, 0.25) 80%, rgba(194, 144, 255, 0) 100%);
+  /* the cyan and blue sections' light (2026-10-06) */
+  --offer-light-cyan: radial-gradient(closest-side, rgba(138, 232, 255, 0.75) 0%, rgba(5, 200, 239, 0.3) 55%, rgba(5, 200, 239, 0) 100%);
+  --offer-light-blue: radial-gradient(closest-side, rgba(157, 188, 255, 0.75) 0%, rgba(58, 112, 234, 0.32) 55%, rgba(58, 112, 234, 0) 100%);
+  --offer-light-soft: radial-gradient(closest-side, rgba(194, 144, 255, 0.6) 0%, rgba(194, 144, 255, 0.5) 72%, rgba(226, 59, 208, 0) 100%);
+  --offer-rays: repeating-conic-gradient(from 0deg, rgba(255, 216, 74, 0.34) 0deg 9deg, transparent 9deg 20deg);
+  --deal-tilt: -12deg;
+  /* how far an offer's painting rises above its tray (the room kept over the tray) */
+  --offer-rise: calc(var(--sp-5) + var(--sp-1));
+
+  /* ---------------------------------------------------------------- motion */
+  --t-press: 80ms; --t-pop: 180ms; --t-panel: 220ms;
+  /* content coming in (a tab's panel, a list): its rise, and the step between items of a list */
+  --t-enter: 260ms; --t-stagger: 35ms; --enter-rise: 8px;
+  /* an idle object breathing in place (a Shop chest): its cycle and its rise */
+  --t-idle: 3.2s; --bob-rise: 3px;
+  /* one turn of light rays (a free claim's offer, a burst modal) */
+  --t-spin: 16s;
+  --ease-pop: cubic-bezier(0.2, 1.4, 0.4, 1); --ease-out: cubic-bezier(0.2, 0.9, 0.3, 1);
+  /* transitions (2026-10-08): leaving is quicker than coming, and accelerates away; a sheet travels its whole height */
+  --ease-in: cubic-bezier(0.5, 0, 0.75, 0.2); --t-out: 200ms; --t-sheet: 300ms; --t-tab: 240ms; --t-nav: 280ms; --t-push: 420ms; --ease-push: cubic-bezier(0.25, 0.46, 0.45, 0.94); --tab-shift: 32px; --nav-shift: 56px;
+
+  /* ---------------------------------------------------------------- layers */
+  --z-board: 0; --z-hud: 10; --z-float: 20; --z-sheet: 50; --z-modal: 60; --z-toast: 70;
+}
+
+/* =====================================================================================
+   THEMES — only semantic tokens change; components stay the same.
+   (Declared per theme so shadows that reference --c-outline resolve to the theme's outline.)
+   ===================================================================================== */
+:root, .theme-blue {
+  --c-outline: var(--blue-900);
+  --c-bg: linear-gradient(180deg, #1a4fc4 0%, #1550bc 30%, #0b64bc 48%, #075aaa 62%, #083792 78%, #061c78 100%);
+  --c-bg-glow: radial-gradient(140% 24% at 50% 46%, rgba(5, 200, 239, 0.9) 0%, rgba(10, 143, 216, 0.6) 40%, rgba(10, 143, 216, 0) 100%);
+  --c-bg-pattern: none;
+  --c-tray: rgba(3, 26, 98, 0.72);
+  /* an opaque tray (under a gold border-box ring the translucent tray would let the ring show through) */
+  --c-tray-solid: color-mix(in srgb, var(--blue-950) 60%, var(--blue-700));
+  --c-tray-rim: #4c7ccb;
+  --c-card: var(--blue-500); --c-card-hi: var(--blue-400); --c-card-lip: #2448c0;
+  --c-neutral: var(--peri-500); --c-neutral-hi: var(--peri-400); --c-neutral-lip: var(--peri-600);
+  --c-light: var(--blue-200);
+  --c-text-2: var(--cyan-300);
+  --c-lvl-done: var(--sky-500); --c-lvl-done-hi: var(--sky-400); --c-lvl-done-lip: var(--sky-600);
+  --c-scrim: rgba(2, 12, 56, 0.72);
+  --tx-ol-color: var(--blue-900);
+  --sh-contact-sm: 0 var(--ext-sm) 0 var(--c-outline);
+  --sh-contact-md: 0 var(--ext-md) 0 var(--c-outline);
+  --sh-contact-lg: 0 var(--ext-lg) 0 var(--c-outline);
+}
+/* game screen (target art: dungeon room) — warm stone, gold rims, purple controls */
+.theme-dungeon {
+  --c-outline: var(--stone-950);
+  --c-bg: linear-gradient(180deg, #3a2630 0%, #4a2f2c 40%, #3a2226 70%, #22151c 100%);
+  --c-bg-glow: radial-gradient(90% 35% at 50% 32%, rgba(242, 112, 28, 0.45) 0%, rgba(210, 70, 15, 0.18) 45%, rgba(210, 70, 15, 0) 100%);
+  --c-bg-pattern: none;
+  --c-tray: rgba(28, 14, 30, 0.84);
+  --c-tray-solid: color-mix(in srgb, var(--stone-950) 70%, var(--stone-800));
+  --c-tray-rim: var(--gold-600);
+  --c-card: var(--purple-600); --c-card-hi: var(--purple-500); --c-card-lip: var(--purple-800);
+  --c-neutral: var(--purple-500); --c-neutral-hi: var(--purple-400); --c-neutral-lip: var(--purple-700);
+  --c-light: var(--purple-100);
+  --c-text-2: var(--gold-400);
+  --c-lvl-done: var(--purple-500); --c-lvl-done-hi: var(--purple-400); --c-lvl-done-lip: var(--purple-700);
+  --c-scrim: rgba(28, 10, 20, 0.72);
+  --tx-ol-color: var(--stone-950);
+  --sh-contact-sm: 0 var(--ext-sm) 0 var(--c-outline);
+  --sh-contact-md: 0 var(--ext-md) 0 var(--c-outline);
+  --sh-contact-lg: 0 var(--ext-lg) 0 var(--c-outline);
+}
+.theme-purple {
+  --c-outline: var(--purple-900);
+  --c-bg: linear-gradient(180deg, #5326ab 0%, #4f22a6 55%, #461d98 100%);
+  --c-bg-glow: radial-gradient(90% 40% at 50% 38%, rgba(140, 90, 230, 0.35) 0%, rgba(140, 90, 230, 0) 100%);
+  /* low-contrast diamond lattice (±6% value) */
+  --c-bg-pattern:
+    repeating-linear-gradient(45deg, rgba(20, 4, 60, 0.28) 0 1.5px, transparent 1.5px 34px),
+    repeating-linear-gradient(-45deg, rgba(20, 4, 60, 0.28) 0 1.5px, transparent 1.5px 34px);
+  --c-tray: rgba(26, 8, 64, 0.6);
+  --c-tray-solid: color-mix(in srgb, var(--purple-950) 60%, var(--purple-700));
+  --c-tray-rim: #7a5bb0;
+  --c-card: var(--purple-500); --c-card-hi: var(--purple-400); --c-card-lip: #5e3099;
+  --c-neutral: var(--purple-400); --c-neutral-hi: var(--purple-300); --c-neutral-lip: #7a55a8;
+  --c-light: var(--purple-100);
+  --c-text-2: var(--purple-300);
+  --c-lvl-done: var(--purple-400); --c-lvl-done-hi: var(--purple-300); --c-lvl-done-lip: var(--purple-600);
+  --c-scrim: rgba(20, 4, 48, 0.72);
+  --tx-ol-color: var(--purple-900);
+  --sh-contact-sm: 0 var(--ext-sm) 0 var(--c-outline);
+  --sh-contact-md: 0 var(--ext-md) 0 var(--c-outline);
+  --sh-contact-lg: 0 var(--ext-lg) 0 var(--c-outline);
+}
